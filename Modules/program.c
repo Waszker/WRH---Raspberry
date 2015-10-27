@@ -112,7 +112,7 @@ int main()
     command commands[] = {
         { { "LD_LIBRARY_PATH=/usr/lib/", NULL }, { "/bin/mjpg_streamer",  "-i",
             "input_uvc.so -n -q 50 -f 1", "-o",
-            "output_http.so -p 8080 -c piotr:password", NULL } },
+            "output_http.so -p 8080 -c login:password", NULL } },
         { { NULL }, { "./server.py", NULL } },
         { { NULL }, { "./lcd2.py", NULL } },
         { { NULL }, { "/bin/stunnel", "./stunnel.conf", NULL } },

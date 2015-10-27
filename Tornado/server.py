@@ -20,7 +20,7 @@ class LoginHandler(BaseHandler):
     # Check if login and password are good
         input_name = self.get_argument("name")
         input_password = self.get_argument("password")
-        if not input_name == "Piotr" or not input_password == "password":
+        if not input_name == "Name" or not input_password == "password":
             self.redirect("/login")
         else:
             # Password and login are good
