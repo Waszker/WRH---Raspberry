@@ -1,5 +1,6 @@
 #include <sys/sem.h>
 #include <sys/shm.h>
+#include <sys/types.h>
 #include "common.h"
 #include "ipc.h"
 
@@ -13,7 +14,7 @@ void init_semaphore(int sem, int start_value, int sem_num)
 int create_semaphore(key_t key, int nsems, int semflg, int init_val)
 {
     int semId, i;
-    if((semId = semget(IPC_PRIVATE, nsems, semflg)) < 0) ERR("semget");
+    if((semId = semget(key, nsems, semflg)) < 0) ERR("semget");
     for(i = 0; i < nsems; i++) init_semaphore(semId, init_val, i);
     return semId;
 }

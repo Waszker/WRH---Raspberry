@@ -5,17 +5,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <sys/shm.h>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include "common.h"
+#include "ipc.h"
 
-#define ERR(src)    (fprintf(stderr, "%s:%d\n", __FILE__, __LINE__),\
-                    perror(src), kill(0, SIGKILL), exit(EXIT_FAILURE))
-#define NUMBER_OF_EXECS     4
+#define NUMBER_OF_EXECS     1
 
 typedef struct command
 {
     char* env[5];
     char* arg[10];
+    int arg_num;
 } command;
 
 volatile sig_atomic_t _is_ending;
@@ -69,9 +74,29 @@ void start_service(command* pcommand, pid_t* ppid)
 
 void start_subprocesses(command commands[], pid_t subprocesses[])
 {
-    int i;
+    int i, sem_id, mem_id;
+    char *value;
+    key_t sem_key, mem_key;
+
+    /* Get semaphores and memory */
+    sem_key = ftok(getcwd(NULL, 0), rand());
+    mem_key = ftok(getcwd(NULL, 0), rand());
+    printf("Got keys\n");
+    sem_id = create_semaphore(sem_key, 2, IPC_CREAT | IPC_EXCL, 1);
+    mem_id = create_memory(mem_key, 4*sizeof(char), IPC_CREAT | IPC_EXCL);
+    printf("Got semaphores and memory\n");
+    if((void*)-1 == (value = shmat(mem_id, NULL, 0))) ERR("shmat");
+    value[0] = 'P';
+
+    /* Start processes */
     for(i = 0; i < NUMBER_OF_EXECS; i++)
+    {
+        char buf[10];
+        snprintf(buf, 10, "%d", mem_id);
+        printf("Buffer with %s\n", buf);
+        commands[i].arg[1] = buf;
         start_service(&commands[i], &subprocesses[i]);
+    }
 }
 
 void stop_all_services(pid_t subprocesses[])
@@ -110,14 +135,19 @@ int main()
     sigset_t mask;
     pid_t subprocesses[NUMBER_OF_EXECS];
     command commands[] = {
+        { { NULL }, { "./ipc_test.py" }, 1 },
         { { "LD_LIBRARY_PATH=/usr/lib/", NULL }, { "/bin/mjpg_streamer",  "-i",
             "input_uvc.so -n -q 50 -f 1", "-o",
-            "output_http.so -p 8080 -c login:password", NULL } },
-        { { NULL }, { "./server.py", NULL } },
-        { { NULL }, { "./lcd2.py", NULL } },
-        { { NULL }, { "/bin/stunnel", "./stunnel.conf", NULL } },
+            "output_http.so -p 8080 -c login:password", NULL }, 10 },
+        { { NULL }, { "./server.py", NULL }, 0 },
+        { { NULL }, { "./lcd2.py", NULL }, 0 },
+        { { NULL }, { "/bin/stunnel", "./stunnel.conf", NULL }, 1 },
     };
     _is_ending = 0;
+
+    /* Create semaphores */
+    srand(time(NULL));
+
 
     // TODO: Should signals go first?
     /* Start processes first, then block signals */
