@@ -8,8 +8,6 @@ class Response(Enum):
     STATUS_UNAUTHORIZED = 401
     STATUS_BAD_REQUEST = 400
     INTERNAL_SERVER_ERROR = 500
-    
-<<<<<<< HEAD
 headers = {'content-type': 'application/json'}
 base_address = 'https://wildraspberrywebapi.azurewebsites.net/'
 register_device_url = base_address + 'api/wrh/registerdevice'
@@ -29,8 +27,6 @@ def register_device(username, password, device_name, device_color):
 def add_module(device_id, device_token, module_name, module_type):
 	content = {'DeviceId': device_id, 'Devicetoken': device_token, 'Name': module_name, 'Type': module_type}
 	return do_post_request(add_module_url, content)
-
-<<<<<<< HEAD
 def edit_module(device_id, device_token, module_id,  module_name):
 	content = {'DeviceId': device_id, 'Devicetoken': device_token, 'Name': module_name, 'Type': module_type}
 	return do_post_request(add_module_url, content)
