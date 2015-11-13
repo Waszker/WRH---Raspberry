@@ -18,8 +18,4 @@ else:
     print 'Nie udalo sie. Status code: ' + str(status_code)
     print 'Content: ' + str(result_content)
 
-
-
-
-
 print('Koniec dzialania skryptu.')
