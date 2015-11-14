@@ -93,4 +93,5 @@ target/
 *.out
 *.app
 
-
+# WRH config file
+.wrh.config
