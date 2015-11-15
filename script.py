@@ -1,6 +1,7 @@
 #!/usr/bin/python2.7
 import os.path as path
 from WRH_Engine.RegisterDevice import RegisterDevice as register
+from WRH_Engine.Configuration import configuration as config
 
 CONFIGURATION_FILE = '.wrh.config'
 
@@ -9,7 +10,10 @@ def _run_maintenance_work():
     return
 
 def _is_configuration_file_sane():
-    return True
+    with open(CONFIGURATION_FILE, 'r') as f:
+        print 'Configuration file found\nChecking it for errors...'
+        return config.check_configuration_file_sanity(f)
+    return False
 
 def _is_configuration_file_present():
     return path.isfile(CONFIGURATION_FILE)
@@ -17,6 +21,7 @@ def _is_configuration_file_present():
 def show_options():
     print 'Welcome to Wild Raspberry House management program!'
     if(_is_configuration_file_present() and _is_configuration_file_sane()):
+        print "All good"
         _run_maintenance_work()
     else:
         (is_success, response_content) = register.register_procedure()
