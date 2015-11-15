@@ -44,7 +44,7 @@ def _register_device():
     (status_code, result_content) = W.register_device(username, password, device_name, device_color)
     is_success = False
 
-    if status_code == W.Response.STATUS_OK.value :
+    if status_code == W.Response.STATUS_OK :
         is_success = True
     else:
         print '***Failed to register device'
