@@ -1,115 +1,43 @@
 #define _GNU_SOURCE
 #include <errno.h>
-#include <signal.h>
-#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
 #include <sys/wait.h>
-#include <sys/shm.h>
-#include <sys/types.h>
-#include <sys/ipc.h>
 #include "common.h"
-#include "ipc.h"
+#include "wrh_lib.h"
 
-#define NUMBER_OF_EXECS     1
+#define CONFIGURATION_FILE "../../../.wrh.config"
 
-typedef struct command
-{
-    char* env[5];
-    char* arg[10];
-    int arg_num;
-} command;
+typedef struct process {
+    enum module_type type;
+    pid_t pid;
+    char* arguments_from_config;
+} process;
 
-volatile sig_atomic_t _is_ending;
-volatile sig_atomic_t _sig_No;
 
-void sig_handler(int signo)
-{
-    _sig_No = signo;
-}
-
-void set_signal_handler(int signo, void (*f)(int))
-{
-    struct sigaction action;
-    memset(&action, 0, sizeof(struct sigaction));
-    action.sa_handler = f;
-    if(-1 == sigaction(signo, &action, NULL)) ERR("sigaction");
-}
-
-sigset_t set_signal_behaviour(int behaviour, sigset_t* set, int num_of_signals, ...)
+void start_subprocesses(process* processes, int processes_number)
 {
     int i;
-    sigset_t oldmask;
-    va_list arguments;
-    va_start(arguments, num_of_signals);
 
-    sigemptyset(set);
-    for(i = 0; i < num_of_signals; i++)
-        sigaddset(set, (int)va_arg(arguments, int));
-    va_end(arguments);
-
-    if(-1 == sigprocmask(behaviour, set, &oldmask)) ERR("sigprocmask");
-
-    return oldmask;
+    for(i = 0; i < processes_number; i++)
+        processes[i].pid = start_module(processes[i].type,
+                processes[i].arguments_from_config);
 }
 
-void start_service(command* pcommand, pid_t* ppid)
-{
-    sigset_t mask;
-    switch(*ppid = fork())
-    {
-        case 0:
-            set_signal_behaviour(SIG_UNBLOCK, &mask, 2, SIGINT, SIGCHLD);
-            execve(pcommand->arg[0], pcommand->arg, pcommand->env);
-            break;
-
-        case -1:
-            ERR("Problem forking");
-            break;
-    }
-}
-
-void start_subprocesses(command commands[], pid_t subprocesses[])
-{
-    int i, sem_id, mem_id;
-    char *value;
-    key_t sem_key, mem_key;
-
-    /* Get semaphores and memory */
-    sem_key = ftok(getcwd(NULL, 0), rand());
-    mem_key = ftok(getcwd(NULL, 0), rand());
-    printf("Got keys\n");
-    sem_id = create_semaphore(sem_key, 2, IPC_CREAT | IPC_EXCL, 1);
-    mem_id = create_memory(mem_key, 4*sizeof(char), IPC_CREAT | IPC_EXCL);
-    printf("Got semaphores and memory\n");
-    if((void*)-1 == (value = shmat(mem_id, NULL, 0))) ERR("shmat");
-    value[0] = 'P';
-
-    /* Start processes */
-    for(i = 0; i < NUMBER_OF_EXECS; i++)
-    {
-        char buf[10];
-        snprintf(buf, 10, "%d", mem_id);
-        printf("Buffer with %s\n", buf);
-        commands[i].arg[1] = buf;
-        start_service(&commands[i], &subprocesses[i]);
-    }
-}
-
-void stop_all_services(pid_t subprocesses[])
+void stop_all_services(process* processes, int processes_number)
 {
     int i;
-    for(i = 0; i < NUMBER_OF_EXECS; i++)
-        kill(subprocesses[i], SIGINT); // do not check for errors here!
+    for(i = 0; i < 10; i++)
+        kill(processes[i].pid, SIGINT); // do not check for errors here!
     while(TEMP_FAILURE_RETRY(wait(NULL)) > 0);
     printf("Ended life of all children\n");
     exit(EXIT_SUCCESS);
 }
 
-void restart_stopped_child(command commands[], pid_t subprocesses[])
+void restart_stopped_child(process* processes, int processes_number)
 {
     pid_t pid;
     int i;
@@ -119,40 +47,59 @@ void restart_stopped_child(command commands[], pid_t subprocesses[])
         if(0 == pid) break;
         if(ECHILD == errno) ERR("waitpid");
 
-        for(i = 0; i < NUMBER_OF_EXECS; i++)
-            if(pid == subprocesses[i] && i != 3)
+        for(i = 0; i < processes_number; i++)
+            if(pid == processes[i].pid)
             {
-                printf("Program %s has stopped. Restarting.\n", commands[i].arg[0]);
-                start_service(&commands[i], &subprocesses[i]);
+                processes[i].pid = start_module(processes[i].type,
+                        processes[i].arguments_from_config);
             }
     }
 }
 
+void fill_processes_details(process* processes, int processes_number, FILE* config)
+{
+    int line_number = 0;
+    char* buffer;
+
+    while((buffer = read_file_line(config)) != NULL)
+    {
+        if(++line_number == 1) continue;
+        processes[line_number - 2].type = get_module_type_from_config_line(buffer);
+        processes[line_number - 2].arguments_from_config = buffer;
+    }
+}
+
+int get_number_of_lines_in_config(FILE* config)
+{
+    char c;
+    int lines_number = 0;
+
+    while(EOF != (c = fgetc(config))) {
+        if('\n' == c) lines_number++;
+    }
+    fseek(config, 0, SEEK_SET);
+
+    return lines_number;
+}
+
+/*
+ * Configuration sanity check should be done in Python module
+ * so when starting this procedure we have 100% good configuration file
+ */
 int main()
 {
     /* Variables */
-    int i;
     sigset_t mask;
-    pid_t subprocesses[NUMBER_OF_EXECS];
-    command commands[] = {
-        { { NULL }, { "./ipc_test.py" }, 1 },
-        { { "LD_LIBRARY_PATH=/usr/lib/", NULL }, { "/bin/mjpg_streamer",  "-i",
-            "input_uvc.so -n -q 50 -f 1", "-o",
-            "output_http.so -p 8080 -c login:password", NULL }, 10 },
-        { { NULL }, { "./server.py", NULL }, 0 },
-        { { NULL }, { "./lcd2.py", NULL }, 0 },
-        { { NULL }, { "/bin/stunnel", "./stunnel.conf", NULL }, 1 },
-    };
-    _is_ending = 0;
+    FILE* config_file = open_file(CONFIGURATION_FILE, "r");
 
-    /* Create semaphores */
-    srand(time(NULL));
-
-
-    // TODO: Should signals go first?
-    /* Start processes first, then block signals */
-    printf("Starting server\n");
-    start_subprocesses(commands, subprocesses);
+    /* Get number of modules */
+    int number_of_modules = get_number_of_lines_in_config(config_file);
+    number_of_modules--; // because first line is not module line
+    if(0 == number_of_modules)
+    {
+        printf("No modules registered. Nothing to do, exiting.");
+        exit(EXIT_SUCCESS);
+    }
 
     /* Setting signal handlers */
     set_signal_handler(SIGINT, sig_handler);
@@ -162,6 +109,13 @@ int main()
     set_signal_behaviour(SIG_UNBLOCK, &mask, 2, SIGINT, SIGCHLD);
     mask = set_signal_behaviour(SIG_BLOCK, &mask, 2, SIGINT, SIGCHLD);
 
+    /* Start subprocesses */
+    printf("Starting server\n");
+    process* subprocesses = (process*)safe_malloc(number_of_modules * sizeof(process));
+    fill_processes_details(subprocesses, number_of_modules, config_file);
+    fclose(config_file); // TODO: Check for errors
+    start_subprocesses(subprocesses, number_of_modules);
+
     /* Wait for signal */
     while(1)
     {
@@ -169,11 +123,11 @@ int main()
         switch(_sig_No)
         {
             case SIGCHLD:
-                restart_stopped_child(commands, subprocesses);
+                restart_stopped_child(subprocesses, number_of_modules);
                 break;
 
             case SIGINT:
-                stop_all_services(subprocesses);
+                stop_all_services(subprocesses, number_of_modules);
                 break;
         }
     }
