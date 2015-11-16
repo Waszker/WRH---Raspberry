@@ -10,17 +10,28 @@ def _edit_module(modules) :
     print 'Editing module'
 
 def _add_new_module() :
-    print 'Adding new module'
+    print '\n***Adding new module***'
+    print '[1] DHT\n[2] Camera\n[3] Motion\n[4] Wi-Fi Socket\n[5] Cancel'
+
+    while True :
+        choice = raw_input('> ')
+        try:
+            value = int(choice)
+        except ValueError :
+            continue
+        if value == 5 :
+            break
+        continue
+
 
 def _run_maintenance_work():
     with open(CONFIGURATION_FILE, 'r') as f:
         (system_info, modules) = config.parse_configuration_file(f)
-        print '\n=== LIST OF REGISTERED MODULES==='
-        for module in modules :
-            config.print_module_information(module)
-        print '\n[1] Edit module\n[2] Add new module\n[3] Exit'
-
         while True :
+            print '\n=== LIST OF REGISTERED MODULES==='
+            for module in modules :
+                config.print_module_information(module)
+            print '\n[1] Edit module\n[2] Add new module\n[3] Exit'
             user_choice = raw_input('> ')
             try :
                 value = int(user_choice)
