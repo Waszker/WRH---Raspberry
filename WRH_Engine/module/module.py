@@ -21,7 +21,10 @@ class Module:
         self.address = str(address)
 
     def get_type_name(self):
-        type_name = self.types_strings[type]
+        try:
+            type_name = Module.types_strings[type]
+        except KeyError:
+            type_name = "UNKNOWN"
         return type_name
 
     def get_information_string(self):
