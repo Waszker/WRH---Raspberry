@@ -6,7 +6,7 @@ def check_configuration_file_sanity(file_handler) :
     # Every other: TYPE ; ID ; GPIO ; NAME ; ADDR
     # Other lines are for module entries
     first_line_pattern = re.compile("([1-9][0-9]{0,9});(.+)$")
-    next_lines_pattern = re.compile("(([1-9][0-9]{0,9};){3})(.+?);(.*)$")
+    next_lines_pattern = re.compile("(([1-9][0-9]{0,9};){2})(.*?);(.+?);(.*)$")
     does_match = False
 
     for i, line in enumerate(file_handler) :
@@ -29,7 +29,7 @@ def _get_first_line_data(line) :
     return (matches.group(1), matches.group(2))
 
 def _get_module_entry_data(line) :
-    m = re.search("([1-9][0-9]{0,9});([1-9][0-9]{0,9});([1-9][0-9]{0,9});(.+?);(.*)$", line)
+    m = re.search("([1-9][0-9]{0,9});([1-9][0-9]{0,9});(.*?);(.+?);(.*)$", line)
     return Module(m.group(2), m.group(1), m.group(3), m.group(4), m.group(5))
 
 # This function does not check if configuration file is sane
@@ -44,3 +44,8 @@ def parse_configuration_file(file_handler) :
         modules_list.append(_get_module_entry_data(line))
 
     return ((device_id, device_token), modules_list)
+
+def add_new_module(file_handler, module) :
+    file_handler.write(str(module.type) + ';' + str(module.id) + ';' + str(module.gpio) + ';'
+                       + str(module.name) + ';' + str(module.address))
+
