@@ -3,6 +3,7 @@ import os.path as path
 import json
 from WRH_Engine.RegisterDevice import RegisterDevice as register
 from WRH_Engine.Configuration import configuration as config
+from WRH_Engine.module.module import Module
 
 CONFIGURATION_FILE = '.wrh.config'
 
@@ -30,7 +31,7 @@ def _run_maintenance_work():
         while True :
             print '\n=== LIST OF REGISTERED MODULES==='
             for module in modules :
-                config.print_module_information(module)
+                module.get_information_string()
             print '\n[1] Edit module\n[2] Add new module\n[3] Exit'
             user_choice = raw_input('> ')
             try :
