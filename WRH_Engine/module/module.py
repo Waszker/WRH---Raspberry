@@ -68,8 +68,8 @@ class Module:
         (status, response_content) = W.add_module(device_id, device_token, name, type)
         if status != W.Response.STATUS_OK :
             print 'There was an error trying to register module.\nPlease try again'
-            print '***Error code ' + status
-            print '***Error response ' + response_content
+            print '***Error code ' + str(status)
+            print '***Error response ' + str(response_content)
         else:
             print 'Congratulations, your new module has been registered!'
             new_module = Module(response_content, type, gpio, name, address)

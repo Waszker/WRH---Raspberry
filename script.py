@@ -58,9 +58,9 @@ def show_options():
         (is_success, response_content) = register.register_procedure()
         if(is_success):
             print 'Congratulations! Your device has successfully been registered!'
-            with open(CONFIGURATION_FILE, 'w') as f:
+            with open(CONFIGURATION_FILE, 'a+') as f:
                 system_info = json.loads(response_content)
-                f.write(str(system_info['Id']) + ";" + str(system_info['Token']))
+                f.write(str(system_info['Id']) + ";" + str(system_info['Token']) + '\n')
 
 if __name__ == "__main__":
     show_options()
