@@ -7,8 +7,22 @@ from WRH_Engine.module.module import Module
 
 CONFIGURATION_FILE = '.wrh.config'
 
-def _edit_module(modules) :
-    print 'Editing module'
+def _edit_module(system_info, modules) :
+    print 'Choose which module to edit'
+    while True:
+        user_choice = raw_input('> ')
+        try:
+            module_number = int(user_choice)
+        except ValueError:
+            continue
+        if module_number > len(modules) or module_number <= 0:
+            continue
+        break
+
+    module = modules[module_number - 1]
+    module.run_edit_procedure(system_info)
+    with open(CONFIGURATION_FILE, 'w') as f:
+        config.update_configuration_file(f, system_info, modules)
 
 def _add_new_module(system_info, modules) :
     module = Module.register_new_module(system_info)
@@ -17,6 +31,22 @@ def _add_new_module(system_info, modules) :
         with open(CONFIGURATION_FILE, 'a') as f:
             config.add_new_module(f, module)
 
+def _remove_module(system_info, modules) :
+    print 'Choose which module to remove'
+    while True:
+        user_choice = raw_input('> ')
+        try:
+            module_number = int(user_choice)
+        except ValueError:
+            continue
+        if module_number > len(modules) or module_number <= 0:
+            continue
+        break
+    module = modules[module_number - 1]
+    if module.run_removal_procedure(system_info):
+        modules.remove(module)
+        with open(CONFIGURATION_FILE, 'w') as f:
+            config.update_configuration_file(f, system_info, modules)
 
 def _run_maintenance_work():
     with open(CONFIGURATION_FILE, 'r') as f:
@@ -24,19 +54,22 @@ def _run_maintenance_work():
 
     while True :
         print '\n=== LIST OF REGISTERED MODULES==='
-        for module in modules :
-            module.get_information_string()
-        print '\n[1] Edit module\n[2] Add new module\n[3] Exit'
+        for i, module in enumerate(modules) :
+            print (str(i+1) + ') '),
+            module.print_information_string()
+        print '\n[1] Edit module\n[2] Add new module\n[3] Delete module\n[4] Exit'
         user_choice = raw_input('> ')
         try :
             value = int(user_choice)
         except ValueError:
             continue
         if value == 1 :
-            _edit_module(modules)
+            _edit_module(system_info, modules)
         elif value == 2 :
             _add_new_module(system_info, modules)
         elif value == 3 :
+            _remove_module(system_info, modules)
+        elif value == 4 :
             break
         continue
     return

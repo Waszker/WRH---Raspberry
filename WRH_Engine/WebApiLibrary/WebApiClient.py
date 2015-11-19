@@ -13,8 +13,8 @@ headers = {'content-type': 'application/json'}
 base_address = 'https://wildraspberrywebapi.azurewebsites.net/'
 register_device_url = base_address + 'api/wrh/registerdevice'
 add_module_url = base_address + 'api/wrh/addmodule'
-edit_module_url = base_address + ''
-remove_module_url = base_address + ''
+edit_module_url = base_address + '/api/wrh/editmodule'
+remove_module_url = base_address + '/api/wrh/removemodule'
 get_scenarios_url = base_address + ''
 add_measurement_url = base_address + ''
 
@@ -30,17 +30,17 @@ def add_module(device_id, device_token, module_name, module_type):
     content = {'DeviceId': device_id, 'Devicetoken': device_token, 'Name': module_name, 'Type': module_type}
     return do_post_request(add_module_url, content)
 
-def edit_module(device_id, device_token, module_id,  module_name):
-    content = {'DeviceId': device_id, 'Devicetoken': device_token, 'Name': module_name, 'Type': module_type}
-    return do_post_request(add_module_url, content)
+def edit_module(device_id, device_token, module_id, module_name):
+    content = {'DeviceId': device_id, 'Devicetoken': device_token, 'Id': module_id, 'Gpio': 0, 'Name': module_name}
+    return do_post_request(edit_module_url, content)
 
 def remove_module(device_id, device_token, module_id):
-    content = {'DeviceId': device_id, 'Devicetoken': device_token, 'Name': module_name, 'Type': module_type}
-    return do_post_request(add_module_url, content)
+    content = {'DeviceId': device_id, 'Devicetoken': device_token, 'Id': module_id}
+    return do_post_request(remove_module_url, content)
 
 def get_scenarios(device_id, device_token):
     content = {'DeviceId': device_id, 'Devicetoken': device_token, 'Name': module_name, 'Type': module_type}
-    return do_post_request(add_module_url, content)
+    return do_post_request(remove_module_url, content)
 
 def add_measurement(device_id, device_token, module_id, timestamp, value, streamingaddress):
     content = {'DeviceId': device_id, 'Devicetoken': device_token, 'Name': module_name, 'Type': module_type}

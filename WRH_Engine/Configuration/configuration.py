@@ -45,6 +45,11 @@ def parse_configuration_file(file_handler) :
 
     return ((device_id, device_token), modules_list)
 
+def update_configuration_file(file_handler, system_info, modules):
+    file_handler.write(str(system_info[0]) + ';' + system_info[1] + '\n')
+    for module in modules:
+        add_new_module(file_handler, module)
+
 def add_new_module(file_handler, module) :
     file_handler.write(str(module.type) + ';' + str(module.id) + ';'
                        + str(module.gpio) + ';' + str(module.name) +

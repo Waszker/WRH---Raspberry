@@ -16,22 +16,46 @@ class Module:
         self.name = str(name)
         self.address = str(address)
 
-    def get_information_string(self):
+    def print_information_string(self):
         print (self.name + ' is module of type ' + Module.get_type_name(self.type)),
         if self.type == 1 or self.type == 3 :
             print ('connected to gpio ' + self.gpio)
         else:
             print ('available at address ' + self.address)
 
-    def run_edit_procedure(self):
+    def run_edit_procedure(self, system_info):
         print 'Provide new module information (leave fields blank if you don\'t want to change)'
+        print 'Please note that changes other than name will always succeed'
+        print 'Name changing requires active Internet connection'
         new_name = raw_input('New module\'s name: ')
         new_gpio = raw_input('New gpio or system device name: ')
         new_address = raw_input('New connection address: ')
-        if new_name : self.name = new_name
+        if new_name :
+            is_success = self._update_module_information(system_info, new_name)
+            if is_success:
+                print 'Congratulations, your module has sucessfully been modified'
+                self.name = new_name
+            else :
+                print '***Error modifying module.'
+                print '***Please try again'
         if new_gpio : self.gpio = new_gpio
         if new_address : self.address = new_address
 
+    def _update_module_information(self, system_info, new_name):
+        (status, response_content) = W.edit_module(system_info[0], system_info[1], self.id, new_name)
+        return status == W.Response.STATUS_OK
+
+    def run_removal_procedure(self, system_info):
+        is_success = False
+        (status, response_content) = W.remove_module(system_info[0], system_info[1], self.id)
+        if status == W.Response.STATUS_OK:
+            print 'Succesfully removed selected module'
+            is_success = True
+        else:
+            print '***There was an error trying to remove selected module'
+            print '***Please try again'
+
+        return is_success
 
     @staticmethod
     def get_type_name(type):
