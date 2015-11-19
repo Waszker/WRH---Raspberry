@@ -15,8 +15,8 @@ register_device_url = base_address + 'api/wrh/registerdevice'
 add_module_url = base_address + 'api/wrh/addmodule'
 edit_module_url = base_address + '/api/wrh/editmodule'
 remove_module_url = base_address + '/api/wrh/removemodule'
-get_scenarios_url = base_address + ''
-add_measurement_url = base_address + ''
+get_scenarios_url = base_address + '/api/wrh/getscenariosdevice'
+add_measurement_url = base_address + '/api/wrh/'
 
 def do_post_request(url, content):
     response = requests.post(url, data = json.dumps(content), headers = headers)
@@ -39,8 +39,8 @@ def remove_module(device_id, device_token, module_id):
     return do_post_request(remove_module_url, content)
 
 def get_scenarios(device_id, device_token):
-    content = {'DeviceId': device_id, 'Devicetoken': device_token, 'Name': module_name, 'Type': module_type}
+    content = {'Id': device_id, 'Token': device_token}
     return do_post_request(remove_module_url, content)
 
 def add_measurement(device_id, device_token, module_id, timestamp, value, streamingaddress):
-    content = {'DeviceId': device_id, 'Devicetoken': device_token, 'Name': module_name, 'Type': module_type}
+    content = {'DeviceId': device_id, 'Devicetoken': device_token, 'ModuleId' : module_id, 'Timestamp' : timestamp, 'Value' : value, 'StreamingAddress' : streamingaddress}
