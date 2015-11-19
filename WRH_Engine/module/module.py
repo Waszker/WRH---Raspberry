@@ -23,6 +23,16 @@ class Module:
         else:
             print ('available at address ' + self.address)
 
+    def run_edit_procedure(self):
+        print 'Provide new module information (leave fields blank if you don\'t want to change)'
+        new_name = raw_input('New module\'s name: ')
+        new_gpio = raw_input('New gpio or system device name: ')
+        new_address = raw_input('New connection address: ')
+        if new_name : self.name = new_name
+        if new_gpio : self.gpio = new_gpio
+        if new_address : self.address = new_address
+
+
     @staticmethod
     def get_type_name(type):
         try:
