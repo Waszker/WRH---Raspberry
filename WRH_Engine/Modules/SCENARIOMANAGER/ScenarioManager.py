@@ -1,13 +1,6 @@
+#!/usr/bin/python2.7
 
 
-
-
-
-
-
-
-def _open_socket:
-	
 
 def main():
 	
