@@ -61,6 +61,10 @@ def main():
 	t_scenarios_changed.daemon = True
 	t_scenarios_changed.start()
 	
+	while 1
+		event.wait()
+		#if join(t_scenarios_changed) then I know that scenarios changed. Download new scenarios, interpret them, change rules.
+		#otherwise, a measurement meeting some rule arrived. Interpret scenarios.
 	
 	print('main() end')
 
