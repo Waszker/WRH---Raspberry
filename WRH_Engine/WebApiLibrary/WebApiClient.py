@@ -40,7 +40,8 @@ def remove_module(device_id, device_token, module_id):
 
 def get_scenarios(device_id, device_token):
     content = {'Id': device_id, 'Token': device_token}
-    return do_post_request(remove_module_url, content)
+    return do_post_request(get_scenarios_url, content)
 
 def add_measurement(device_id, device_token, module_id, timestamp, value, streamingaddress):
     content = {'DeviceId': device_id, 'Devicetoken': device_token, 'ModuleId' : module_id, 'Timestamp' : timestamp, 'Value' : value, 'StreamingAddress' : streamingaddress}
+    return do_post_request(add_measurement_url, content)
