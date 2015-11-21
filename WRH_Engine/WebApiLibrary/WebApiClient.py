@@ -13,10 +13,11 @@ headers = {'content-type': 'application/json'}
 base_address = 'https://wildraspberrywebapi.azurewebsites.net/'
 register_device_url = base_address + 'api/wrh/registerdevice'
 add_module_url = base_address + 'api/wrh/addmodule'
-edit_module_url = base_address + '/api/wrh/editmodule'
-remove_module_url = base_address + '/api/wrh/removemodule'
-get_scenarios_url = base_address + '/api/wrh/getscenariosdevice'
-add_measurement_url = base_address + '/api/wrh/'
+edit_module_url = base_address + 'api/wrh/editmodule'
+remove_module_url = base_address + 'api/wrh/removemodule'
+get_scenarios_url = base_address + 'api/wrh/getscenariosdevice'
+add_measurement_url = base_address + 'api/wrh/addmeasurement'
+scenarios_changed_url = base_address + 'api/wrh/scenarioschanged'
 
 def do_post_request(url, content):
     response = requests.post(url, data = json.dumps(content), headers = headers)
