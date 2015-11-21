@@ -6,8 +6,8 @@ import time
 import socket
 
 #na sztywno dane rasberaka uzytkownika przem321@wp.pl
-deviceid = '113'
-devicetoken = '33f1308d-f669-4eee-85fb-cacff7b2745c'
+deviceid = '9'
+devicetoken = 'dea763a0-5c0c-4555-bcc6-9f0cc1dcf030'
 socket_port = 2000
 scenarios = []
 measurements = []
@@ -17,8 +17,8 @@ event = threading.Event() #triggered when scenarios changed OR measurement meets
 
 def _get_scenarios():
 	global scenarios
+	print('gettingscenarios')
 	(status_code, result_content) = W.get_scenarios(deviceid, devicetoken)
-	#print('status_code = ' + str(status_code))
 	result_object = json.loads(result_content)
 	scenarios = result_object
 
@@ -42,11 +42,15 @@ def _socket_accept():
 
 def _scenarios_changed():
 	print('scenarios_changed() start')
-	while 1
+	while True:
 		time.sleep(10)
+		(status_code, result_content) = W.scenarios_changed(deviceid, devicetoken)
 		#check if scenarios changed, signal main() if yes (signal via Event)
 		#event.set()
 		#then exit, will be started again by main()
+		if status_code == W.Response.STATUS_OK :
+			event.set()
+			break
 	print('scenarios_changed() end')
 	
 def main():
@@ -61,11 +65,22 @@ def main():
 	t_scenarios_changed.daemon = True
 	t_scenarios_changed.start()
 	
-	while 1
+	while True:
 		event.wait()
-		#if join(t_scenarios_changed) then I know that scenarios changed. Download new scenarios, interpret them, change rules.
-		#otherwise, a measurement meeting some rule arrived. Interpret scenarios.
-	
+		lock.acquire()
+		print('event triggered')
+		sleep(1)
+		#if t_scenarios_changed finished then I know that scenarios changed. Download new scenarios
+		if not t_scenarios_changed.isAlive():
+			t_scenarios_changed.join()
+			_get_scenarios()
+		else
+			print('event triggered by measurement meeting some rule')
+		
+		#interpret scenarios, generate rules
+		
+		lock.release()
+			
 	print('main() end')
 
 if __name__ == "__main__":
