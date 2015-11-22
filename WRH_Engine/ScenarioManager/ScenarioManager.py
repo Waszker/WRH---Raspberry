@@ -36,6 +36,7 @@ def _socket_accept():
 	while 1:
 		(clientsocket, address) = serversocket.accept()
 		t = threading.Thread(target=_socket_communicate, args=(clientsocket))
+		t.daemon = True
 		t.start()
 		
 	print('accept_socket_messages() end')
@@ -61,20 +62,22 @@ def main():
 	t_accept.daemon = True
 	t_accept.start()
 	
-	t_scenarios_changed = threading.Thread(target=_scenarios_changed)
-	t_scenarios_changed.daemon = True
-	t_scenarios_changed.start()
+	
 	
 	while True:
+		event.clear()
+		t_scenarios_changed = threading.Thread(target=_scenarios_changed)
+		t_scenarios_changed.daemon = True
+		t_scenarios_changed.start()
 		event.wait()
 		lock.acquire()
 		print('event triggered')
-		sleep(1)
+		time.sleep(1)
 		#if t_scenarios_changed finished then I know that scenarios changed. Download new scenarios
 		if not t_scenarios_changed.isAlive():
 			t_scenarios_changed.join()
 			_get_scenarios()
-		else
+		else:
 			print('event triggered by measurement meeting some rule')
 		
 		#interpret scenarios, generate rules
