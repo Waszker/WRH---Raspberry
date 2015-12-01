@@ -10,10 +10,11 @@ deviceid = '9'
 devicetoken = 'dea763a0-5c0c-4555-bcc6-9f0cc1dcf030'
 socket_port = 2000
 scenarios = []
-measurements = []
-rules = []
+measurements = [] # // pairs, moduleId and Value
+doneScenaros = [] # // pairs, scenarioId - number of times the scenario was executed
+rules = [] # // rules, when to trigger event. (when measurement from specified module is .. )
 lock = threading.Lock()
-event = threading.Event() #triggered when scenarios changed OR measurement meets rule
+event = threading.Event() #triggered when scenarios changed OR slme measurement meets rule
 
 def _get_scenarios():
 	global scenarios
@@ -24,7 +25,7 @@ def _get_scenarios():
 
 def _socket_communicate(clientsocket):
 	print('socket_communicate() start')
-	
+	# read measurement, update global measurements array
 	print('socket_communicate() end')
 
 	
@@ -53,6 +54,14 @@ def _scenarios_changed():
 			event.set()
 			break
 	print('scenarios_changed() end')
+
+
+def _try_execute_scenarios():
+	global measurements
+	# // check if any scenarios is triggered, if yes then execute it
+
+def _generate_rules():
+	# // update global rules
 	
 def main():
 	print('main() start')
@@ -80,7 +89,11 @@ def main():
 		else:
 			print('event triggered by measurement meeting some rule')
 		
-		#interpret scenarios, generate rules
+		# check measurements, check if any scenario is triggered, execute
+		_try_execute_scenarios()
+		
+		#generate rules based on scenarios
+		_generate_rules()
 		
 		lock.release()
 			
