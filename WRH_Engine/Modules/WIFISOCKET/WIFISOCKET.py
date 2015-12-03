@@ -13,7 +13,7 @@ moduleid = '15'
 
 	
 def main():
-	print('main() start')
+	print('main() start wifisocket')
 	while True:
 		time.sleep(100)	
 	print('main() end')
