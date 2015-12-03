@@ -1,7 +1,7 @@
 #!/usr/bin/python2.7
 from ..WebApiLibrary import WebApiClient as webapi
 from WRH_Engine.Configuration import configuration as config
-import os
+import sys
 import json
 import threading
 import time
@@ -11,8 +11,8 @@ import signal
 
 CONFIGURATION_FILE = '.wrh.config'
 #dane rasberaka uzytkownika przem321@wp.pl
-deviceid = '18'
-devicetoken = '0d41ace1-fa6b-439c-ac02-cafae7c09a26'
+deviceid = '9'
+devicetoken = 'dea763a0-5c0c-4555-bcc6-9f0cc1dcf030'
 socket_port = 2000
 scenarios = []
 measurements = dict() # // pairs, moduleId and Value
@@ -23,8 +23,7 @@ event = threading.Event() #triggered when scenarios changed OR slme measurement 
 availablemodules = []
 
 def signal_handler(signal, frame):
-    print 'Scenario Manager SIGINT routine'
-    os.exit(0)
+    sys.exit(0)
 
 def _read_available_modules():
 	print('reading available modules')
@@ -84,16 +83,12 @@ def _socket_accept():
 def _scenarios_changed():
 	print('scenarios_changed() start')
 	while True:
-		time.sleep(1)
+		time.sleep(10)
 		(status_code, result_content) = webapi.scenarios_changed(deviceid, devicetoken)
 		#check if scenarios changed, signal main() if yes (signal via Event)
 		#event.set()
 		#then exit, will be started again by main()
-		print('\n\n')
-		print('sc changed code: ' + str(status_code))
-		print('\n\n')
 		if status_code == 200 :
-			print('SCENARIOS HAS CHANGED!')
 			event.set()
 			break
 	print('scenarios_changed() end')
@@ -102,7 +97,6 @@ def _scenarios_changed():
 def _try_execute_scenarios():
 	global measurements
 	global doneScenarios
-	global scenarios
 	print('try_execute_scenarios')
 	# // TODO: uwzglednienie priorytetow, oraz Recurring. (doneScenarios)
 	# // check if any scenarios is triggered, if yes then execute it
@@ -111,10 +105,10 @@ def _try_execute_scenarios():
 			continue
 		print(str(scen["Name"]))
 		# // datetime.now between starttime and endtime?
-		if not str(scen["ConditionModuleId"]) in measurements:
-			print('nie ma (jeszcze) pomiaru do takiego confitionmoduleid')
-			continue #// pomiaru takiego nie ma
 		value = measurements[str(scen["ConditionModuleId"])]
+		if not value:
+			print('nie ma pomiaru do takiego confitionmoduleid')
+			continue #// pomiaru takiego nie ma
 		print(str(scen["Condition"]))
 		if str(scen["Condition"]) == '5': # // czy wykryto ruch?
 			if str(value) == '1':
@@ -186,8 +180,8 @@ def _does_measurement_match_rule(moduleid, value):
 	#~for
 	return False #zadne rule nie spelnione
 
-def main_routine():
-
+def main():
+    signal.signal(signal.SIGINT, signal_handler)
 	print('main() start SCENARIOMANAGER')
 	_read_available_modules()
 
@@ -204,7 +198,6 @@ def main_routine():
 		t_scenarios_changed = threading.Thread(target=_scenarios_changed)
 		t_scenarios_changed.daemon = True
 		t_scenarios_changed.start()
-		signal.pause()
 		event.wait()
 		lock.acquire()
 		print('event triggered')
@@ -227,5 +220,4 @@ def main_routine():
 	print('main() end')
 
 if __name__ == "__main__":
-    signal.signal(signal.SIGINT, signal_handler)
-    main_routine()
+    main()
