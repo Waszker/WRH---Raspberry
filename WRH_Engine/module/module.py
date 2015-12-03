@@ -43,12 +43,12 @@ class Module:
 
     def _update_module_information(self, system_info, new_name):
         (status, response_content) = W.edit_module(system_info[0], system_info[1], self.id, new_name)
-        return status == W.Response.STATUS_OK
+        return status == 200
 
     def run_removal_procedure(self, system_info):
         is_success = False
         (status, response_content) = W.remove_module(system_info[0], system_info[1], self.id)
-        if status == W.Response.STATUS_OK:
+        if status == 200:
             print 'Succesfully removed selected module'
             is_success = True
         else:
