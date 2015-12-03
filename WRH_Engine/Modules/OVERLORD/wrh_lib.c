@@ -9,7 +9,7 @@ static command commands[] = {
     { { "LD_LIBRARY_PATH=/usr/lib/", NULL },
         { "/bin/mjpg_streamer",  "-i", "input_uvc.so -n -q 50 -f 1",
         "-o", "output_http.so -p 8080 -c login:password", NULL } },
-    { { NULL }, { "./server.py", NULL } },
+    { { NULL }, { "/usr/bin/python2.7", "-m", "WRH_Engine.Modules.CAMERA.camera", NULL } },
     { { NULL }, { "./lcd2.py", NULL } },
     { { NULL }, { "/bin/stunnel", "./stunnel.conf", NULL } },
 };
@@ -57,6 +57,8 @@ pid_t start_service(command* pcommand)
         case 0:
             printf("Starting %s\n", pcommand->arg[0]);
             execve(pcommand->arg[0], pcommand->arg, pcommand->env);
+            perror("execve");
+            exit(EXIT_FAILURE);
             break;
 
         case -1:

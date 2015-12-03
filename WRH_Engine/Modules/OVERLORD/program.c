@@ -9,7 +9,7 @@
 #include "common.h"
 #include "wrh_lib.h"
 
-#define CONFIGURATION_FILE "../../../.wrh.config"
+#define CONFIGURATION_FILE ".wrh.config"
 
 typedef struct process {
     enum module_type type;
@@ -100,6 +100,7 @@ int main()
         printf("No modules registered. Nothing to do, exiting.");
         exit(EXIT_SUCCESS);
     }
+    printf("Number of registered modules: %d\n", number_of_modules);
 
     /* Setting signal handlers */
     set_signal_handler(SIGINT, sig_handler);

@@ -28,7 +28,7 @@ def _get_first_line_data(line) :
     matches = re.search("([1-9][0-9]{0,9});(.+)$", line)
     return (matches.group(1), matches.group(2))
 
-def _get_module_entry_data(line) :
+def get_module_entry_data(line) :
     m = re.search("([1-9][0-9]{0,9});([1-9][0-9]{0,9});(.*?);(.+?);(.*)$", line)
     return Module(m.group(2), m.group(1), m.group(3), m.group(4), m.group(5))
 
@@ -41,7 +41,7 @@ def parse_configuration_file(file_handler) :
 
     modules_list = []
     for i, line in enumerate(file_handler) :
-        modules_list.append(_get_module_entry_data(line))
+        modules_list.append(get_module_entry_data(line))
 
     return ((device_id, device_token), modules_list)
 
