@@ -51,7 +51,7 @@ def main():
 		_sync_with_api(measurement)
 		_send_measurement_to_scenario_manager(measurement)
 		time.sleep(after_sleep_time)
-		break
+		#break
 	print('main() end')
 
 if __name__ == "__main__":
