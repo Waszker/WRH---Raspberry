@@ -6,12 +6,16 @@ import json
 import threading
 import time
 import socket
-# // import WebApiLibrary
+import RPi.GPIO as GPIO
+
 
 #na sztywno dane rasberaka uzytkownika przem321@wp.pl
-deviceid = '9'
-devicetoken = 'dea763a0-5c0c-4555-bcc6-9f0cc1dcf030'
-moduleid = '14'
+deviceid = '17'
+devicetoken = '6967a427-0bb9-4085-bf2e-a3d966f4115c'
+moduleid = '24'
+PIR = 4
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(PIR, GPIO.IN)
 temp_cnt = 0
 sleep_time = 10
 
@@ -31,12 +35,11 @@ def _sync_with_api(measurement):
 	print('sprawdzam czy starsze dane na karcie nie sa zsynchronizowane, i wysylam je jesli nie byly wyslane')
 
 def _read_movement():
-	return 1
-	global temp_cnt
-	temp_cnt = temp_cnt + 1
-	if temp_cnt % 5 == 0:
+	if GPIO.input(PIR):
 		return 1
-	return 0
+	else:
+		return 0
+
 
 def main():
 	print('main() start')

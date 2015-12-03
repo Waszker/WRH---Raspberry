@@ -5,7 +5,7 @@ NAME=program
 CC=gcc
 
 # Flags to use
-CFLAGS=-Wall -Werror -pedantic -g -O3 -c
+CFLAGS=-Wall -Werror -g -O3 -c
 
 # Specify files
 FILES=program.o wrh_lib.o common.o
