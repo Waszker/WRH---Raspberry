@@ -14,7 +14,8 @@ moduleid = '15'
 	
 def main():
 	print('main() start')
-	
+	while True:
+		time.sleep(100)	
 	print('main() end')
 
 if __name__ == "__main__":
