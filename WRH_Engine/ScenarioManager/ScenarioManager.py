@@ -8,7 +8,7 @@ import socket
 import urllib2
 
 CONFIGURATION_FILE = '.wrh.config'
-#na sztywno dane rasberaka uzytkownika przem321@wp.pl
+#dane rasberaka uzytkownika przem321@wp.pl
 deviceid = '9'
 devicetoken = 'dea763a0-5c0c-4555-bcc6-9f0cc1dcf030'
 socket_port = 2000
@@ -19,13 +19,14 @@ rules = [] # // rules, when to trigger event. (when measurement from specified m
 lock = threading.Lock()
 event = threading.Event() #triggered when scenarios changed OR slme measurement meets rule
 availablemodules = []
-system_info = []
 
 def _read_available_modules():
 	print('reading available modules')
 	global availablemodules
 	with open(CONFIGURATION_FILE, 'r') as f:
 		(system_info, availablemodules) = config.parse_configuration_file(f)
+	deviceid = system_info[0]
+	devicetoken = system_info[1]
 
 def _get_scenarios():
 	global scenarios
@@ -90,6 +91,7 @@ def _scenarios_changed():
 
 def _try_execute_scenarios():
 	global measurements
+	global doneScenarios
 	print('try_execute_scenarios')
 	# // TODO: uwzglednienie priorytetow, oraz Recurring. (doneScenarios)
 	# // check if any scenarios is triggered, if yes then execute it
@@ -105,10 +107,18 @@ def _try_execute_scenarios():
 		print(str(scen["Condition"]))
 		if str(scen["Condition"]) == '5': # // czy wykryto ruch?
 			if str(value) == '1':
+				
+				if not str(scen["Id"]) in doneScenarios:
+					doneScenarios[str(scen["Id"])] = 0
+					print('zeruje donescenarios')
+				done = doneScenarios[str(scen["Id"])]
+				if done>0 and int(scen["Recurring"])==0:
+					print('scenariusz juz byl wykonany a nie jest recurring.')
+					continue # // scenariusz byl juz wykonany
 				print('_execute_scenario()')
 				result = _execute_scenario(str(scen["ActionModuleId"]), str(scen["Action"]))
 				if result == True:
-					doneScenarios[str(scen["Id"])] = 1
+					doneScenarios[str(scen["Id"])] = done + 1
 				else:
 					print('nie udalo sie wykonac scenariusza')
 			
@@ -129,6 +139,10 @@ def _execute_scenario(actionmoduleid, action):
 		print('akcja typu toggle gniazdko')
 		address = module.address + '?toggle'
 		urllib2.urlopen(address).read()
+		
+	
+	return True
+	
 
 def _generate_rules():
 	# // update global rules
