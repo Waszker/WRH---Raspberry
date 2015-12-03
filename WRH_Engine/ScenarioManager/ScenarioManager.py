@@ -28,7 +28,7 @@ def _socket_communicate(clientsocket):
 	# read measurement, update global measurements array
 	print('socket_communicate() end')
 
-	
+
 def _socket_accept():
 	print('accept_socket_messages() start')
 	serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -39,7 +39,7 @@ def _socket_accept():
 		t = threading.Thread(target=_socket_communicate, args=(clientsocket))
 		t.daemon = True
 		t.start()
-		
+
 	print('accept_socket_messages() end')
 
 def _scenarios_changed():
@@ -63,7 +63,7 @@ def _try_execute_scenarios():
 def _generate_rules():
 	# // update global rules
     global rules
-	
+
 def main():
 	print('main() start')
 	_get_scenarios()
@@ -71,9 +71,9 @@ def main():
 	t_accept = threading.Thread(target=_socket_accept)
 	t_accept.daemon = True
 	t_accept.start()
-	
-	
-	
+
+
+
 	while True:
 		event.clear()
 		t_scenarios_changed = threading.Thread(target=_scenarios_changed)
@@ -89,15 +89,15 @@ def main():
 			_get_scenarios()
 		else:
 			print('event triggered by measurement meeting some rule')
-		
+
 		# check measurements, check if any scenario is triggered, execute
 		_try_execute_scenarios()
-		
+
 		#generate rules based on scenarios
 		_generate_rules()
-		
+
 		lock.release()
-			
+
 	print('main() end')
 
 if __name__ == "__main__":
