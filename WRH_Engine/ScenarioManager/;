@@ -1,7 +1,7 @@
 #!/usr/bin/python2.7
 from ..WebApiLibrary import WebApiClient as webapi
 from WRH_Engine.Configuration import configuration as config
-import os
+import sys
 import json
 import threading
 import time
@@ -23,8 +23,7 @@ event = threading.Event() #triggered when scenarios changed OR slme measurement 
 availablemodules = []
 
 def signal_handler(signal, frame):
-    print 'Scenario Manager SIGINT routine'
-    os.exit(0)
+    sys.exit(0)
 
 def _read_available_modules():
 	print('reading available modules')
@@ -181,8 +180,8 @@ def _does_measurement_match_rule(moduleid, value):
 	#~for
 	return False #zadne rule nie spelnione
 
-def main_routine():
-
+def main():
+    signal.signal(signal.SIGINT, signal_handler)
 	print('main() start SCENARIOMANAGER')
 	_read_available_modules()
 
@@ -199,7 +198,6 @@ def main_routine():
 		t_scenarios_changed = threading.Thread(target=_scenarios_changed)
 		t_scenarios_changed.daemon = True
 		t_scenarios_changed.start()
-		signal.pause()
 		event.wait()
 		lock.acquire()
 		print('event triggered')
@@ -222,5 +220,4 @@ def main_routine():
 	print('main() end')
 
 if __name__ == "__main__":
-    signal.signal(signal.SIGINT, signal_handler)
-    main_routine()
+    main()
