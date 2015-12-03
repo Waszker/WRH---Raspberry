@@ -176,7 +176,7 @@ def _does_measurement_match_rule(moduleid, value):
 	return False #zadne rule nie spelnione
 
 def main():
-	print('main() start')
+	print('main() start SCENARIOMANAGER')
 	_read_available_modules()
 	
 	_get_scenarios()

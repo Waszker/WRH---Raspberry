@@ -43,7 +43,8 @@ def _read_movement():
 
 
 def main():
-	print('main() start')
+	print('main() start MOVEMENT')
+	time.sleep(10)
 	
 	while True:		
 		measurement = _read_movement()
