@@ -58,7 +58,7 @@ def register_procedure():
     print "Register procedure requires you to have an account in WRH system"
     is_user_registered = raw_input('Do you have already an account? [Y/N]: ')
 
-    if(upcase(is_user_registered) == 'Y'):
+    if(is_user_registered.upper() == 'Y'):
         return _register_device()
     else:
         print 'Please use your browser or mobile app to create your account'
