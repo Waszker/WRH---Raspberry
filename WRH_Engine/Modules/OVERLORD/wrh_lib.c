@@ -51,11 +51,13 @@ enum module_type get_module_type_from_config_line(char* line)
 pid_t start_service(command* pcommand)
 {
     pid_t ppid;
+    sigset_t mask;
 
     switch(ppid = fork())
     {
         case 0:
             printf("Starting %s\n", pcommand->arg[0]);
+            set_signal_behaviour(SIG_UNBLOCK, &mask, 2, SIGINT, SIGCHLD);
             execve(pcommand->arg[0], pcommand->arg, pcommand->env);
             perror("execve");
             exit(EXIT_FAILURE);
