@@ -11,8 +11,8 @@ import signal
 
 CONFIGURATION_FILE = '.wrh.config'
 #dane rasberaka uzytkownika przem321@wp.pl
-deviceid = '9'
-devicetoken = 'dea763a0-5c0c-4555-bcc6-9f0cc1dcf030'
+deviceid = '18'
+devicetoken = '0d41ace1-fa6b-439c-ac02-cafae7c09a26'
 socket_port = 2000
 scenarios = []
 measurements = dict() # // pairs, moduleId and Value
@@ -84,12 +84,13 @@ def _socket_accept():
 def _scenarios_changed():
 	print('scenarios_changed() start')
 	while True:
-		time.sleep(10)
+		time.sleep(1)
 		(status_code, result_content) = webapi.scenarios_changed(deviceid, devicetoken)
 		#check if scenarios changed, signal main() if yes (signal via Event)
 		#event.set()
 		#then exit, will be started again by main()
 		if status_code == 200 :
+			print('SCENARIOS HAS CHANGED!')
 			event.set()
 			break
 	print('scenarios_changed() end')
@@ -106,10 +107,10 @@ def _try_execute_scenarios():
 			continue
 		print(str(scen["Name"]))
 		# // datetime.now between starttime and endtime?
-		value = measurements[str(scen["ConditionModuleId"])]
-		if not value:
-			print('nie ma pomiaru do takiego confitionmoduleid')
+		if not str(scen["ConditionModuleId"]) in measurements:
+			print('nie ma (jeszcze) pomiaru do takiego confitionmoduleid')
 			continue #// pomiaru takiego nie ma
+		value = measurements[str(scen["ConditionModuleId"])]
 		print(str(scen["Condition"]))
 		if str(scen["Condition"]) == '5': # // czy wykryto ruch?
 			if str(value) == '1':
