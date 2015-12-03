@@ -185,26 +185,14 @@ def _does_measurement_match_rule(moduleid, value):
 		#if rulecondition == 4: i tak dalej
 	#~for
 	return False #zadne rule nie spelnione
-
-def main_routine():
-
-	print('main() start SCENARIOMANAGER')
-	_read_available_modules()
-
-	_get_scenarios()
-	print str(len(scenarios))
-	_generate_rules()
-
-	t_accept = threading.Thread(target=_socket_accept)
-	t_accept.daemon = True
-	t_accept.start()
-
+	
+def _main_event_waiting():
 	while True:
 		event.clear()
 		t_scenarios_changed = threading.Thread(target=_scenarios_changed)
 		t_scenarios_changed.daemon = True
 		t_scenarios_changed.start()
-		signal.pause()
+		
 		event.wait()
 		lock.acquire()
 		print('event triggered')
@@ -223,6 +211,25 @@ def main_routine():
 		_generate_rules()
 
 		lock.release()
+
+def main_routine():
+
+	print('main() start SCENARIOMANAGER')
+	_read_available_modules()
+
+	_get_scenarios()
+	print str(len(scenarios))
+	_generate_rules()
+
+	t_accept = threading.Thread(target=_socket_accept)
+	t_accept.daemon = True
+	t_accept.start()
+
+	t_event = threading.Thread(target=_main_event_waiting)
+	t_event.daemon = True
+	t_event.start()
+	
+	signal.pause()
 
 	print('main() end')
 
