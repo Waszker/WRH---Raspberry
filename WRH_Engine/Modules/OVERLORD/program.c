@@ -101,7 +101,7 @@ int main()
     printf("Program start\n");
     int number_of_modules = get_number_of_lines_in_config(config_file);
     // first line is not module line but ScenarioManager will be started instead
-    if(0 == number_of_modules)
+    if(0 == (number_of_modules-1))
     {
         printf("No modules registered. Nothing to do, exiting.");
         exit(EXIT_SUCCESS);
