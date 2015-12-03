@@ -30,6 +30,7 @@ void start_subprocesses(process* processes, int processes_number)
 void stop_all_services(process* processes, int processes_number)
 {
     int i;
+    printf("Ending subprocesses\n");
     for(i = 0; i < 10; i++)
         kill(processes[i].pid, SIGINT); // do not check for errors here!
     while(TEMP_FAILURE_RETRY(wait(NULL)) > 0);
@@ -71,11 +72,11 @@ void fill_processes_details(process* processes, int processes_number, FILE* conf
 
 int get_number_of_lines_in_config(FILE* config)
 {
-    char c;
+    int c;
     int lines_number = 0;
 
     while(EOF != (c = fgetc(config))) {
-        if('\n' == c) lines_number++;
+        if('\n' == (char)c) lines_number++;
     }
     fseek(config, 0, SEEK_SET);
 
@@ -93,6 +94,7 @@ int main()
     FILE* config_file = open_file(CONFIGURATION_FILE, "r");
 
     /* Get number of modules */
+    printf("Program start\n");
     int number_of_modules = get_number_of_lines_in_config(config_file);
     number_of_modules--; // because first line is not module line
     if(0 == number_of_modules)
@@ -102,7 +104,7 @@ int main()
     }
     printf("Number of registered modules: %d\n", number_of_modules);
 
-    /* Setting signal handlers */
+    /* Setting child signal handler */
     set_signal_handler(SIGINT, sig_handler);
     set_signal_handler(SIGCHLD, sig_handler);
 
