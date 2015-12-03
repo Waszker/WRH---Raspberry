@@ -1,5 +1,6 @@
 #!/usr/bin/python2.7
 from ..WebApiLibrary import WebApiClient as W
+from WRH_Engine.Configuration import configuration as C
 import json
 import threading
 import time
@@ -15,7 +16,10 @@ doneScenaros = dict() # // pairs, scenarioId - number of times the scenario was 
 rules = [] # // rules, when to trigger event. (when measurement from specified module is .. )
 lock = threading.Lock()
 event = threading.Event() #triggered when scenarios changed OR slme measurement meets rule
+availablemodules = []
 
+def _read_available_modules():
+	
 
 def _get_scenarios():
 	global scenarios
@@ -97,6 +101,8 @@ def _scenarios_changed():
 def _try_execute_scenarios():
 	global measurements
 	# // check if any scenarios is triggered, if yes then execute it
+	for scen in scenarios:
+		
 
 def _generate_rules():
 	# // update global rules
