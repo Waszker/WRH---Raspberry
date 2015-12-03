@@ -78,12 +78,13 @@ def _socket_accept():
 def _scenarios_changed():
 	print('scenarios_changed() start')
 	while True:
-		time.sleep(10)
+		time.sleep(1)
 		(status_code, result_content) = webapi.scenarios_changed(deviceid, devicetoken)
 		#check if scenarios changed, signal main() if yes (signal via Event)
 		#event.set()
 		#then exit, will be started again by main()
 		if status_code == 200 :
+			print('SCENARIOS HAS CHANGED!')
 			event.set()
 			break
 	print('scenarios_changed() end')
