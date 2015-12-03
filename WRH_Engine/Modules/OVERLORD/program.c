@@ -64,9 +64,9 @@ void fill_processes_details(process* processes, int processes_number, FILE* conf
 
     while((buffer = read_file_line(config)) != NULL)
     {
-        if(++line_number == 1) continue;
-        processes[line_number - 2].type = get_module_type_from_config_line(buffer);
-        processes[line_number - 2].arguments_from_config = buffer;
+        if(++line_number == 1) processes[line_number - 1].type = SCENARIO;
+        processes[line_number - 1].type = get_module_type_from_config_line(buffer);
+        processes[line_number - 1].arguments_from_config = buffer;
     }
 }
 
@@ -96,13 +96,13 @@ int main()
     /* Get number of modules */
     printf("Program start\n");
     int number_of_modules = get_number_of_lines_in_config(config_file);
-    number_of_modules--; // because first line is not module line
+    // first line is not module line but ScenarioManager will be started instead
     if(0 == number_of_modules)
     {
         printf("No modules registered. Nothing to do, exiting.");
         exit(EXIT_SUCCESS);
     }
-    printf("Number of registered modules: %d\n", number_of_modules);
+    printf("Number of registered modules: %d\n", number_of_modules - 1);
 
     /* Setting child signal handler */
     set_signal_handler(SIGINT, sig_handler);

@@ -7,6 +7,7 @@
 enum module_type
 {
     UNDEFINED,
+    SCENARIO,
     DHT,
     CAMERA,
     MOTION,

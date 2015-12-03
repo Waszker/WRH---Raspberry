@@ -5,16 +5,16 @@
 #include "common.h"
 #include "wrh_lib.h"
 
-static enum module_type module_types[] = { DHT, CAMERA, MOTION, SOCKET };
+static enum module_type module_types[] = { SCENARIO, DHT, CAMERA, MOTION, SOCKET };
 static int modules_number = sizeof(module_types) / sizeof(enum module_type);
 
 // https://trello.com/c/1oOLJIQW/60-module-type
 static command commands[] = {
+    { { NULL }, { "/usr/bin/python2.7", "-m", "WRH_Engine.ScenarioManager.ScenarioManager", NULL } },
     { { NULL }, { NULL } },
     { { NULL }, { "/usr/bin/python2.7", "-m", "WRH_Engine.Modules.CAMERA.camera", NULL } },
-	{ { NULL }, { "/usr/bin/python2.7", "-m", "WRH_Engine.Modules.MOVEMENT.MOVEMENT", NULL } },
-	{ { NULL }, { "/usr/bin/python2.7", "-m", "WRH_Engine.Modules.WIFISOCKET.WIFISOCKET", NULL } }, // gniazdko
-    { { NULL }, { "/usr/bin/python2.7", "-m", "WRH_Engine.ScenarioManager.ScenarioManager", NULL } }, 
+    { { NULL }, { "/usr/bin/python2.7", "-m", "WRH_Engine.Modules.MOVEMENT.MOVEMENT", NULL } },
+    { { NULL }, { "/usr/bin/python2.7", "-m", "WRH_Engine.Modules.WIFISOCKET.WIFISOCKET", NULL } },
     { { NULL }, { "./lcd2.py", NULL } },
     { { NULL }, { "/bin/stunnel", "./stunnel.conf", NULL } },
 };
@@ -26,7 +26,7 @@ int module_type_to_int(enum module_type type)
     for(i = 0; i < sizeof(module_types); i++)
         if(module_types[i] == type) break;
 
-    return (i < modules_number ? i+1 : -1);
+    return (i < modules_number ? i : -1);
 }
 
 enum module_type int_to_module_type(int number)
@@ -34,7 +34,7 @@ enum module_type int_to_module_type(int number)
     enum module_type type;
 
     if(number > modules_number) type = UNDEFINED;
-    else type = module_types[number - 1];
+    else type = module_types[number];
 
     return type;
 }
@@ -78,7 +78,7 @@ pid_t start_service(command* pcommand)
 
 pid_t start_module(enum module_type type, char* argument_from_file)
 {
-    command command_to_copy = commands[module_type_to_int(type) - 1];
+    command command_to_copy = commands[module_type_to_int(type)];
     command* command_to_use = (command*)safe_malloc(sizeof(command));
     int i, was_file_argument_added = 0;
 
