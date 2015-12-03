@@ -100,7 +100,7 @@ class Module:
         address = raw_input('Enter web address at which device will be accessed: ')
         print 'Ok, all good. Now wait for registration procedure to finish...'
         (status, response_content) = W.add_module(device_id, device_token, name, type)
-        if status != W.Response.STATUS_OK :
+        if status != 200 :
             print 'There was an error trying to register module.\nPlease try again'
             print '***Error code ' + str(status)
             print '***Error response ' + str(response_content)
