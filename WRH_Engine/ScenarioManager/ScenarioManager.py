@@ -1,25 +1,30 @@
 #!/usr/bin/python2.7
-from ..WebApiLibrary import WebApiClient as W
-from WRH_Engine.Configuration import configuration as C
+from ..WebApiLibrary import WebApiClient as webapi
+from WRH_Engine.Configuration import configuration as config
 import json
 import threading
 import time
 import socket
 
+CONFIGURATION_FILE = '.wrh.config'
 #na sztywno dane rasberaka uzytkownika przem321@wp.pl
 deviceid = '9'
 devicetoken = 'dea763a0-5c0c-4555-bcc6-9f0cc1dcf030'
 socket_port = 2000
 scenarios = []
 measurements = dict() # // pairs, moduleId and Value
-doneScenaros = dict() # // pairs, scenarioId - number of times the scenario was executed
+doneScenarios = dict() # // pairs, scenarioId - number of times the scenario was executed
 rules = [] # // rules, when to trigger event. (when measurement from specified module is .. )
 lock = threading.Lock()
 event = threading.Event() #triggered when scenarios changed OR slme measurement meets rule
 availablemodules = []
+system_info = []
 
 def _read_available_modules():
-	
+	print('reading available modules')
+	global availablemodules
+	with open(CONFIGURATION_FILE, 'r') as f:
+		(system_info, availablemodules) = config.parse_configuration_file(f)
 
 def _get_scenarios():
 	global scenarios
@@ -28,23 +33,7 @@ def _get_scenarios():
 	result_object = json.loads(result_content)
 	scenarios = result_object
 	
-def _does_measurement_match_rule(moduleid, value):
-	print('czy measurement: ' + str(moduleid) + ' \n' + str(value) + '\n spelnia jakas rule?')
-	# // lock jest nasz
-	for rule in rules:
-		if not str(rule[0]) == moduleid:
-			continue
-		
-		rulecondition = rule[1]
-		rulevalue = rule[1]
-		
-		if rulecondition == 5:
-			# // motion detected
-			if value == '1':
-				return True
-		#if rulecondition == 4: i tak dalej
-	#~for
-	return False #zadne rule nie spelnione
+
 	
 
 def _socket_communicate(clientsocket):
@@ -100,9 +89,43 @@ def _scenarios_changed():
 
 def _try_execute_scenarios():
 	global measurements
+	print('try_execute_scenarios')
+	# // TODO: uwzglednienie priorytetow, oraz Recurring. (doneScenarios)
 	# // check if any scenarios is triggered, if yes then execute it
 	for scen in scenarios:
+		if not scen["Name"]:
+			continue
+		print(str(scen["Name"]))
+		# // datetime.now between starttime and endtime?
+		value = measurements[str(scen["ConditionModuleId"])]
+		if not value:
+			continue #// pomiaru takiego nie ma
+		if str(scen["Condition"]) == 5: # // czy wykryto ruch?
+			if str(value) == 1:
+				result = _execute_scenario(str(scen["ActionModuleId"]), str(scen["Action"]))
+				if result == True:
+					doneScenarios[str(scen["Id"])] = 1
+				else:
+					print('nie udalo sie wykonac scenariusza')
+			
 		
+	return
+
+def _execute_scenario(actionmoduleid, action):
+	print('wykonuje scenariusz')
+	module = []
+	for mod in availablemodules:
+		if mod.id == actionmoduleid:
+			module = mod
+			break
+	if not module return False
+	
+	if action == '3':
+		print('akcja typu toggle gniazdko')
+		address = module.address
+		
+			
+	
 
 def _generate_rules():
 	# // update global rules
@@ -117,8 +140,30 @@ def _generate_rules():
 		print('Dodaje rule nastepujaca: ' + str(rule[0]) + ' ' + str(rule[1]) + ' ' + str(rule[2]))
 		rules.append(rule)
 
+def _does_measurement_match_rule(moduleid, value):
+	print('czy measurement: ' + str(moduleid) + ' \n' + str(value) + '\n spelnia jakas rule?')
+	# // lock jest nasz
+	for rule in rules:
+		if not str(rule[0]) == moduleid:
+			continue
+		
+		rulecondition = rule[1]
+		rulevalue = rule[1]
+		
+		if rulecondition == 5:
+			# // motion detected
+			if value == '1':
+				return True
+		#if rulecondition == 4: i tak dalej
+	#~for
+	return False #zadne rule nie spelnione
+
 def main():
 	print('main() start')
+	_read_available_modules()
+	print availablemodules
+	return
+	
 	_get_scenarios()
 	print str(len(scenarios))
 	_generate_rules()
