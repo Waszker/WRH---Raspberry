@@ -9,6 +9,7 @@ import socket
 #na sztywno dane rasberaka uzytkownika przem321@wp.pl
 deviceid = '9'
 devicetoken = 'dea763a0-5c0c-4555-bcc6-9f0cc1dcf030'
+moduleid = '15'
 
 	
 def main():

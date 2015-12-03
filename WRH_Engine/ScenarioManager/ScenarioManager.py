@@ -10,11 +10,12 @@ deviceid = '9'
 devicetoken = 'dea763a0-5c0c-4555-bcc6-9f0cc1dcf030'
 socket_port = 2000
 scenarios = []
-measurements = [] # // pairs, moduleId and Value
-doneScenaros = [] # // pairs, scenarioId - number of times the scenario was executed
+measurements = dict() # // pairs, moduleId and Value
+doneScenaros = dict() # // pairs, scenarioId - number of times the scenario was executed
 rules = [] # // rules, when to trigger event. (when measurement from specified module is .. )
 lock = threading.Lock()
 event = threading.Event() #triggered when scenarios changed OR slme measurement meets rule
+
 
 def _get_scenarios():
 	global scenarios
@@ -22,21 +23,58 @@ def _get_scenarios():
 	(status_code, result_content) = W.get_scenarios(deviceid, devicetoken)
 	result_object = json.loads(result_content)
 	scenarios = result_object
+	
+def _does_measurement_match_rule(moduleid, value):
+	print('czy measurement: ' + str(moduleid) + ' \n' + str(value) + '\n spelnia jakas rule?')
+	# // lock jest nasz
+	for rule in rules:
+		if not str(rule[0]) == moduleid:
+			continue
+		
+		rulecondition = rule[1]
+		rulevalue = rule[1]
+		
+		if rulecondition == 5:
+			# // motion detected
+			if value == '1':
+				return True
+		#if rulecondition == 4: i tak dalej
+	#~for
+	return False #zadne rule nie spelnione
+	
 
 def _socket_communicate(clientsocket):
 	print('socket_communicate() start')
+	global measurements
 	# read measurement, update global measurements array
+	moduleid = clientsocket.recv(4096)
+	print('przyszedl measurement od modulu o id: ' + str(moduleid))
+	clientsocket.send('ACK')
+	value = clientsocket.recv(4096)
+	print('przyszla wartosc rowna: ' + str(value))
+	matchrule = False
+	lock.acquire()
+	measurements[str(moduleid)] = value
+	matchrule = _does_measurement_match_rule(moduleid, value)
+	lock.release()
+	if matchrule:
+		print('rule spelniona, uruchamiam event')
+		event.set()
+	else:
+		print('niespelnia zadnej')
 	print('socket_communicate() end')
 
 
 def _socket_accept():
+	global socket_port
 	print('accept_socket_messages() start')
 	serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	serversocket.bind((socket.gethostname(), socket_port))
+	serversocket.bind(('localhost', socket_port))
+	print('_socket_accept bind: ' + str('localhost') + ' ' + str(socket_port))
 	serversocket.listen(5)
 	while 1:
 		(clientsocket, address) = serversocket.accept()
-		t = threading.Thread(target=_socket_communicate, args=(clientsocket))
+		t = threading.Thread(target=_socket_communicate, args=(clientsocket,))
 		t.daemon = True
 		t.start()
 
@@ -63,16 +101,25 @@ def _try_execute_scenarios():
 def _generate_rules():
 	# // update global rules
     global rules
+    global scenarios
+    rules = []
+    for scen in scenarios:
+		if not scen["Name"]:
+			continue
+		print('rozwazam scenariusz ' + str(scen["Name"]))
+		rule = (scen["ConditionModuleId"], scen["Condition"], scen["ValueInt"])
+		print('Dodaje rule nastepujaca: ' + str(rule[0]) + ' ' + str(rule[1]) + ' ' + str(rule[2]))
+		rules.append(rule)
 
 def main():
 	print('main() start')
 	_get_scenarios()
 	print str(len(scenarios))
+	_generate_rules()
+	
 	t_accept = threading.Thread(target=_socket_accept)
 	t_accept.daemon = True
 	t_accept.start()
-
-
 
 	while True:
 		event.clear()
