@@ -17,7 +17,8 @@ PIR = 4
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(PIR, GPIO.IN)
 temp_cnt = 0
-sleep_time = 10
+sleep_time = 1
+after_sleep_time = 5
 
 def _send_measurement_to_scenario_manager(measurement):
 	print('wysylam measurement do scenario manager')
@@ -49,8 +50,11 @@ def main():
 		_save_to_card(measurement)
 		_sync_with_api(measurement)
 		_send_measurement_to_scenario_manager(measurement)
-		#time.sleep(sleep_time)
-		break
+		if measurement == 0:
+			time.sleep(sleep_time)
+		else:
+			time.sleep(after_sleep_time)		
+		#break
 	print('main() end')
 
 if __name__ == "__main__":
