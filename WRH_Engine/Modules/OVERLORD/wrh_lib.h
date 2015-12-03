@@ -13,9 +13,6 @@ enum module_type
     SOCKET
 };
 
-static enum module_type module_types[] = { DHT, CAMERA, MOTION, SOCKET };
-static int modules_number = sizeof(module_types) / sizeof(enum module_type);
-
 typedef struct command
 {
     char* env[MAX_ENV_COUNT];   // environment-specific options

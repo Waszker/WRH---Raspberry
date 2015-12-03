@@ -5,11 +5,13 @@
 #include "common.h"
 #include "wrh_lib.h"
 
+static enum module_type module_types[] = { DHT, CAMERA, MOTION, SOCKET };
+static int modules_number = sizeof(module_types) / sizeof(enum module_type);
+
 static command commands[] = {
-    { { "LD_LIBRARY_PATH=/usr/lib/", NULL },
-        { "/bin/mjpg_streamer",  "-i", "input_uvc.so -n -q 50 -f 1",
-        "-o", "output_http.so -p 8080 -c login:password", NULL } },
+    { { NULL }, { NULL } },
     { { NULL }, { "/usr/bin/python2.7", "-m", "WRH_Engine.Modules.CAMERA.camera", NULL } },
+    { { NULL }, { "/usr/bin/python2.7", "-m", "WRH_Engine.ScenarioManager.ScenarioManager", NULL } },
     { { NULL }, { "./lcd2.py", NULL } },
     { { NULL }, { "/bin/stunnel", "./stunnel.conf", NULL } },
 };
