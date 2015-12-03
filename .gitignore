@@ -95,3 +95,7 @@ target/
 
 # WRH config file
 .wrh.config
+
+# Generated C files
+*.o
+WRH_Engine/Modules/OVERLORD/program
