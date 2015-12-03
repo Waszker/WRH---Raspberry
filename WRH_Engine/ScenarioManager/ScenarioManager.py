@@ -5,9 +5,10 @@ import json
 import threading
 import time
 import socket
+import urllib2
 
 CONFIGURATION_FILE = '.wrh.config'
-#na sztywno dane rasberaka uzytkownika przem321@wp.pl
+#dane rasberaka uzytkownika przem321@wp.pl
 deviceid = '9'
 devicetoken = 'dea763a0-5c0c-4555-bcc6-9f0cc1dcf030'
 socket_port = 2000
@@ -18,18 +19,19 @@ rules = [] # // rules, when to trigger event. (when measurement from specified m
 lock = threading.Lock()
 event = threading.Event() #triggered when scenarios changed OR slme measurement meets rule
 availablemodules = []
-system_info = []
 
 def _read_available_modules():
 	print('reading available modules')
 	global availablemodules
 	with open(CONFIGURATION_FILE, 'r') as f:
 		(system_info, availablemodules) = config.parse_configuration_file(f)
+	deviceid = system_info[0]
+	devicetoken = system_info[1]
 
 def _get_scenarios():
 	global scenarios
 	print('gettingscenarios')
-	(status_code, result_content) = W.get_scenarios(deviceid, devicetoken)
+	(status_code, result_content) = webapi.get_scenarios(deviceid, devicetoken)
 	result_object = json.loads(result_content)
 	scenarios = result_object
 	
@@ -77,11 +79,11 @@ def _scenarios_changed():
 	print('scenarios_changed() start')
 	while True:
 		time.sleep(10)
-		(status_code, result_content) = W.scenarios_changed(deviceid, devicetoken)
+		(status_code, result_content) = webapi.scenarios_changed(deviceid, devicetoken)
 		#check if scenarios changed, signal main() if yes (signal via Event)
 		#event.set()
 		#then exit, will be started again by main()
-		if status_code == W.Response.STATUS_OK :
+		if status_code == webapi.Response.STATUS_OK :
 			event.set()
 			break
 	print('scenarios_changed() end')
@@ -89,6 +91,7 @@ def _scenarios_changed():
 
 def _try_execute_scenarios():
 	global measurements
+	global doneScenarios
 	print('try_execute_scenarios')
 	# // TODO: uwzglednienie priorytetow, oraz Recurring. (doneScenarios)
 	# // check if any scenarios is triggered, if yes then execute it
@@ -99,12 +102,23 @@ def _try_execute_scenarios():
 		# // datetime.now between starttime and endtime?
 		value = measurements[str(scen["ConditionModuleId"])]
 		if not value:
+			print('nie ma pomiaru do takiego confitionmoduleid')
 			continue #// pomiaru takiego nie ma
-		if str(scen["Condition"]) == 5: # // czy wykryto ruch?
-			if str(value) == 1:
+		print(str(scen["Condition"]))
+		if str(scen["Condition"]) == '5': # // czy wykryto ruch?
+			if str(value) == '1':
+				
+				if not str(scen["Id"]) in doneScenarios:
+					doneScenarios[str(scen["Id"])] = 0
+					print('zeruje donescenarios')
+				done = doneScenarios[str(scen["Id"])]
+				if done>0 and int(scen["Recurring"])==0:
+					print('scenariusz juz byl wykonany a nie jest recurring.')
+					continue # // scenariusz byl juz wykonany
+				print('_execute_scenario()')
 				result = _execute_scenario(str(scen["ActionModuleId"]), str(scen["Action"]))
 				if result == True:
-					doneScenarios[str(scen["Id"])] = 1
+					doneScenarios[str(scen["Id"])] = done + 1
 				else:
 					print('nie udalo sie wykonac scenariusza')
 			
@@ -115,16 +129,19 @@ def _execute_scenario(actionmoduleid, action):
 	print('wykonuje scenariusz')
 	module = []
 	for mod in availablemodules:
-		if mod.id == actionmoduleid:
+		if str(mod.id) == actionmoduleid:
 			module = mod
 			break
-	if not module return False
+	if not module:
+		return False
 	
 	if action == '3':
 		print('akcja typu toggle gniazdko')
-		address = module.address
+		address = module.address + '?toggle'
+		urllib2.urlopen(address).read()
 		
-			
+	
+	return True
 	
 
 def _generate_rules():
@@ -161,8 +178,6 @@ def _does_measurement_match_rule(moduleid, value):
 def main():
 	print('main() start')
 	_read_available_modules()
-	print availablemodules
-	return
 	
 	_get_scenarios()
 	print str(len(scenarios))
