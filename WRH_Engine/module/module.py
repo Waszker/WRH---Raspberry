@@ -43,12 +43,12 @@ class Module:
 
     def _update_module_information(self, system_info, new_name):
         (status, response_content) = W.edit_module(system_info[0], system_info[1], self.id, new_name)
-        return status == W.Response.STATUS_OK
+        return status == 200
 
     def run_removal_procedure(self, system_info):
         is_success = False
         (status, response_content) = W.remove_module(system_info[0], system_info[1], self.id)
-        if status == W.Response.STATUS_OK:
+        if status == 200:
             print 'Succesfully removed selected module'
             is_success = True
         else:
@@ -100,7 +100,7 @@ class Module:
         address = raw_input('Enter web address at which device will be accessed: ')
         print 'Ok, all good. Now wait for registration procedure to finish...'
         (status, response_content) = W.add_module(device_id, device_token, name, type)
-        if status != W.Response.STATUS_OK :
+        if status != 200 :
             print 'There was an error trying to register module.\nPlease try again'
             print '***Error code ' + str(status)
             print '***Error response ' + str(response_content)

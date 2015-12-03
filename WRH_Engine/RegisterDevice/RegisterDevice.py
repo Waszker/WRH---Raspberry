@@ -44,7 +44,7 @@ def _register_device():
     (status_code, result_content) = W.register_device(username, password, device_name, device_color)
     is_success = False
 
-    if status_code == W.Response.STATUS_OK :
+    if status_code == 200 :
         is_success = True
     else:
         print '***Failed to register device'
@@ -58,7 +58,7 @@ def register_procedure():
     print "Register procedure requires you to have an account in WRH system"
     is_user_registered = raw_input('Do you have already an account? [Y/N]: ')
 
-    if(is_user_registered == 'Y'):
+    if(is_user_registered.upper() == 'Y'):
         return _register_device()
     else:
         print 'Please use your browser or mobile app to create your account'
