@@ -62,6 +62,7 @@ def _try_execute_scenarios():
 
 def _generate_rules():
 	# // update global rules
+    global rules
 	
 def main():
 	print('main() start')
