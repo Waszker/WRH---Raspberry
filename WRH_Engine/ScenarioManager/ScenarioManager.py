@@ -9,8 +9,8 @@ import urllib2
 
 CONFIGURATION_FILE = '.wrh.config'
 #dane rasberaka uzytkownika przem321@wp.pl
-deviceid = '9'
-devicetoken = 'dea763a0-5c0c-4555-bcc6-9f0cc1dcf030'
+deviceid = '18'
+devicetoken = '0d41ace1-fa6b-439c-ac02-cafae7c09a26'
 socket_port = 2000
 scenarios = []
 measurements = dict() # // pairs, moduleId and Value
@@ -100,10 +100,10 @@ def _try_execute_scenarios():
 			continue
 		print(str(scen["Name"]))
 		# // datetime.now between starttime and endtime?
-		value = measurements[str(scen["ConditionModuleId"])]
-		if not value:
-			print('nie ma pomiaru do takiego confitionmoduleid')
+		if not str(scen["ConditionModuleId"]) in measurements:
+			print('nie ma (jeszcze) pomiaru do takiego confitionmoduleid')
 			continue #// pomiaru takiego nie ma
+		value = measurements[str(scen["ConditionModuleId"])]
 		print(str(scen["Condition"]))
 		if str(scen["Condition"]) == '5': # // czy wykryto ruch?
 			if str(value) == '1':
