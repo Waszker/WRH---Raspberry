@@ -13,6 +13,16 @@ deviceid = '9'
 devicetoken = 'dea763a0-5c0c-4555-bcc6-9f0cc1dcf030'
 temp_cnt = 0
 
+def _send_measurement_to_scenario_manager(measurement)
+	print('wysylam measurement do scenario manager')
+
+def _save_to_card(measurement)
+	print('zapisuje na karte SD')
+
+def _sync_with_api(measurement)
+	print('wysylam ostatni measurement do API')
+	print('sprawdzam czy starsze dane na karcie nie sa zsynchronizowane, i wysylam je jesli nie byly wyslane')
+
 def _read_movement():
 	global temp_cnt
 	temp_cnt = temp_cnt + 1
@@ -22,10 +32,14 @@ def _read_movement():
 
 def main():
 	print('main() start')
-	while True:
-		measurement = _read_movement()
+	
+	while True:		
 		time.sleep(10)
-        (status_code, result_content) = W.scenarios_changed(deviceid, devicetoken)
+		measurement = _read_movement()
+		_save_to_card(measurement)
+		_sync_with_api(measurement)
+		_send_measurement_to_scenario_manager(measurement)
+		
 	print('main() end')
 
 if __name__ == "__main__":
