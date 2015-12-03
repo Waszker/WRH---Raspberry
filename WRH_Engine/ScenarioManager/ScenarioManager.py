@@ -5,6 +5,7 @@ import json
 import threading
 import time
 import socket
+import urllib2
 
 CONFIGURATION_FILE = '.wrh.config'
 #na sztywno dane rasberaka uzytkownika przem321@wp.pl
@@ -29,7 +30,7 @@ def _read_available_modules():
 def _get_scenarios():
 	global scenarios
 	print('gettingscenarios')
-	(status_code, result_content) = W.get_scenarios(deviceid, devicetoken)
+	(status_code, result_content) = webapi.get_scenarios(deviceid, devicetoken)
 	result_object = json.loads(result_content)
 	scenarios = result_object
 	
@@ -77,11 +78,11 @@ def _scenarios_changed():
 	print('scenarios_changed() start')
 	while True:
 		time.sleep(10)
-		(status_code, result_content) = W.scenarios_changed(deviceid, devicetoken)
+		(status_code, result_content) = webapi.scenarios_changed(deviceid, devicetoken)
 		#check if scenarios changed, signal main() if yes (signal via Event)
 		#event.set()
 		#then exit, will be started again by main()
-		if status_code == W.Response.STATUS_OK :
+		if status_code == webapi.Response.STATUS_OK :
 			event.set()
 			break
 	print('scenarios_changed() end')
@@ -99,9 +100,12 @@ def _try_execute_scenarios():
 		# // datetime.now between starttime and endtime?
 		value = measurements[str(scen["ConditionModuleId"])]
 		if not value:
+			print('nie ma pomiaru do takiego confitionmoduleid')
 			continue #// pomiaru takiego nie ma
-		if str(scen["Condition"]) == 5: # // czy wykryto ruch?
-			if str(value) == 1:
+		print(str(scen["Condition"]))
+		if str(scen["Condition"]) == '5': # // czy wykryto ruch?
+			if str(value) == '1':
+				print('_execute_scenario()')
 				result = _execute_scenario(str(scen["ActionModuleId"]), str(scen["Action"]))
 				if result == True:
 					doneScenarios[str(scen["Id"])] = 1
@@ -115,17 +119,16 @@ def _execute_scenario(actionmoduleid, action):
 	print('wykonuje scenariusz')
 	module = []
 	for mod in availablemodules:
-		if mod.id == actionmoduleid:
+		if str(mod.id) == actionmoduleid:
 			module = mod
 			break
-	if not module return False
+	if not module:
+		return False
 	
 	if action == '3':
 		print('akcja typu toggle gniazdko')
-		address = module.address
-		
-			
-	
+		address = module.address + '?toggle'
+		urllib2.urlopen(address).read()
 
 def _generate_rules():
 	# // update global rules
@@ -161,8 +164,6 @@ def _does_measurement_match_rule(moduleid, value):
 def main():
 	print('main() start')
 	_read_available_modules()
-	print availablemodules
-	return
 	
 	_get_scenarios()
 	print str(len(scenarios))
