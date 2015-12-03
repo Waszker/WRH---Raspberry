@@ -83,7 +83,7 @@ def _scenarios_changed():
 		#check if scenarios changed, signal main() if yes (signal via Event)
 		#event.set()
 		#then exit, will be started again by main()
-		if status_code == webapi.Response.STATUS_OK :
+		if status_code == 200 :
 			event.set()
 			break
 	print('scenarios_changed() end')
