@@ -83,6 +83,9 @@ def _scenarios_changed():
 		#check if scenarios changed, signal main() if yes (signal via Event)
 		#event.set()
 		#then exit, will be started again by main()
+		print('\n\n')
+		print('sc changed code: ' + str(status_code))
+		print('\n\n')
 		if status_code == 200 :
 			print('SCENARIOS HAS CHANGED!')
 			event.set()
@@ -93,6 +96,7 @@ def _scenarios_changed():
 def _try_execute_scenarios():
 	global measurements
 	global doneScenarios
+	global scenarios
 	print('try_execute_scenarios')
 	# // TODO: uwzglednienie priorytetow, oraz Recurring. (doneScenarios)
 	# // check if any scenarios is triggered, if yes then execute it

@@ -12,7 +12,7 @@ import RPi.GPIO as GPIO
 #na sztywno dane rasberaka uzytkownika przem321@wp.pl
 deviceid = '17'
 devicetoken = '6967a427-0bb9-4085-bf2e-a3d966f4115c'
-moduleid = '24'
+moduleid = '28'
 PIR = 4
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(PIR, GPIO.IN)
@@ -48,13 +48,13 @@ def main():
 	
 	while True:		
 		measurement = _read_movement()
+		if measurement == 0:
+			time.sleep(sleep_time)
+			continue
 		_save_to_card(measurement)
 		_sync_with_api(measurement)
 		_send_measurement_to_scenario_manager(measurement)
-		if measurement == 0:
-			time.sleep(sleep_time)
-		else:
-			time.sleep(after_sleep_time)		
+		time.sleep(after_sleep_time)		
 		#break
 	print('main() end')
 
