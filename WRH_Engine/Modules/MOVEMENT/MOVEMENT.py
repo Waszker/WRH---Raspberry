@@ -48,13 +48,13 @@ def main():
 	
 	while True:		
 		measurement = _read_movement()
-		if measurement == 0:
-			time.sleep(sleep_time)
-			continue
 		_save_to_card(measurement)
 		_sync_with_api(measurement)
 		_send_measurement_to_scenario_manager(measurement)
-		time.sleep(after_sleep_time)		
+		if measurement == 0:
+			time.sleep(sleep_time)
+		else:
+			time.sleep(after_sleep_time)		
 		#break
 	print('main() end')
 
