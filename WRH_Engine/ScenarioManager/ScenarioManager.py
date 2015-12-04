@@ -130,6 +130,7 @@ def _try_execute_scenarios():
 				result = _execute_scenario(str(scen["ActionModuleId"]), str(scen["Action"]))
 				if result == True:
 					doneScenarios[str(scen["Id"])] = done + 1
+					measurements.pop(str(scen["ConditionModuleId"])) # // usuwam measurement zeby przy ponownej interpretacji nie byl brany pod uwage ten sam pomiar
 				else:
 					print('nie udalo sie wykonac scenariusza')
 
