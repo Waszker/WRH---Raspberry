@@ -64,11 +64,13 @@ void fill_processes_details(process* processes, int processes_number, FILE* conf
 
     while((buffer = read_file_line(config)) != NULL)
     {
-        if(++line_number == 1) 
-		{
-			processes[line_number - 1].type = SCENARIO;
-			continue;
-		}
+        if(++line_number == 1)
+        {
+            // first line of configuration file will never contain module
+            // so we add there ScenarioManager module instead
+            processes[line_number - 1].type = SCENARIO;
+            continue;
+        }
         processes[line_number - 1].type = get_module_type_from_config_line(buffer);
         processes[line_number - 1].arguments_from_config = buffer;
     }

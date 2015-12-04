@@ -51,7 +51,10 @@ void* safe_malloc(size_t size)
 
 char* read_file_line(FILE* file)
 {
-    char* buffer = 0;
-    TEMP_FAILURE_RETRY(fscanf(file, "%ms", &buffer));
+    char* buffer = NULL;
+    size_t len = 0;
+    ssize_t read;
+    read = getline(&buffer, &len, file);
+    if(-1 == read) buffer = NULL;
     return buffer;
 }
