@@ -205,6 +205,8 @@ def _main_event_waiting():
 			_get_scenarios()
 			_generate_rules()
 			_try_execute_scenarios()
+			t_scenarios_changed = threading.Thread(target=_scenarios_changed)
+			t_scenarios_changed.daemon = True
 			t_scenarios_changed.start()
 		else:
 			print('event triggered by measurement meeting some rule')
