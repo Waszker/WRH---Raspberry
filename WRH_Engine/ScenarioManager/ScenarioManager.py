@@ -103,7 +103,7 @@ def _try_execute_scenarios():
 	global measurements
 	global doneScenarios
 	global scenarios
-	print('try_execute_scenarios')
+	print('try_execute_scenarios, scenariuszy jest: ' + len(scenarios))
 	# // TODO: uwzglednienie priorytetow, oraz Recurring. (doneScenarios)
 	# // check if any scenarios is triggered, if yes then execute it
 	for scen in scenarios:
@@ -188,11 +188,12 @@ def _does_measurement_match_rule(moduleid, value):
 	return False #zadne rule nie spelnione
 	
 def _main_event_waiting():
+	t_scenarios_changed = threading.Thread(target=_scenarios_changed)
+	t_scenarios_changed.daemon = True
+	t_scenarios_changed.start()
 	while True:
 		event.clear()
-		t_scenarios_changed = threading.Thread(target=_scenarios_changed)
-		t_scenarios_changed.daemon = True
-		t_scenarios_changed.start()
+		
 		
 		event.wait()
 		lock.acquire()
@@ -200,17 +201,15 @@ def _main_event_waiting():
 		time.sleep(1)
 		#if t_scenarios_changed finished then I know that scenarios changed. Download new scenarios
 		if not t_scenarios_changed.isAlive():
+			print('event triggered by scenarios changed')
 			t_scenarios_changed.join()
 			_get_scenarios()
+			_generate_rules()
+			_try_execute_scenarios()
 		else:
 			print('event triggered by measurement meeting some rule')
-
-		# check measurements, check if any scenario is triggered, execute
-		_try_execute_scenarios()
-
-		#generate rules based on scenarios
-		_generate_rules()
-
+			_try_execute_scenarios()
+		
 		lock.release()
 
 def main_routine():
