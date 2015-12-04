@@ -101,7 +101,7 @@ def _try_execute_scenarios():
 	global measurements
 	global doneScenarios
 	global scenarios
-	print('try_execute_scenarios, scenariuszy jest: ' + len(scenarios))
+	print('try_execute_scenarios, scenariuszy jest: ' + str(len(scenarios)))
 	# // TODO: uwzglednienie priorytetow, oraz Recurring. (doneScenarios)
 	# // check if any scenarios is triggered, if yes then execute it
 	for scen in scenarios:
