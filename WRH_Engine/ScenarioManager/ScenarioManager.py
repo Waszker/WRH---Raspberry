@@ -40,8 +40,9 @@ def _get_scenarios():
 	(status_code, result_content) = webapi.get_scenarios(deviceid, devicetoken)
 	result_object = json.loads(result_content)
 	scenarios = result_object
-
-
+	print('\n')
+	print('sciagnalem ' + str(len(scenarios)) + ' scenariuszy!')
+	print('\n')
 
 
 def _socket_communicate(clientsocket):
@@ -89,9 +90,6 @@ def _scenarios_changed():
 		#check if scenarios changed, signal main() if yes (signal via Event)
 		#event.set()
 		#then exit, will be started again by main()
-		print('\n\n')
-		print('sc changed code: ' + str(status_code))
-		print('\n\n')
 		if status_code == 200 :
 			print('SCENARIOS HAS CHANGED!')
 			event.set()
@@ -200,6 +198,7 @@ def _main_event_waiting():
 		#if t_scenarios_changed finished then I know that scenarios changed. Download new scenarios
 		if not t_scenarios_changed.isAlive():
 			t_scenarios_changed.join()
+			time.sleep(2)
 			_get_scenarios()
 		else:
 			print('event triggered by measurement meeting some rule')
