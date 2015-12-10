@@ -2,6 +2,7 @@
 
 import WRH_Engine.Modules.MOVEMENT.MOVEMENT
 from WRH_Engine.WebApiLibrary import WebApiClient as W
+from WRH_Engine.Configuration import configuration as C
 import json
 import threading
 import time
@@ -44,6 +45,8 @@ def _read_movement():
 
 def main():
 	print('main() start MOVEMENT')
+	conf_line = sys.argv[1]
+    moduleobject = C.get_module_entry_data(conf_line)
 	time.sleep(10)
 	
 	while True:		
