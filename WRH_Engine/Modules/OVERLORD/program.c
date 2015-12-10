@@ -14,6 +14,7 @@
 typedef struct process {
     enum module_type type;
     pid_t pid;
+    char* device_config;
     char* arguments_from_config;
 } process;
 
@@ -24,6 +25,7 @@ void start_subprocesses(process* processes, int processes_number)
 
     for(i = 0; i < processes_number; i++)
         processes[i].pid = start_module(processes[i].type,
+                processes[i].device_config,
                 processes[i].arguments_from_config);
 }
 
@@ -52,6 +54,7 @@ void restart_stopped_child(process* processes, int processes_number)
             if(pid == processes[i].pid)
             {
                 processes[i].pid = start_module(processes[i].type,
+                        processes[i].device_config,
                         processes[i].arguments_from_config);
             }
     }
@@ -69,9 +72,11 @@ void fill_processes_details(process* processes, int processes_number, FILE* conf
             // first line of configuration file will never contain module
             // so we add there ScenarioManager module instead
             processes[line_number - 1].type = SCENARIO;
+            processes[line_number - 1].device_config = buffer;
             continue;
         }
         processes[line_number - 1].type = get_module_type_from_config_line(buffer);
+        processes[line_number - 1].device_config = processes[0].device_config;
         processes[line_number - 1].arguments_from_config = buffer;
     }
 }

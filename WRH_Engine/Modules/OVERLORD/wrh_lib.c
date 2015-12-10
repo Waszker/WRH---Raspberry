@@ -76,21 +76,22 @@ pid_t start_service(command* pcommand)
     return ppid;
 }
 
-pid_t start_module(enum module_type type, char* argument_from_file)
+pid_t start_module(enum module_type type, char* device_config, char* argument_from_file)
 {
     command command_to_copy = commands[module_type_to_int(type)];
     command* command_to_use = (command*)safe_malloc(sizeof(command));
-    int i, was_file_argument_added = 0;
+    int i, were_config_args_added = 0;
 
     for(i = 0; i < MAX_ENV_COUNT; i++) {
         command_to_use->env[i] = command_to_copy.env[i];
     }
     for(i = 0; i < MAX_ARGUMENT_COUNT; i++) {
         command_to_use->arg[i] = command_to_copy.arg[i];
-        if(NULL == command_to_copy.arg[i] && !was_file_argument_added)
+        if(NULL == command_to_copy.arg[i] && were_config_args_added != 2)
         {
-            command_to_use->arg[i] = argument_from_file;
-            was_file_argument_added = 1;
+            if(0 == were_config_args_added) command_to_use->arg[i] = device_config;
+            else command_to_use->arg[i] = argument_from_file;
+            were_config_args_added++;
         }
     }
 

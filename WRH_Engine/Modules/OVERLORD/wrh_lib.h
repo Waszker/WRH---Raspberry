@@ -27,6 +27,6 @@ typedef struct command
 int module_type_to_int(enum module_type);
 enum module_type int_to_module_type(int);
 enum module_type get_module_type_from_config_line(char*);
-pid_t start_module(enum module_type, char*);
+pid_t start_module(enum module_type, char*, char*);
 
 #endif

@@ -10,7 +10,7 @@ def signal_handler(signal, frame):
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_handler)
-    conf_line = sys.argv[1]
+    conf_line = sys.argv[2]
     camera = C.get_module_entry_data(conf_line)
     device_name = camera.gpio
     port = camera.address
