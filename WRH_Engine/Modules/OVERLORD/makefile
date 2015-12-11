@@ -15,7 +15,7 @@ all: $(NAME)
 $(NAME): $(FILES)
 	$(CC) $(FILES) -o $(NAME)
 
-prgr.o: program.c
+program.o: program.c
 	$(CC) $(CFLAGS) program.c -o program.o
 
 wrh_lib.o: wrh_lib.c
