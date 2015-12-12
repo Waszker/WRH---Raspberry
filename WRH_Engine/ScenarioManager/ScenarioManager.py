@@ -145,9 +145,9 @@ def _get_active_scenarios_by_date(scenarios):
 
 # from list of scenarios, exclude scenarios with the lowest priority within scenarios with the same action module
 def _get_active_scenarios_by_priority(scenarios):
-    result = []
-	for scen in scenarios:
-		# TODO 
+	result = []
+	#TODO
+	for scen in scenarios: 
 		result.append(scen)
 	
 	return result
@@ -180,16 +180,16 @@ def _get_scenarios_to_execute():
 				continue # not properly encoded value.
 			temp = v[0]
 			wilg = v[1]
-		if scen["Condition"] == 1: # Temperatura poniżej..
+		if scen["Condition"] == 1: # Temperatura ponizj..
 			if temp < scen["ValueInt"]):
 				conditionMet = True
-		if scen["Condition"] == 2: # Temperatura powyżej..
+		if scen["Condition"] == 2: # Temperatura powyzj..
 			if temp > scen["ValueInt"]):
 				conditionMet = True
-		if scen["Condition"] == 3: # Wilgotność poniżej..
+		if scen["Condition"] == 3: # Wilgotnosc ponizej..
 			if wilg < scen["ValueInt"]):
 				conditionMet = True
-		if scen["Condition"] == 4: # Wilgotność powyżej..
+		if scen["Condition"] == 4: # Wilgotnosc powyzj..
 			if wilg > scen["ValueInt"]):
 				conditionMet = True
 		if scen["Condition"] == 5: # Wykryto ruch
