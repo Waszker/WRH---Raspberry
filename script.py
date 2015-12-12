@@ -1,11 +1,16 @@
 #!/usr/bin/python2.7
 import os.path as path
 import json
+import signal
+import subprocess
 from WRH_Engine.RegisterDevice import RegisterDevice as register
 from WRH_Engine.Configuration import configuration as config
 from WRH_Engine.module.module import Module
 
 CONFIGURATION_FILE = '.wrh.config'
+
+def _siginit_handler(signal, frame):
+    print 'SIGINT signal caught'
 
 def _edit_module(system_info, modules) :
     print 'Choose which module to edit'
@@ -48,6 +53,13 @@ def _remove_module(system_info, modules) :
         with open(CONFIGURATION_FILE, 'w') as f:
             config.update_configuration_file(f, system_info, modules)
 
+def _run_overlord():
+    signal.signal(signal.SIGINT, _siginit_handler)
+    command = "./WRH_Engine/Modules/OVERLORD/program"
+    process = subprocess.Popen(command)
+    process.wait()
+    signal.signal(signal.SIGINT, _siginit_handler)
+
 def _run_maintenance_work():
     with open(CONFIGURATION_FILE, 'r') as f:
         (system_info, modules) = config.parse_configuration_file(f)
@@ -57,7 +69,7 @@ def _run_maintenance_work():
         for i, module in enumerate(modules) :
             print (str(i+1) + ') '),
             module.print_information_string()
-        print '\n[1] Edit module\n[2] Add new module\n[3] Delete module\n[4] Exit'
+        print '\n[1] Edit module\n[2] Add new module\n[3] Delete module\n[4] Start modules\n[5] Exit'
         user_choice = raw_input('> ')
         try :
             value = int(user_choice)
@@ -70,6 +82,8 @@ def _run_maintenance_work():
         elif value == 3 :
             _remove_module(system_info, modules)
         elif value == 4 :
+            _run_overlord()
+        elif value == 5 :
             break
         continue
     return
