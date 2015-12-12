@@ -21,10 +21,9 @@ def check_configuration_file_sanity(file_handler) :
                 print 'Line ' + line + 'seems to be corrupted!'
                 break
 
-
     return does_match
 
-def _get_first_line_data(line) :
+def get_device_entry_data(line) :
     matches = re.search("([1-9][0-9]{0,9});(.+)$", line)
     return (matches.group(1), matches.group(2))
 
@@ -37,7 +36,7 @@ def get_module_entry_data(line) :
 # Returns tuple containing tuple of device id and device token
 # and list of modules
 def parse_configuration_file(file_handler) :
-    (device_id, device_token) = _get_first_line_data(file_handler.readline())
+    (device_id, device_token) = get_device_entry_data(file_handler.readline())
 
     modules_list = []
     for i, line in enumerate(file_handler) :
