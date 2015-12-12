@@ -22,6 +22,14 @@ lock = threading.Lock()
 event = threading.Event() #triggered when scenarios changed OR slme measurement meets rule
 availablemodules = []
 
+def _extract_info_from_streamingaddress(streaming_address)
+	# we have encoded into camera module's streamingaddress four things:
+	address = "" # actual streaming address
+	port = ""
+	login = ""
+	password = "" # login and password are needed to make a snapshot
+	return (address, port, login, password)
+
 def signal_handler(signal, frame):
     print 'Scenario Manager SIGINT routine'
     os.exit(0)
