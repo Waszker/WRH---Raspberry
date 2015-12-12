@@ -69,11 +69,14 @@ class Module:
     def register_new_module(system_info) :
         print '\n***Adding new module***'
         i = 1
+
+        # Display all available module types
         for key, name in Module.types_strings.iteritems():
             print '[' + str(key) + '] ' + name
             i = i+1
         print '[' + str(i) + '] Cancel'
 
+        # Get user selection and run registration procedure
         new_module = None
         while True :
             choice = raw_input('> ')
@@ -81,7 +84,7 @@ class Module:
                 value = int(choice)
             except ValueError :
                 continue
-            if value == i :
+            if value == i : # user wants to exit
                 break
             elif Module.get_type_name(value) != "UNKNOWN":
                 new_module = Module._run_registration_procedure(system_info, value)
