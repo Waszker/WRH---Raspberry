@@ -1,5 +1,6 @@
 #!/bin/python2.7
 from WRH_Engine.Configuration import configuration as C
+from WRH_Engine.Utils import utils as U
 import sys
 import os
 import subprocess
@@ -18,8 +19,9 @@ def _snapshot_thread(port, login, password):
     while True:
         t.sleep(5)
         image = get_camera_snapshot(port, login, password)
-        with open("snapshot.jpg", "w") as f:
-            f.write(image)
+        #with open("snapshot.jpg", "w") as f:
+        #    f.write(image)
+        U.add_measurement("test");
 
 def _signal_handler(signal, frame):
     sys.exit(0)
