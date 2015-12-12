@@ -1,5 +1,7 @@
-﻿#!/usr/bin/env python
+#!/usr/bin/env python
 
+import socket
+import time
 import sys
 import signal
 import Adafruit_DHT
@@ -18,17 +20,23 @@ def _send_measurement_to_scenario_manager(measurement):
 	clientsocket.send(measurement)
 
 
-global dev, module
+dev=''
+module=''
 
 
 def main(argv):
+    global module
+    global dev
     # check arguments
     if len(argv) != 2:
         raise ValueError("Bad parameters")
 
     # pull out dev and module data
-    dev = C.get_device_entry_data(argv[1])
-    module = C.get_module_entry_data(argv[2])
+    dev = C.get_device_entry_data(argv[0])
+    module = C.get_module_entry_data(argv[1])
+
+    while True:
+        time.sleep(100)
 
 
 def _get_measurement(gpio):
@@ -40,16 +48,17 @@ def _signal_handler():
     sys.exit(0)
 
 
-def _sigalrm_handler():
+def _sigalrm_handler(signal, frame):
     timestamp = U.generate_proper_date_format()
     measurement = _get_measurement(module.gpio)
     _send_measurement_to_scenario_manager(measurement)
-    if not W.add_measurement(dev[0], dev[1], module.id, timestamp, measurement, "")[0] == Response.STATUS_OK:
+    print str(measurement)
+    if not W.add_measurement(dev[0], dev[1], module.id, timestamp, measurement, "")[0] == W.Response.STATUS_OK:
         U.write_measurement(module.type, module.id, measurement)
 
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, _signal_handler)
     signal.signal(signal.SIGALRM, _sigalrm_handler)
-    signal.alarm(300)
+    signal.alarm(3)
     main(sys.argv[1:])
