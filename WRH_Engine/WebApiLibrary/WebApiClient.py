@@ -8,6 +8,7 @@ class Response(Enum):
     STATUS_UNAUTHORIZED = 401
     STATUS_BAD_REQUEST = 400
     INTERNAL_SERVER_ERROR = 500
+    CONNECTION_ERROR = -1
 
 headers = {'content-type': 'application/json'}
 base_address = 'https://wildraspberrywebapi.azurewebsites.net/'
@@ -20,8 +21,13 @@ add_measurement_url = base_address + 'api/wrh/addmeasurement'
 scenarios_changed_url = base_address + 'api/wrh/scenarioschanged'
 
 def do_post_request(url, content):
-    response = requests.post(url, data = json.dumps(content), headers = headers)
-    return (response.status_code, response.text)
+    try:
+        response = requests.post(url, data = json.dumps(content), headers = headers)
+        result = (response.status_code, response.text)
+    except requests.exceptions.ConnectionError:
+        result = (Response.CONNECTION_ERROR, "No Internet connection")
+
+    return result
 
 def register_device(username, password, device_name, device_color):
     content = {'Username': username, 'Password': password, 'Name': device_name, 'Color': device_color}
