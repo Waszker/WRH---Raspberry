@@ -11,6 +11,10 @@ deviceid = '9'
 devicetoken = 'dea763a0-5c0c-4555-bcc6-9f0cc1dcf030'
 moduleid = '15'
 
+# UWAGA
+# zmiany w planach, nie bedzie modulu od gniazdka.
+# poniewaz pomiarow nie zbieramy z gniazdka,
+# a wykonaniem steruje bezposrednio Scenario Manager
 	
 def main():
 	print('main() start wifisocket')
