@@ -3,6 +3,17 @@
 import sys
 # import Adafruit_DHT
 
+def _send_measurement_to_scenario_manager(measurement):
+	print('wysylam measurement do scenario manager')
+	clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	clientsocket.connect(('localhost', 2000))
+	clientsocket.send("1234") # moduleId
+	clientsocket.recv(4096)
+	temperatura = 21
+	wilgotnosc = 70
+	measurement = str(temperatura) + ";" + str(wilgotnosc)
+	clientsocket.send(measurement)
+
 def main(argv):
     # check arguments
     if len(argv) != 9:
