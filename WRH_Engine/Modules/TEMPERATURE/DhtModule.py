@@ -4,9 +4,9 @@ import sys
 import signal
 import Adafruit_DHT
 from WRH_Engine.Configuration import configuration as C
-from ..WebApiLibrary import WebApiClient as W
+from WRH_Engine.WebApiLibrary import WebApiClient as W
 from WRH_Engine.Utils import utils as U
-from ..module.module import Module
+from WRH_Engine.module.module import Module
 
 
 def _send_measurement_to_scenario_manager(measurement):
