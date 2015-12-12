@@ -46,7 +46,7 @@ def _read_movement():
 def main():
 	print('main() start MOVEMENT')
 	conf_line = sys.argv[1]
-    moduleobject = C.get_module_entry_data(conf_line)
+	moduleobject = C.get_module_entry_data(conf_line)
 	time.sleep(10)
 	
 	while True:		

@@ -22,6 +22,8 @@ lock = threading.Lock()
 event = threading.Event() #triggered when scenarios changed OR slme measurement meets rule
 availablemodules = []
 
+
+# get streaming address, port, login and password encoded into one field - streamingaddress
 def _extract_info_from_streamingaddress(streaming_address)
 	# we have encoded into camera module's streamingaddress four things:
 	address = "" # actual streaming address
@@ -30,10 +32,13 @@ def _extract_info_from_streamingaddress(streaming_address)
 	password = "" # login and password are needed to make a snapshot
 	return (address, port, login, password)
 
+
 def signal_handler(signal, frame):
     print 'Scenario Manager SIGINT routine'
     os.exit(0)
-
+    
+   
+# read deviceId, deviceToken and Modules from configuration file
 def _read_available_modules():
 	print('reading available modules')
 	global availablemodules
@@ -42,7 +47,9 @@ def _read_available_modules():
 	deviceid = system_info[0]
 	devicetoken = system_info[1]
 
+# download Scenarios from WebApi
 def _get_scenarios():
+	# lock is acquired
 	global scenarios
 	print('gettingscenarios')
 	(status_code, result_content) = webapi.get_scenarios(deviceid, devicetoken)
@@ -103,6 +110,12 @@ def _scenarios_changed():
 			event.set()
 			break
 	print('scenarios_changed() end')
+	 
+
+# get a list of Ids of scenarios which should be executed
+# list is prepared based on: measurements, doneScenarios, and current time
+def _get_scenarios_to_execute():
+	
 
 
 def _try_execute_scenarios():
@@ -243,6 +256,26 @@ def main_routine():
 
 	print('main() end')
 
+
+
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_handler)
+    
+    print("Path at terminal when executing this file")
+	print(os.getcwd() + "\n")
+
+	print("This file path, relative to os.getcwd()")
+	print(__file__ + "\n")
+
+	print("This file full path (following symlinks)")
+	full_path = os.path.realpath(__file__)
+	print(full_path + "\n")
+
+	print("This file directory and name")
+	path, filename = os.path.split(full_path)
+	print(path + ' --> ' + filename + "\n")
+
+	print("This file directory only")
+	print(os.path.dirname(full_path))
+    
     main_routine()
