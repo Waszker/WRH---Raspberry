@@ -117,7 +117,7 @@ def _scenarios_changed():
 # make a python datetime object based on our datetime string
 # YYYY-MM-DDThh:mm:ss
 # returns: (success, datetime)
-def _convert_datetime_to_python(datetime)
+def _convert_datetime_to_python(datetime):
 	return (False, '')
 
 
