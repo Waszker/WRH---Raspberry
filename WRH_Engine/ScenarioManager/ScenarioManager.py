@@ -182,16 +182,16 @@ def _get_scenarios_to_execute():
 			wilg = v[1]
 
 		if scen["Condition"] == 1: # Temperatura ponizej..
-			if temp < scen["ValueInt"]):
+			if temp < scen["ValueInt"]:
 				conditionMet = True
 		if scen["Condition"] == 2: # Temperatura powyzej..
-			if temp > scen["ValueInt"]):
+			if temp > scen["ValueInt"]:
 				conditionMet = True
 		if scen["Condition"] == 3: # Wilgotnosc ponizej..
-			if wilg < scen["ValueInt"]):
+			if wilg < scen["ValueInt"]:
 				conditionMet = True
 		if scen["Condition"] == 4: # Wilgotnosc powyzej..
-			if wilg > scen["ValueInt"]):
+			if wilg > scen["ValueInt"]:
 				conditionMet = True
 		if scen["Condition"] == 5: # Wykryto ruch
 			if value > 0:
