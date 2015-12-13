@@ -10,7 +10,7 @@ import urllib2
 import signal
 from datetime import datetime, timedelta
 
-verbose = False # should I print comments what is happening?
+verbose = True # should I print comments what is happening?
 CONFIGURATION_FILE = '.wrh.config'
 
 deviceid = ''
@@ -55,11 +55,13 @@ def _get_scenarios():
 	global scenarios
 	print('gettingscenarios')
 	(status_code, result_content) = webapi.get_scenarios(deviceid, devicetoken)
+	if status_code != 200: # TODO magic number
+		if verbose:
+			print('_get_scenarios() status_code=' + str(status_code))
+		scenarios = []
+		return
 	result_object = json.loads(result_content)
 	scenarios = result_object
-	print('\n')
-	print('sciagnalem ' + str(len(scenarios)) + ' scenariuszy!')
-	print('\n')
 
 # communicate with client (some Module in our case). Read measurement from it
 def _socket_communicate(clientsocket):
@@ -145,9 +147,9 @@ def _get_active_scenarios_by_date(scenarios):
 
 # from list of scenarios, exclude scenarios with the lowest priority within scenarios with the same action module
 def _get_active_scenarios_by_priority(scenarios):
-    result = []
-	for scen in scenarios:
-		# TODO 
+	result = []
+	#TODO
+	for scen in scenarios: 
 		result.append(scen)
 	
 	return result
@@ -180,17 +182,18 @@ def _get_scenarios_to_execute():
 				continue # not properly encoded value.
 			temp = v[0]
 			wilg = v[1]
-		if scen["Condition"] == 1: # Temperatura poniżej..
-			if temp < scen["ValueInt"]):
+
+		if scen["Condition"] == 1: # Temperatura ponizej..
+			if temp < scen["ValueInt"]:
 				conditionMet = True
-		if scen["Condition"] == 2: # Temperatura powyżej..
-			if temp > scen["ValueInt"]):
+		if scen["Condition"] == 2: # Temperatura powyzej..
+			if temp > scen["ValueInt"]:
 				conditionMet = True
-		if scen["Condition"] == 3: # Wilgotność poniżej..
-			if wilg < scen["ValueInt"]):
+		if scen["Condition"] == 3: # Wilgotnosc ponizej..
+			if wilg < scen["ValueInt"]:
 				conditionMet = True
-		if scen["Condition"] == 4: # Wilgotność powyżej..
-			if wilg > scen["ValueInt"]):
+		if scen["Condition"] == 4: # Wilgotnosc powyzej..
+			if wilg > scen["ValueInt"]:
 				conditionMet = True
 		if scen["Condition"] == 5: # Wykryto ruch
 			if value > 0:

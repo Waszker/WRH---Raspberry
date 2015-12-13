@@ -4,9 +4,9 @@ import sys
 import signal
 import Adafruit_DHT
 from WRH_Engine.Configuration import configuration as C
-from WRH_Engine.WebApiLibrary import WebApiClient as W
+from ..WebApiLibrary import WebApiClient as W
 from WRH_Engine.Utils import utils as U
-from WRH_Engine.module.module import Module
+from ..module.module import Module
 
 
 def _send_measurement_to_scenario_manager(measurement):
@@ -15,6 +15,9 @@ def _send_measurement_to_scenario_manager(measurement):
 	clientsocket.connect(('localhost', 2000))
 	clientsocket.send("1234") # moduleId
 	clientsocket.recv(4096)
+	temperatura = 21
+	wilgotnosc = 70
+	measurement = str(temperatura) + ";" + str(wilgotnosc)
 	clientsocket.send(measurement)
 
 
