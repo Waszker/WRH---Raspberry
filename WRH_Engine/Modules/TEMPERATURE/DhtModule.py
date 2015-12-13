@@ -27,8 +27,8 @@ def main(argv):
         raise ValueError("Bad parameters")
 
     # pull out dev and module data
-    dev = get_device_entry_data(argv[1])
-    module = get_module_entry_data(argv[2])
+    dev = C.get_device_entry_data(argv[1])
+    module = C.get_module_entry_data(argv[2])
 
 
 def _get_measurement(gpio):
