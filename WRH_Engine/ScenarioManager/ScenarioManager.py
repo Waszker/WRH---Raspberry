@@ -180,31 +180,18 @@ def _get_scenarios_to_execute():
 				continue # not properly encoded value.
 			temp = v[0]
 			wilg = v[1]
-<<<<<<< HEAD
-		if scen["Condition"] == 1: # Temperatura poniżej..
-			if temp < scen["ValueInt"]:
-				conditionMet = True
-		if scen["Condition"] == 2: # Temperatura powyżej..
-			if temp > scen["ValueInt"]:
-				conditionMet = True
-		if scen["Condition"] == 3: # Wilgotność poniżej..
-			if wilg < scen["ValueInt"]:
-				conditionMet = True
-		if scen["Condition"] == 4: # Wilgotność powyżej..
-			if wilg > scen["ValueInt"]:
-=======
-		if scen["Condition"] == 1: # Temperatura ponizj..
+
+		if scen["Condition"] == 1: # Temperatura ponizej..
 			if temp < scen["ValueInt"]):
 				conditionMet = True
-		if scen["Condition"] == 2: # Temperatura powyzj..
+		if scen["Condition"] == 2: # Temperatura powyzej..
 			if temp > scen["ValueInt"]):
 				conditionMet = True
 		if scen["Condition"] == 3: # Wilgotnosc ponizej..
 			if wilg < scen["ValueInt"]):
 				conditionMet = True
-		if scen["Condition"] == 4: # Wilgotnosc powyzj..
+		if scen["Condition"] == 4: # Wilgotnosc powyzej..
 			if wilg > scen["ValueInt"]):
->>>>>>> c6f51a40cce3ebd42797157e9af74218f258f4ed
 				conditionMet = True
 		if scen["Condition"] == 5: # Wykryto ruch
 			if value > 0:
