@@ -8,6 +8,7 @@ import time
 import socket
 import urllib2
 import signal
+from datetime import datetime, timedelta
 
 verbose = False # should I print comments what is happening?
 CONFIGURATION_FILE = '.wrh.config'
@@ -113,13 +114,42 @@ def _scenarios_changed():
 			break
 	print('scenarios_changed() end')
 
+# make a python datetime object based on our datetime string
+# YYYY-MM-DDThh:mm:ss
+# returns: (success, datetime)
+def _convert_datetime_to_python(datetime)
+
+
 # from list of scenarios, get scenarios that are active (startDate <= DateTime.Now <= endDate)
 def _get_active_scenarios_by_date(scenarios):
+	now = datetime.utcnow()
 	result = []
+	for scen in scenarios:
+		active = True
+		(successStart, datetimeStart) = _convert_datetime_to_python(scen["startDate"])
+		(successEnd, datetimeEnd) = _convert_datetime_to_python(scen["startDate"])
+		
+		if successStart:
+			if datetimeStart > now:
+				active = False
+		if successEnd:
+			if datetimeEnd < now:
+				active = False
+		
+		if active:
+			result.append(scen)
+	
+	return result
+	
 
 # from list of scenarios, exclude scenarios with the lowest priority within scenarios with the same action module
 def _get_active_scenarios_by_priority(scenarios):
     result = []
+	for scen in scenarios:
+		# TODO 
+		result.append(scen)
+	
+	return result
 
 # get a list of Ids of scenarios which are to be executed
 # list is prepared based on: measurements, doneScenarios, and current time
@@ -148,17 +178,22 @@ def _get_scenarios_to_execute():
 			if len(v) != 2:
 				continue # not properly encoded value.
 			temp = v[0]
-			temp = v[1]
+			wilg = v[1]
 		if scen["Condition"] == 1: # Temperatura poniżej..
-			print('')
+			if temp < scen["ValueInt"]):
+				conditionMet = True
 		if scen["Condition"] == 2: # Temperatura powyżej..
-			print('')
+			if temp > scen["ValueInt"]):
+				conditionMet = True
 		if scen["Condition"] == 3: # Wilgotność poniżej..
-			print('')
+			if wilg < scen["ValueInt"]):
+				conditionMet = True
 		if scen["Condition"] == 4: # Wilgotność powyżej..
-			print('')
+			if wilg > scen["ValueInt"]):
+				conditionMet = True
 		if scen["Condition"] == 5: # Wykryto ruch
-			print('')
+			if value > 0:
+				conditionMet = True
 		if conditionMet:
 			result.append(scen["Id"])
 	
@@ -192,14 +227,25 @@ def _execute_scenario(actionmoduleid, action):
 	if not module:
 		return False
 
+	if action == '1':
+		address = module.address + '?on'
+		# TODO try catch
+		urllib2.urlopen(address).read()
+		return True
+	if action == '2':
+		address = module.address + '?off'
+		# TODO try catch
+		urllib2.urlopen(address).read()
+		return True
 	if action == '3':
-		print('akcja typu toggle gniazdko')
 		address = module.address + '?toggle'
 		# TODO try catch
 		urllib2.urlopen(address).read()
-	return True
-	
-	# TODO if action == snapshot
+		return True
+	if action == '4':
+		# TODO take snapshot
+		return True
+	return False
 
 
 # in loop wait for event to be triggered, try to execute scenarios
