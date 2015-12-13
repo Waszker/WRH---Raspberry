@@ -11,7 +11,7 @@ static int modules_number = sizeof(module_types) / sizeof(enum module_type);
 // https://trello.com/c/1oOLJIQW/60-module-type
 static command commands[] = {
     { { NULL }, { "/usr/bin/python2.7", "-m", "WRH_Engine.ScenarioManager.ScenarioManager", NULL } },
-    { { NULL }, { NULL } },
+    { { NULL }, { "/usr/bin/python2.7", "-m", "WRH_Engine.Modules.TEMPERATURE.DhtModule", NULL } },
     { { NULL }, { "/usr/bin/python2.7", "-m", "WRH_Engine.Modules.CAMERA.camera", NULL } },
     { { NULL }, { "/usr/bin/python2.7", "-m", "WRH_Engine.Modules.MOVEMENT.MOVEMENT", NULL } },
     { { NULL }, { "/usr/bin/python2.7", "-m", "WRH_Engine.Modules.WIFISOCKET.WIFISOCKET", NULL } },
