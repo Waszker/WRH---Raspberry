@@ -1,7 +1,13 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 
 import sys
-# import Adafruit_DHT
+import signal
+import Adafruit_DHT
+from WRH_Engine.Configuration import configuration as C
+from ..WebApiLibrary import WebApiClient as W
+from WRH_Engine.Utils import utils as U
+from ..module.module import Module
+
 
 def _send_measurement_to_scenario_manager(measurement):
 	print('wysylam measurement do scenario manager')
@@ -14,27 +20,38 @@ def _send_measurement_to_scenario_manager(measurement):
 	measurement = str(temperatura) + ";" + str(wilgotnosc)
 	clientsocket.send(measurement)
 
+
+global dev, module
+
+
 def main(argv):
     # check arguments
-    if len(argv) != 9:
+    if len(argv) != 2:
         raise ValueError("Bad parameters")
-        return
 
-    compressed_argv = argv # list for cmd parameters without semi-colons
+    # pull out dev and module data
+    dev = get_device_entry_data(argv[1])
+    module = get_module_entry_data(argv[2])
 
-    try:
-        semi_col = ';'
-        while semi_col in compressed_argv: # remove all semi-colons
-            compressed_argv.remove(semi_col); 
-    except ValueError as e:
-        raise ValueError(e);
-    
-    # get gpio number
-    gpio = int(compressed_argv[2])
-    print(gpio) # for test only
 
-    # humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.AM2302, gpio)
-    # print "Temp={0:0.1f}*C Humidity={1:0.1f}%".format(temperature, humidity)
+def _get_measurement(gpio):
+    humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.AM2302, gpio)
+    return "{0:0.1f};{1:0.1f}".format(temperature, humidity)
+
+
+def _signal_handler():
+    sys.exit(0)
+
+
+def _sigalrm_handler():
+    timestamp = U.generate_proper_date_format()
+    measurement = _get_measurement(module.gpio)
+    if not W.add_measurement(dev[0], dev[1], module.id, timestamp, measurement, "")[0] == Response.STATUS_OK:
+        U.write_measurement(module.type, module.id, measurement)
+
 
 if __name__ == "__main__":
-   main(sys.argv[1:])
+    signal.signal(signal.SIGINT, _signal_handler)
+    signal.signal(signal.SIGALRM, _sigalrm_handler)
+    signal.alarm(300)
+    main(sys.argv[1:])
