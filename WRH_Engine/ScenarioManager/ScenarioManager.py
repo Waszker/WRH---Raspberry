@@ -11,21 +11,21 @@ import signal
 
 verbose = False # should I print comments what is happening?
 CONFIGURATION_FILE = '.wrh.config'
-#dane rasberaka uzytkownika przem321@wp.pl
-deviceid = '18'
-devicetoken = '0d41ace1-fa6b-439c-ac02-cafae7c09a26'
+
+deviceid = ''
+devicetoken = ''
 socket_port = 2000
 scenarios = []
 measurements = dict() # // pairs, moduleId and Value
 doneScenarios = dict() # // pairs, scenarioId - number of times the scenario was executed
-rules = [] # // rules, when to trigger event. (when measurement from specified module is .. )
 lock = threading.Lock()
-event = threading.Event() #triggered when scenarios changed OR some measurement meets rule
+event = threading.Event() #triggered when scenarios changed OR some measurement meet some scenarios' conditions
 availablemodules = []
 
 
 # get streaming address, port, login and password encoded into one field - streamingaddress
 def _extract_info_from_streamingaddress(streaming_address):
+	# TODO zrobic to
 	# we have encoded into camera module's streamingaddress four things:
 	address = "" # actual streaming address
 	port = ""
@@ -60,7 +60,7 @@ def _get_scenarios():
 	print('sciagnalem ' + str(len(scenarios)) + ' scenariuszy!')
 	print('\n')
 
-
+# communicate with client (some Module in our case). Read measurement from it
 def _socket_communicate(clientsocket):
 	print('socket_communicate() start')
 	global measurements
@@ -73,16 +73,16 @@ def _socket_communicate(clientsocket):
 	matchrule = False
 	lock.acquire()
 	measurements[str(moduleid)] = value
-	matchrule = _does_measurement_match_rule(moduleid, value)
+	scens = _get_scenarios_to_execute()
 	lock.release()
-	if matchrule:
+	if len(scens) > 0:
 		print('rule spelniona, uruchamiam event')
 		event.set()
 	else:
 		print('niespelnia zadnej')
 	print('socket_communicate() end')
 
-
+# wait for incoming connections, and accept them. Accepted connection are then handled by _socket_communicate()
 def _socket_accept():
 	global socket_port
 	print('accept_socket_messages() start')
@@ -98,15 +98,16 @@ def _socket_accept():
 
 	print('accept_socket_messages() end')
 
+# periodically check with WebApi if scenarios has changed. If yes, then trigger event.
 def _scenarios_changed():
 	print('scenarios_changed() start')
 	while True:
-		time.sleep(1)
+		time.sleep(5) #TODO magic number
 		(status_code, result_content) = webapi.scenarios_changed(deviceid, devicetoken)
 		#check if scenarios changed, signal main() if yes (signal via Event)
 		#event.set()
 		#then exit, will be started again by main()
-		if status_code == 200 :
+		if status_code == 200 : #TODO use enum
 			print('SCENARIOS HAS CHANGED!')
 			event.set()
 			break
@@ -116,7 +117,7 @@ def _scenarios_changed():
 def _get_active_scenarios_by_date(scenarios):
 	result = []
 
-# from list of scenarios, exclude scenarios with the lowest priority from scenarios with the same action module
+# from list of scenarios, exclude scenarios with the lowest priority within scenarios with the same action module
 def _get_active_scenarios_by_priority(scenarios):
     result = []
 
@@ -149,55 +150,38 @@ def _get_scenarios_to_execute():
 			temp = v[0]
 			temp = v[1]
 		if scen["Condition"] == 1: # Temperatura poniżej..
-			
+			print('')
 		if scen["Condition"] == 2: # Temperatura powyżej..
-			
+			print('')
 		if scen["Condition"] == 3: # Wilgotność poniżej..
-			
+			print('')
 		if scen["Condition"] == 4: # Wilgotność powyżej..
-			
+			print('')
 		if scen["Condition"] == 5: # Wykryto ruch
-			
+			print('')
+		if conditionMet:
+			result.append(scen["Id"])
+	
+	return result
 
-
+# try to execute all scenarios taken from _get_scenarios_to_execute()
 def _try_execute_scenarios():
 	global measurements
 	global doneScenarios
 	global scenarios
 	print('try_execute_scenarios, scenariuszy jest: ' + str(len(scenarios)))
-	# // TODO: uwzglednienie priorytetow, oraz Recurring. (doneScenarios)
-	# // check if any scenarios is triggered, if yes then execute it
-	for scen in scenarios:
-		if not scen["Name"]:
-			continue
-		print(str(scen["Name"]))
-		# // datetime.now between starttime and endtime?
-		if not str(scen["ConditionModuleId"]) in measurements:
-			print('nie ma (jeszcze) pomiaru do takiego conditionmoduleid')
-			continue #// pomiaru takiego nie ma
-		value = measurements[str(scen["ConditionModuleId"])]
-		print(str(scen["Condition"]))
-		if str(scen["Condition"]) == '5': # // czy wykryto ruch?
-			if str(value) == '1':
-
-				if not str(scen["Id"]) in doneScenarios:
-					doneScenarios[str(scen["Id"])] = 0
-					print('zeruje donescenarios')
-				done = doneScenarios[str(scen["Id"])]
-				if done>0 and int(scen["Recurring"])==0:
-					print('scenariusz juz byl wykonany a nie jest recurring.')
-					continue # // scenariusz byl juz wykonany
-				print('_execute_scenario()')
-				result = _execute_scenario(str(scen["ActionModuleId"]), str(scen["Action"]))
-				if result == True:
-					doneScenarios[str(scen["Id"])] = done + 1
-					measurements.pop(str(scen["ConditionModuleId"])) # // usuwam measurement zeby przy ponownej interpretacji nie byl brany pod uwage ten sam pomiar
-				else:
-					print('nie udalo sie wykonac scenariusza')
-
-
+	
+	scensToExecute = _get_scenarios_to_execute()
+	for scen in scensToExecute:
+		print('trying to execute scenario ' + str(scen["Id"]))
+		result = _execute_scenario(str(scen["ActionModuleId"]), str(scen["Action"]))
+		if result == True:
+			doneScenarios[str(scen["Id"])] = doneScenarios[str(scen["Id"])] + 1
+		else:
+			print('nie udalo sie wykonac scenariusza')
 	return
 
+# execute one scenario
 def _execute_scenario(actionmoduleid, action):
 	print('wykonuje scenariusz')
 	module = []
@@ -211,51 +195,21 @@ def _execute_scenario(actionmoduleid, action):
 	if action == '3':
 		print('akcja typu toggle gniazdko')
 		address = module.address + '?toggle'
+		# TODO try catch
 		urllib2.urlopen(address).read()
-
-
 	return True
-
-
-def _generate_rules():
-	# // update global rules
-    global rules
-    global scenarios
-    rules = []
-    for scen in scenarios:
-        if not scen["Name"]:
-            continue
-        print('rozwazam scenariusz ' + str(scen["Name"]))
-        rule = (scen["ConditionModuleId"], scen["Condition"], scen["ValueInt"])
-        print('Dodaje rule nastepujaca: ' + str(rule[0]) + ' ' + str(rule[1]) + ' ' + str(rule[2]))
-        rules.append(rule)
-
-def _does_measurement_match_rule(moduleid, value):
-	print('czy measurement: ' + str(moduleid) + ' \n' + str(value) + '\n spelnia jakas rule?')
-	# // lock jest nasz
-	for rule in rules:
-		if not str(rule[0]) == moduleid:
-			continue
-
-		rulecondition = rule[1]
-		rulevalue = rule[1]
-
-		if rulecondition == 5:
-			# // motion detected
-			if value == '1':
-				return True
-		#if rulecondition == 4: i tak dalej
-	#~for
-	return False #zadne rule nie spelnione
 	
+	# TODO if action == snapshot
+
+
+# in loop wait for event to be triggered, try to execute scenarios
 def _main_event_waiting():
+	global measurements
 	t_scenarios_changed = threading.Thread(target=_scenarios_changed)
 	t_scenarios_changed.daemon = True
 	t_scenarios_changed.start()
 	while True:
 		event.clear()
-		
-		
 		event.wait()
 		lock.acquire()
 		print('event triggered')
@@ -266,7 +220,6 @@ def _main_event_waiting():
 			t_scenarios_changed.join()
 			time.sleep(2)
 			_get_scenarios()
-			_generate_rules()
 			_try_execute_scenarios()
 			t_scenarios_changed = threading.Thread(target=_scenarios_changed)
 			t_scenarios_changed.daemon = True
@@ -275,17 +228,18 @@ def _main_event_waiting():
 			print('event triggered by measurement meeting some rule')
 			_try_execute_scenarios()
 		
-		# TODO clear measurements, zeby nie byl wykonany scenariusz znowu na podstawie tego samego measurement
+		# clear measurements, zeby nie byl wykonany scenariusz znowu na podstawie tego samego measurement
+		measurements = dict()
 		lock.release()
 
-def main_routine():
+
+def main():
 
 	print('main() start SCENARIOMANAGER')
 	_read_available_modules()
 
 	_get_scenarios()
 	print str(len(scenarios))
-	_generate_rules()
 
 	t_accept = threading.Thread(target=_socket_accept)
 	t_accept.daemon = True
@@ -304,4 +258,4 @@ def main_routine():
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_handler)
     
-    main_routine()
+    main()
