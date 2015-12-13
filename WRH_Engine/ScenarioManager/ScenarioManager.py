@@ -118,6 +118,7 @@ def _scenarios_changed():
 # YYYY-MM-DDThh:mm:ss
 # returns: (success, datetime)
 def _convert_datetime_to_python(datetime)
+	return (False, '')
 
 
 # from list of scenarios, get scenarios that are active (startDate <= DateTime.Now <= endDate)
