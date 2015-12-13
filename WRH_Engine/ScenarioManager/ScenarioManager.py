@@ -10,7 +10,7 @@ import urllib2
 import signal
 from datetime import datetime, timedelta
 
-verbose = False # should I print comments what is happening?
+verbose = True # should I print comments what is happening?
 CONFIGURATION_FILE = '.wrh.config'
 
 deviceid = ''
@@ -55,11 +55,13 @@ def _get_scenarios():
 	global scenarios
 	print('gettingscenarios')
 	(status_code, result_content) = webapi.get_scenarios(deviceid, devicetoken)
+	if status_code != 200: # TODO magic number
+		if verbose:
+			print('_get_scenarios() status_code=' + str(status_code))
+		scenarios = []
+		return
 	result_object = json.loads(result_content)
 	scenarios = result_object
-	print('\n')
-	print('sciagnalem ' + str(len(scenarios)) + ' scenariuszy!')
-	print('\n')
 
 # communicate with client (some Module in our case). Read measurement from it
 def _socket_communicate(clientsocket):
