@@ -1,6 +1,7 @@
 #!/usr/bin/python2.7
 from ..WebApiLibrary import WebApiClient as webapi
 from WRH_Engine.Configuration import configuration as config
+from WRH_Engine.Modules.Camera import camera
 import os
 import json
 import threading
@@ -26,12 +27,12 @@ availablemodules = []
 
 # get streaming address, port, login and password encoded into one field - streamingaddress
 def _extract_info_from_streamingaddress(streaming_address):
-	# TODO zrobic to
+	# TODO zrobic to (Piotrek zrobi)
 	# we have encoded into camera module's streamingaddress four things:
 	address = "" # actual streaming address
 	port = ""
-	login = ""
-	password = "" # login and password are needed to make a snapshot
+	login = "login"
+	password = "password" # login and password are needed to make a snapshot
 	return (address, port, login, password)
 
 
@@ -248,6 +249,7 @@ def _execute_scenario(actionmoduleid, action):
 		return True
 	if action == '4':
 		# TODO take snapshot
+		camera.get_camera_snapshot("port", "login", "password")
 		return True
 	return False
 
