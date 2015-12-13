@@ -17,6 +17,7 @@ moduleid = '28'
 PIR = 4
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(PIR, GPIO.IN)
+
 temp_cnt = 0
 sleep_time = 1
 after_sleep_time = 5

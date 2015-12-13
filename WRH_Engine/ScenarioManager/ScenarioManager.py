@@ -9,6 +9,7 @@ import socket
 import urllib2
 import signal
 
+verbose = False # should I print comments what is happening?
 CONFIGURATION_FILE = '.wrh.config'
 #dane rasberaka uzytkownika przem321@wp.pl
 deviceid = '18'
@@ -19,12 +20,12 @@ measurements = dict() # // pairs, moduleId and Value
 doneScenarios = dict() # // pairs, scenarioId - number of times the scenario was executed
 rules = [] # // rules, when to trigger event. (when measurement from specified module is .. )
 lock = threading.Lock()
-event = threading.Event() #triggered when scenarios changed OR slme measurement meets rule
+event = threading.Event() #triggered when scenarios changed OR some measurement meets rule
 availablemodules = []
 
 
 # get streaming address, port, login and password encoded into one field - streamingaddress
-def _extract_info_from_streamingaddress(streaming_address)
+def _extract_info_from_streamingaddress(streaming_address):
 	# we have encoded into camera module's streamingaddress four things:
 	address = "" # actual streaming address
 	port = ""
@@ -110,12 +111,53 @@ def _scenarios_changed():
 			event.set()
 			break
 	print('scenarios_changed() end')
-	 
 
-# get a list of Ids of scenarios which should be executed
+# from list of scenarios, get scenarios that are active (startDate <= DateTime.Now <= endDate)
+def _get_active_scenarios_by_date(scenarios):
+	result = []
+
+# from list of scenarios, exclude scenarios with the lowest priority from scenarios with the same action module
+def _get_active_scenarios_by_priority(scenarios):
+    result = []
+
+# get a list of Ids of scenarios which are to be executed
 # list is prepared based on: measurements, doneScenarios, and current time
 def _get_scenarios_to_execute():
-	
+	global scenarios
+	result = []
+	active_date_scenarios = _get_active_scenarios_by_date(scenarios)
+	active_scenarios = _get_active_scenarios_by_priority(active_date_scenarios)
+    
+	for scenario in active_scenarios:
+		if not str(scen["ConditionModuleId"]) in measurements:
+			continue # there is no Measurement from Module with this Id (yet)
+		value = measurements[str(scen["ConditionModuleId"])]
+		
+		if not str(scen["Id"]) in doneScenarios:
+			doneScenarios[str(scen["Id"])] = 0
+		done = doneScenarios[str(scen["Id"])]
+		if done>0 and int(scen["Recurring"])==0:
+			continue # // scenario was already executed, and is not recurring
+		
+		conditionMet = False
+		temp = ''
+		wilg = ''
+		if scen["Condition"] < 5:
+			v = value.split(';')
+			if len(v) != 2:
+				continue # not properly encoded value.
+			temp = v[0]
+			temp = v[1]
+		if scen["Condition"] == 1: # Temperatura poniżej..
+			
+		if scen["Condition"] == 2: # Temperatura powyżej..
+			
+		if scen["Condition"] == 3: # Wilgotność poniżej..
+			
+		if scen["Condition"] == 4: # Wilgotność powyżej..
+			
+		if scen["Condition"] == 5: # Wykryto ruch
+			
 
 
 def _try_execute_scenarios():
@@ -131,7 +173,7 @@ def _try_execute_scenarios():
 		print(str(scen["Name"]))
 		# // datetime.now between starttime and endtime?
 		if not str(scen["ConditionModuleId"]) in measurements:
-			print('nie ma (jeszcze) pomiaru do takiego confitionmoduleid')
+			print('nie ma (jeszcze) pomiaru do takiego conditionmoduleid')
 			continue #// pomiaru takiego nie ma
 		value = measurements[str(scen["ConditionModuleId"])]
 		print(str(scen["Condition"]))
@@ -181,12 +223,12 @@ def _generate_rules():
     global scenarios
     rules = []
     for scen in scenarios:
-		if not scen["Name"]:
-			continue
-		print('rozwazam scenariusz ' + str(scen["Name"]))
-		rule = (scen["ConditionModuleId"], scen["Condition"], scen["ValueInt"])
-		print('Dodaje rule nastepujaca: ' + str(rule[0]) + ' ' + str(rule[1]) + ' ' + str(rule[2]))
-		rules.append(rule)
+        if not scen["Name"]:
+            continue
+        print('rozwazam scenariusz ' + str(scen["Name"]))
+        rule = (scen["ConditionModuleId"], scen["Condition"], scen["ValueInt"])
+        print('Dodaje rule nastepujaca: ' + str(rule[0]) + ' ' + str(rule[1]) + ' ' + str(rule[2]))
+        rules.append(rule)
 
 def _does_measurement_match_rule(moduleid, value):
 	print('czy measurement: ' + str(moduleid) + ' \n' + str(value) + '\n spelnia jakas rule?')
@@ -233,6 +275,7 @@ def _main_event_waiting():
 			print('event triggered by measurement meeting some rule')
 			_try_execute_scenarios()
 		
+		# TODO clear measurements, zeby nie byl wykonany scenariusz znowu na podstawie tego samego measurement
 		lock.release()
 
 def main_routine():
@@ -260,22 +303,5 @@ def main_routine():
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_handler)
-    
-    print("Path at terminal when executing this file")
-	print(os.getcwd() + "\n")
-
-	print("This file path, relative to os.getcwd()")
-	print(__file__ + "\n")
-
-	print("This file full path (following symlinks)")
-	full_path = os.path.realpath(__file__)
-	print(full_path + "\n")
-
-	print("This file directory and name")
-	path, filename = os.path.split(full_path)
-	print(path + ' --> ' + filename + "\n")
-
-	print("This file directory only")
-	print(os.path.dirname(full_path))
     
     main_routine()
