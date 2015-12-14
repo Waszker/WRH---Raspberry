@@ -8,6 +8,7 @@ import signal
 import time as t
 import threading
 import requests
+from urllib2 import urlopen
 
 def _start_stunnel(camera):
     filename = "/tmp/stunnel" + str(camera.id) + ".conf"
@@ -25,14 +26,20 @@ def _start_stunnel(camera):
     p.wait()
 
 
-def _snapshot_thread(camera, login, password):
+def _get_streaming_address(port):
+    address = "https://"
+    address = address + str(urlopen('http://ip.42.pl/raw').read())
+    address = address + ":" + str(port)
+    return address
+
+def _snapshot_thread(device_info, camera, login, password):
     port = camera.address;
 
     while True:
         t.sleep(5)
         image = get_camera_snapshot(port, login, password)
-        U.write_measurement(camera.type, camera.id, image)
-        U.add_measurement("test");
+        U.manage_measurement(device_info[0], device_info[1], camera.id,
+                             camera.type, image, _get_streaming_address(camera.gpio))
 
 
 def _signal_handler(signal, frame):
@@ -42,14 +49,14 @@ def _signal_handler(signal, frame):
     sys.exit(0)
 
 
-def _start_camera_thread(camera):
+def _start_camera_thread(device_info, camera):
     os.environ['LD_LIBRARY_PATH'] = '/usr/lib'
     command = ["/bin/mjpg_streamer",  "-i", "input_uvc.so -n -q 50 -f 1 -d " + str(camera.gpio),
                "-o", "output_http.so -p " + camera.address + " -c login:password"]
     print(command)
 
     # Preparing thread and subprocess
-    thread1 = threading.Thread(target = _snapshot_thread, args = (camera, 'login', 'password'))
+    thread1 = threading.Thread(target = _snapshot_thread, args = (device_info, camera, 'login', 'password'))
     thread2 = threading.Thread(target = _start_stunnel, args = (camera,))
     p = subprocess.Popen(command, stdout = subprocess.PIPE, stderr = subprocess.PIPE, env = os.environ)
     thread1.daemon = thread2.daemon = True
@@ -67,10 +74,12 @@ def get_camera_snapshot(port, login, password):
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, _signal_handler)
+    device_line = sys.argv[1]
     conf_line = sys.argv[2]
 
+    device_info = C.get_device_entry_data(device_line)
     camera = C.get_module_entry_data(conf_line)
-    process = _start_camera_thread(camera)
+    process = _start_camera_thread(device_info, camera)
 
     # Await some response from subprocess
     for line in process.stderr.readlines():
