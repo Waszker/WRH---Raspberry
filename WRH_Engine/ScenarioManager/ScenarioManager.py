@@ -167,7 +167,7 @@ def _get_scenarios_to_execute():
 	for scen in active_scenarios:
 		if not str(scen["ConditionModuleId"]) in measurements:
 			continue # there is no Measurement from Module with this Id (yet)
-		value = measurements[str(scen["ValueInt"])]
+		value = measurements[str(scen["ConditionModuleId"])]
 
 		if not str(scen["Id"]) in doneScenarios:
 			doneScenarios[str(scen["Id"])] = 0
