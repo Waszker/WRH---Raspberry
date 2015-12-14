@@ -246,6 +246,7 @@ def _execute_scenario(actionmoduleid, action):
 		return True
 	if action == '3':
 		address = module.address + '?toggle'
+		print('probuje togglowac gniazdko pod adresem: ' + address)
 		# TODO try catch
 		urllib2.urlopen(address).read()
 		return True
