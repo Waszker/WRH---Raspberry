@@ -21,7 +21,7 @@ def manage_measurement(device_id, device_token,  module_id,  module_type, measur
         try:
             if not os.path.exists(path):
                 os.makedirs(path)
-            with open("{}/{}.wrh".format(path, time.strftime("%Y-%d-%m.%H:%M")), 'a+') as f:
+            with open("{}/{}.wrh".format(path, time.strftime("%Y-%d-%m.%H:%M:%S")), 'a+') as f:
                 f.write("{}${}".format(str(generate_proper_date()), str(measurement)))
         except IOError as err:
             try:
@@ -29,7 +29,7 @@ def manage_measurement(device_id, device_token,  module_id,  module_type, measur
                 file = listdir(path)[0]
                 os.remove(os.path.join(path, file))
                 # try to write measurement once again
-                with open("{}/{}.wrh".format(path, time.strftime("%Y-%d-%m.%H:%M")), 'a+') as f:
+                with open("{}/{}.wrh".format(path, time.strftime("%Y-%d-%m.%H:%M:%S")), 'a+') as f:
                     f.write("{}${}".format(generate_proper_date(), measurement))
             except IOError as err:
                 raise IOError(err.message)
