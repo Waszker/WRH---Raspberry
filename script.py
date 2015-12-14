@@ -1,5 +1,6 @@
 #!/usr/bin/python2.7
 import os.path as path
+import os
 import json
 import signal
 import subprocess
@@ -117,4 +118,6 @@ def show_options():
                 f.write(str(system_info['Id']) + ";" + str(system_info['Token']) + '\n')
 
 if __name__ == "__main__":
+    if os.getuid() != 0:
+        exit("You need to have root privileges to run this script.\nPlease try again, this time using 'sudo'. Exiting.")
     show_options()

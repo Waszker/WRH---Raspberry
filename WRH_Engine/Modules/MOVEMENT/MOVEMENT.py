@@ -3,6 +3,7 @@
 import WRH_Engine.Modules.MOVEMENT.MOVEMENT
 from WRH_Engine.WebApiLibrary import WebApiClient as W
 from WRH_Engine.Configuration import configuration as config
+from WRH_Engine.Utils import utils as U
 import json
 import threading
 import time
@@ -27,8 +28,6 @@ def _read_arguments(argv):
 	global deviceid
 	global devicetoken
 	global module
-	print('argv[0] = ' + argv[0])
-	print('argv[1] = ' + argv[1])
 	dev = config.get_device_entry_data(argv[0])
 	module = config.get_module_entry_data(argv[1])
 
@@ -36,7 +35,7 @@ def _send_measurement_to_scenario_manager(measurement):
 	print('wysylam measurement do scenario manager')
 	clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	clientsocket.connect(('localhost', 2000))
-	clientsocket.send(moduleid)
+	clientsocket.send(str(module.id))
 	clientsocket.recv(4096)
 	clientsocket.send(str(measurement))
 
@@ -55,7 +54,7 @@ def _read_movement():
 def main(argv):
 	print('main() start MOVEMENT')
 	_read_arguments(argv)
-	time.sleep(10)
+	time.sleep(4)
 	
 	while True:		
 		measurement = _read_movement()
