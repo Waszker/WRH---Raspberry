@@ -45,6 +45,8 @@ def signal_handler(signal, frame):
 def _read_available_modules():
 	print('reading available modules')
 	global availablemodules
+	global deviceid
+	global devicetoken
 	with open(CONFIGURATION_FILE, 'r') as f:
 		(system_info, availablemodules) = config.parse_configuration_file(f)
 	deviceid = system_info[0]
