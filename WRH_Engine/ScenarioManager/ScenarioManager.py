@@ -160,8 +160,9 @@ def _get_active_scenarios_by_priority(scenarios):
 def _get_scenarios_to_execute():
 	global scenarios
 	result = []
-	active_date_scenarios = _get_active_scenarios_by_date(scenarios)
-	active_scenarios = _get_active_scenarios_by_priority(active_date_scenarios)
+	#active_date_scenarios = _get_active_scenarios_by_date(scenarios)
+	#active_scenarios = _get_active_scenarios_by_priority(active_date_scenarios)
+	active_scenarios = scenarios
 
 	for scen in active_scenarios:
 		if not str(scen["ConditionModuleId"]) in measurements:
