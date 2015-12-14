@@ -35,18 +35,18 @@ def manage_measurement(dev, module, measurement):
 def _send_old_measurements(path, dev, module_id):
     try:
         if os.path.exists(path):
-        # ... for each file in measurement directory
-        for file in listdir(path):
-            content = ''
-            # read content
-            with open(os.path.join(path, file), 'r') as content_file:
-                content = content_file.read()
-            # pull out timestamp and measuremet
-            pair = content.split('$')
-            # send measurement
-            if W.add_measurement(dev[0], dev[1], module_id, pair[0], pair[1], "")[0] == W.Response.STATUS_OK:
-                # remove file if ok
-                os.remove(os.path.join(path, file))
+			# ... for each file in measurement directory
+			for file in listdir(path):
+				content = ''
+				# read content
+				with open(os.path.join(path, file), 'r') as content_file:
+					content = content_file.read()
+				# pull out timestamp and measuremet
+				pair = content.split('$')
+				# send measurement
+				if W.add_measurement(dev[0], dev[1], module_id, pair[0], pair[1], "")[0] == W.Response.STATUS_OK:
+					# remove file if ok
+					os.remove(os.path.join(path, file))
     except IOError as err:
         raise IOError(err.message)
 
