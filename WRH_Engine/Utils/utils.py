@@ -9,11 +9,11 @@ from os import listdir
 from WRH_Engine.WebApiLibrary import WebApiClient as W
 
 
-def manage_measurement(dev, module, measurement):
-    path = "/var/wrh/{}_{}".format(module.type, module.id)
-    if W.add_measurement(dev[0], dev[1], module.id, generate_proper_date(), measurement, "")[0] == W.Response.STATUS_OK:
+def manage_measurement(device_id, device_token,  module_id,  module_type, measurement):
+    path = "/var/wrh/{}_{}".format(module_type, module_id)
+    if W.add_measurement(device_id, device_token, module_id, generate_proper_date(), measurement, "")[0] == W.Response.STATUS_OK:
         # send old measurements
-        _send_old_measurements(path, dev, module.id)
+        _send_old_measurements(path, device_id,  device_token, module_id)
     else:
         try:
             if not os.path.exists(path):
@@ -32,7 +32,7 @@ def manage_measurement(dev, module, measurement):
                 raise IOError(err.message)
 
 
-def _send_old_measurements(path, dev, module_id):
+def _send_old_measurements(path, device_id,  device_token, module_id):
     try:
         if os.path.exists(path):
 			# ... for each file in measurement directory
@@ -44,7 +44,7 @@ def _send_old_measurements(path, dev, module_id):
 				# pull out timestamp and measuremet
 				pair = content.split('$')
 				# send measurement
-				if W.add_measurement(dev[0], dev[1], module_id, pair[0], pair[1], "")[0] == W.Response.STATUS_OK:
+				if W.add_measurement(device_id, device_token, module_id, pair[0], pair[1], "")[0] == W.Response.STATUS_OK:
 					# remove file if ok
 					os.remove(os.path.join(path, file))
     except IOError as err:

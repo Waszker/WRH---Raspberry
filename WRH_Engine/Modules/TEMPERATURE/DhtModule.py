@@ -51,7 +51,7 @@ def _signal_handler():
 def _sigalrm_handler(signal, frame):
     measurement = _get_measurement(module.gpio)
     _send_measurement_to_scenario_manager(measurement)
-    U.manage_measurement(dev, module, measurement)
+    U.manage_measurement(dev[0],  dev[1], module.id,  module.type, measurement)
 
 
 if __name__ == "__main__":
