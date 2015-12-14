@@ -5,6 +5,7 @@ import time
 import os
 import re
 import datetime
+import socket
 from os import listdir
 from WRH_Engine.WebApiLibrary import WebApiClient as W
 
