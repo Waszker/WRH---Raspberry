@@ -8,6 +8,7 @@ import threading
 import time
 import socket
 import RPi.GPIO as GPIO
+import sys
 
 
 #na sztywno dane rasberaka uzytkownika przem321@wp.pl
@@ -22,12 +23,14 @@ temp_cnt = 0
 sleep_time = 1
 after_sleep_time = 5
 
-def _read_arguments():
+def _read_arguments(argv):
 	global deviceid
 	global devicetoken
 	global module
-	dev = C.get_device_entry_data(argv[0])
-	mod = C.get_module_entry_data(argv[1])
+	print('argv[0] = ' + argv[0])
+	print('argv[1] = ' + argv[1])
+	dev = config.get_device_entry_data(argv[0])
+	mod = config.get_module_entry_data(argv[1])
 	module = config.get_module_entry_data(mod)
 
 def _send_measurement_to_scenario_manager(measurement):
@@ -50,9 +53,9 @@ def _read_movement():
 	return result
 
 
-def main():
+def main(argv):
 	print('main() start MOVEMENT')
-	_read_arguments()
+	_read_arguments(argv)
 	time.sleep(10)
 	
 	while True:		
@@ -67,4 +70,4 @@ def main():
 	print('main() end')
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])
