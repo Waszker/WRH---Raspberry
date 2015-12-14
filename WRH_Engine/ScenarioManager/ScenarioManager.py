@@ -212,7 +212,7 @@ def _try_execute_scenarios():
 	global scenarios
 	print('try_execute_scenarios, scenariuszy jest: ' + str(len(scenarios)))
 
-	#scensToExecute = _get_scenarios_to_execute()
+	scensToExecute = _get_scenarios_to_execute()
 	for scen in scensToExecute:
 		print('trying to execute scenario ' + str(scen["Id"]))
 		result = _execute_scenario(str(scen["ActionModuleId"]), str(scen["Action"]))
