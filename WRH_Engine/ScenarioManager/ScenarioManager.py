@@ -1,7 +1,7 @@
 #!/usr/bin/python2.7
 from ..WebApiLibrary import WebApiClient as webapi
 from WRH_Engine.Configuration import configuration as config
-import WRH_Engine.Modules.CAMERA as camera
+import WRH_Engine.Modules.CAMERA.camera as camera
 import WRH_Engine.Utils.utils as utils
 import sys
 import json
