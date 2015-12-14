@@ -11,14 +11,7 @@ from WRH_Engine.WebApiLibrary import WebApiClient as W
 
 def manage_measurement(device_id, device_token,  module_id,  module_type, measurement):
     path = "/var/wrh/{}_{}".format(module_type, module_id)
-    if not isinstance(device_id, basestring):
-        print('dev id')
-    if not isinstance(device_token, basestring):
-        print('dev token')
-    if not isinstance(module_id, basestring):
-        print('mid')
-    print('probuje wyslac: ' + device_id + ' ' + device_token + ' ' + str(module_id) + ' ' + str(generate_proper_date()) + ' ' + str(measurement))
-    send_result = W.add_measurement(device_id, device_token, str(module_id), str(generate_proper_date()), measurement, "")
+    send_result = W.add_measurement(device_id, device_token, str(module_id), str(generate_proper_date()), str(measurement), "")
     if send_result[0] == W.Response.STATUS_OK:
         # send old measurements
         print('man_meas: udalo sie wyslac')
@@ -29,7 +22,7 @@ def manage_measurement(device_id, device_token,  module_id,  module_type, measur
             if not os.path.exists(path):
                 os.makedirs(path)
             with open("{}/{}.wrh".format(path, time.strftime("%Y-%d-%m.%H:%M")), 'a+') as f:
-                f.write("{}${}".format(generate_proper_date(), measurement))
+                f.write("{}${}".format(str(generate_proper_date()), str(measurement)))
         except IOError as err:
             try:
                 # remove the oldest file
@@ -54,7 +47,7 @@ def _send_old_measurements(path, device_id,  device_token, module_id):
 				# pull out timestamp and measuremet
 				pair = content.split('$')
 				# send measurement
-				if W.add_measurement(device_id, device_token, module_id, pair[0], pair[1], "")[0] == W.Response.STATUS_OK:
+				if W.add_measurement(device_id, device_token, str(module_id), pair[0], pair[1], "")[0] == W.Response.STATUS_OK:
 					# remove file if ok
 					os.remove(os.path.join(path, file))
     except IOError as err:
