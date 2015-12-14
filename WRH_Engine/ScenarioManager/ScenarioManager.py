@@ -197,7 +197,7 @@ def _get_scenarios_to_execute():
 				conditionMet = True
 		if scen["Condition"] == 5: # Wykryto ruch
 			print('Condition scenariusza - czy wykryto ruch?')
-			if value > 0:
+			if int(value) > 0:
 				print('value=' + str(value)+ '> 0, czyli tak')
 				conditionMet = True
 		if conditionMet:
