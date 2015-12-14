@@ -2,6 +2,7 @@
 from ..WebApiLibrary import WebApiClient as webapi
 from WRH_Engine.Configuration import configuration as config
 import WRH_Engine.Modules.CAMERA as camera
+import WRH_Engine.Utils.utils as utils
 import sys
 import json
 import threading
@@ -9,6 +10,7 @@ import time
 import socket
 import urllib2
 import signal
+import re
 from datetime import datetime, timedelta
 
 verbose = True # should I print comments what is happening?
@@ -122,8 +124,22 @@ def _scenarios_changed():
 # make a python datetime object based on our datetime string
 # YYYY-MM-DDThh:mm:ss
 # returns: (success, datetime)
-def _convert_datetime_to_python(datetime):
-	return (False, '')
+def _convert_datetime_to_python(our_datetime):
+	datetimepattern = re.compile("^([0-9][0-9][0-9][0-9])-([0-9][0-9])-([0-9][0-9])T([0-9][0-9]):([0-9][0-9]):([0-9][0-9])$")
+	utils.add_measurement("test")
+	does_match = datetimepattern.match(our_datetime)
+	if not does_match:
+		return (False,  '')
+	groups = re.search(datetimepattern,  our_datetime)
+	success = True
+	result = ''
+	try:
+		result = datetime(int(groups.group(1)),  int(groups.group(2)),  int(groups.group(3)),  int(groups.group(4)),  int(groups.group(5)),  int(groups.group(6)))
+	except:
+		success = False
+		result = ''
+	
+	return (success,  result)
 
 
 # from list of scenarios, get scenarios that are active (startDate <= DateTime.Now <= endDate)
