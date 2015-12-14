@@ -96,6 +96,9 @@ target/
 # WRH config file
 .wrh.config
 
+# Stunnel private key
+key.pem
+
 # Generated C files
 *.o
 WRH_Engine/Modules/OVERLORD/program

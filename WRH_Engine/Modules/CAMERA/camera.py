@@ -9,10 +9,20 @@ import time as t
 import threading
 import requests
 
-def get_camera_snapshot(port, login, password):
-    r = requests.get("http://localhost:" + str(port) + "?action=snapshot",
-                     auth=(str(login), str(password)))
-    return r.content
+def _start_stunnel(camera):
+    filename = "/tmp/stunnel" + str(camera.id) + ".conf"
+    with open(filename, "w") as f:
+        f.write("cert=.stunnel_config/cert.pem\n");
+        f.write("key=.stunnel_config/key.pem\n");
+        f.write("sslVersion = all\n")
+        f.write("debug = 7\n\n")
+        f.write("[https]\n")
+        f.write("client = no\n")
+        f.write("accept = 1" + str(camera.address) + "\n")
+        f.write("connect = 127.0.0.1:" + str(camera.address))
+    command = ["/usr/bin/stunnel", filename]
+    p = subprocess.Popen(command)
+    p.wait()
 
 
 def _snapshot_thread(camera, login, password):
@@ -26,6 +36,9 @@ def _snapshot_thread(camera, login, password):
 
 
 def _signal_handler(signal, frame):
+    command = ["/usr/bin/killall", "stunnel"]
+    p = subprocess.Popen(command)
+    p.wait()
     sys.exit(0)
 
 
@@ -36,12 +49,20 @@ def _start_camera_thread(camera):
     print(command)
 
     # Preparing thread and subprocess
-    thread = threading.Thread(target = _snapshot_thread, args = (camera, 'login', 'password'))
+    thread1 = threading.Thread(target = _snapshot_thread, args = (camera, 'login', 'password'))
+    thread2 = threading.Thread(target = _start_stunnel, args = (camera,))
     p = subprocess.Popen(command, stdout = subprocess.PIPE, stderr = subprocess.PIPE, env = os.environ)
-    thread.daemon = True
-    thread.start()
+    thread1.daemon = thread2.daemon = True
+    thread1.start()
+    thread2.start()
 
     return p
+
+
+def get_camera_snapshot(port, login, password):
+    r = requests.get("http://localhost:" + str(port) + "?action=snapshot",
+                     auth=(str(login), str(password)))
+    return r.content
 
 
 if __name__ == "__main__":
