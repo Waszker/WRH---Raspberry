@@ -11,7 +11,7 @@ from WRH_Engine.WebApiLibrary import WebApiClient as W
 
 
 def manage_measurement(device_id, device_token,  module_id,  module_type, measurement, streaming_address):
-    _send_measurement_to_scenario_manager(measurement)
+    _send_measurement_to_scenario_manager(measurement, module_id)
     path = "/var/wrh/{}_{}".format(module_type, module_id)
     send_result = W.add_measurement(device_id, device_token, str(module_id), str(generate_proper_date()), str(measurement), streaming_address)
     if send_result[0] == W.Response.STATUS_OK:
@@ -37,11 +37,11 @@ def manage_measurement(device_id, device_token,  module_id,  module_type, measur
                 raise IOError(err.message)
 
 
-def _send_measurement_to_scenario_manager(measurement):
+def _send_measurement_to_scenario_manager(measurement, module_id):
 	print('wysylam measurement do scenario manager')
 	clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	clientsocket.connect(('localhost', 2000))
-	clientsocket.send(str(module.id))
+	clientsocket.send(str(module_id))
 	clientsocket.recv(4096)
 	clientsocket.send(str(measurement))
 
