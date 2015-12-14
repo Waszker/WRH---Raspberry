@@ -252,7 +252,7 @@ def _execute_scenario(actionmoduleid, action):
 		return True
 	if action == '4':
 		# TODO take snapshot
-		print('taking snapshot, port=' + str(module.address)' , login:password')
+		print('taking snapshot, port=' + str(module.address) +' login:password')
 		content = camera.get_camera_snapshot(str(module.address), "login", "password")
 		print('snapshot taken, content = ')
 		print(str(content))
