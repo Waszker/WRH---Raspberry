@@ -163,7 +163,7 @@ def _get_scenarios_to_execute():
 	active_date_scenarios = _get_active_scenarios_by_date(scenarios)
 	active_scenarios = _get_active_scenarios_by_priority(active_date_scenarios)
 
-	for scenario in active_scenarios:
+	for scen in active_scenarios:
 		if not str(scen["ConditionModuleId"]) in measurements:
 			continue # there is no Measurement from Module with this Id (yet)
 		value = measurements[str(scen["ConditionModuleId"])]
