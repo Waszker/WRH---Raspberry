@@ -9,9 +9,9 @@ from os import listdir
 from WRH_Engine.WebApiLibrary import WebApiClient as W
 
 
-def manage_measurement(device_id, device_token,  module_id,  module_type, measurement):
+def manage_measurement(device_id, device_token,  module_id,  module_type, measurement, streaming_address):
     path = "/var/wrh/{}_{}".format(module_type, module_id)
-    send_result = W.add_measurement(device_id, device_token, str(module_id), str(generate_proper_date()), str(measurement), "")
+    send_result = W.add_measurement(device_id, device_token, str(module_id), str(generate_proper_date()), str(measurement), streaming_address)
     if send_result[0] == W.Response.STATUS_OK:
         # send old measurements
         print('man_meas: udalo sie wyslac')
