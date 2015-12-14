@@ -6,6 +6,7 @@ def _is_device_color_convention_correct(color):
     pattern = re.compile("#[\d | A-F]{8}")
     return pattern.match(color)
 
+
 def _get_device_information():
     while True:
         device_name = raw_input('Your device "name": ')
@@ -21,9 +22,11 @@ def _get_device_information():
 
     return (device_name, device_color)
 
+
 def _is_username_convention_correct(username):
     pattern = re.compile("(.+?)@(.+?).(..)")
     return pattern.match(username)
+
 
 def _get_login_information():
     while True:
@@ -35,6 +38,7 @@ def _get_login_information():
     password = getpass.getpass('Password: ')
 
     return (username, password)
+
 
 def _register_device():
     (username, password) = _get_login_information()
@@ -52,6 +56,7 @@ def _register_device():
         print '***Response content: ' + str(result_content)
 
     return (is_success, result_content)
+
 
 # Runs register procedure that asks user some important questions
 def register_procedure():

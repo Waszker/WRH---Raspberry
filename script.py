@@ -12,6 +12,7 @@ CONFIGURATION_FILE = '.wrh.config'
 def _siginit_handler(signal, frame):
     print 'SIGINT signal caught'
 
+
 def _edit_module(system_info, modules) :
     print 'Choose which module to edit'
     while True:
@@ -29,12 +30,14 @@ def _edit_module(system_info, modules) :
     with open(CONFIGURATION_FILE, 'w') as f:
         config.update_configuration_file(f, system_info, modules)
 
+
 def _add_new_module(system_info, modules) :
     module = Module.register_new_module(system_info)
     if module :
         modules.append(module)
         with open(CONFIGURATION_FILE, 'a') as f:
             config.add_new_module(f, module)
+
 
 def _remove_module(system_info, modules) :
     print 'Choose which module to remove'
@@ -53,12 +56,14 @@ def _remove_module(system_info, modules) :
         with open(CONFIGURATION_FILE, 'w') as f:
             config.update_configuration_file(f, system_info, modules)
 
+
 def _run_overlord():
     signal.signal(signal.SIGINT, _siginit_handler)
     command = "./WRH_Engine/Modules/OVERLORD/program"
     process = subprocess.Popen(command)
     process.wait()
     signal.signal(signal.SIGINT, _siginit_handler)
+
 
 def _run_maintenance_work():
     with open(CONFIGURATION_FILE, 'r') as f:
@@ -94,8 +99,10 @@ def _is_configuration_file_sane():
         return config.check_configuration_file_sanity(f)
     return False
 
+
 def _is_configuration_file_present():
     return path.isfile(CONFIGURATION_FILE)
+
 
 def show_options():
     print 'Welcome to Wild Raspberry House management program!'

@@ -9,6 +9,7 @@ class Module:
         4 : 'WI-FI SOCKET'
     }
 
+
     def __init__(self, id, type, gpio, name, address):
         self.id = int(id)
         self.type = int(type)
@@ -16,12 +17,14 @@ class Module:
         self.name = str(name)
         self.address = str(address)
 
+
     def print_information_string(self):
         print (self.name + ' is module of type ' + Module.get_type_name(self.type)),
         if self.type == 1 or self.type == 3 :
             print ('connected to gpio ' + self.gpio)
         else:
             print ('available at address ' + self.address)
+
 
     def run_edit_procedure(self, system_info):
         print 'Provide new module information (leave fields blank if you don\'t want to change)'
@@ -41,9 +44,11 @@ class Module:
         if new_gpio : self.gpio = new_gpio
         if new_address : self.address = new_address
 
+
     def _update_module_information(self, system_info, new_name):
         (status, response_content) = W.edit_module(system_info[0], system_info[1], self.id, new_name)
         return status == W.Response.STATUS_OK
+
 
     def run_removal_procedure(self, system_info):
         is_success = False
@@ -57,6 +62,7 @@ class Module:
 
         return is_success
 
+
     @staticmethod
     def get_type_name(type):
         try:
@@ -64,6 +70,7 @@ class Module:
         except KeyError:
             type_name = "UNKNOWN"
         return type_name
+
 
     @staticmethod
     def register_new_module(system_info) :
@@ -91,6 +98,7 @@ class Module:
                 break
             continue
         return new_module
+
 
     @staticmethod
     def _run_registration_procedure((device_id, device_token), type):

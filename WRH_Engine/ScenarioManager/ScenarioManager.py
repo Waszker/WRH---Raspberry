@@ -2,7 +2,7 @@
 from ..WebApiLibrary import WebApiClient as webapi
 from WRH_Engine.Configuration import configuration as config
 import WRH_Engine.Modules.CAMERA as camera
-import os
+import sys
 import json
 import threading
 import time
@@ -38,9 +38,9 @@ def _extract_info_from_streamingaddress(streaming_address):
 
 def signal_handler(signal, frame):
     print 'Scenario Manager SIGINT routine'
-    os.exit(0)
-    
-   
+    sys.exit(0)
+
+
 # read deviceId, deviceToken and Modules from configuration file
 def _read_available_modules():
 	print('reading available modules')
@@ -132,27 +132,27 @@ def _get_active_scenarios_by_date(scenarios):
 		active = True
 		(successStart, datetimeStart) = _convert_datetime_to_python(scen["startDate"])
 		(successEnd, datetimeEnd) = _convert_datetime_to_python(scen["startDate"])
-		
+
 		if successStart:
 			if datetimeStart > now:
 				active = False
 		if successEnd:
 			if datetimeEnd < now:
 				active = False
-		
+
 		if active:
 			result.append(scen)
-	
+
 	return result
-	
+
 
 # from list of scenarios, exclude scenarios with the lowest priority within scenarios with the same action module
 def _get_active_scenarios_by_priority(scenarios):
 	result = []
 	#TODO
-	for scen in scenarios: 
+	for scen in scenarios:
 		result.append(scen)
-	
+
 	return result
 
 # get a list of Ids of scenarios which are to be executed
@@ -162,18 +162,18 @@ def _get_scenarios_to_execute():
 	result = []
 	active_date_scenarios = _get_active_scenarios_by_date(scenarios)
 	active_scenarios = _get_active_scenarios_by_priority(active_date_scenarios)
-    
+
 	for scenario in active_scenarios:
 		if not str(scen["ConditionModuleId"]) in measurements:
 			continue # there is no Measurement from Module with this Id (yet)
 		value = measurements[str(scen["ConditionModuleId"])]
-		
+
 		if not str(scen["Id"]) in doneScenarios:
 			doneScenarios[str(scen["Id"])] = 0
 		done = doneScenarios[str(scen["Id"])]
 		if done>0 and int(scen["Recurring"])==0:
 			continue # // scenario was already executed, and is not recurring
-		
+
 		conditionMet = False
 		temp = ''
 		wilg = ''
@@ -201,7 +201,7 @@ def _get_scenarios_to_execute():
 				conditionMet = True
 		if conditionMet:
 			result.append(scen["Id"])
-	
+
 	return result
 
 # try to execute all scenarios taken from _get_scenarios_to_execute()
@@ -210,7 +210,7 @@ def _try_execute_scenarios():
 	global doneScenarios
 	global scenarios
 	print('try_execute_scenarios, scenariuszy jest: ' + str(len(scenarios)))
-	
+
 	scensToExecute = _get_scenarios_to_execute()
 	for scen in scensToExecute:
 		print('trying to execute scenario ' + str(scen["Id"]))
@@ -279,7 +279,7 @@ def _main_event_waiting():
 		else:
 			print('event triggered by measurement meeting some rule')
 			_try_execute_scenarios()
-		
+
 		# clear measurements, zeby nie byl wykonany scenariusz znowu na podstawie tego samego measurement
 		measurements = dict()
 		lock.release()
@@ -300,7 +300,7 @@ def main():
 	t_event = threading.Thread(target=_main_event_waiting)
 	t_event.daemon = True
 	t_event.start()
-	
+
 	signal.pause()
 
 	print('main() end')
@@ -309,5 +309,5 @@ def main():
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_handler)
-    
+
     main()

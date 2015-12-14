@@ -23,13 +23,16 @@ def check_configuration_file_sanity(file_handler) :
 
     return does_match
 
+
 def get_device_entry_data(line) :
     matches = re.search("([1-9][0-9]{0,9});(.+)$", line)
     return (matches.group(1), matches.group(2))
 
+
 def get_module_entry_data(line) :
     m = re.search("([1-9][0-9]{0,9});([1-9][0-9]{0,9});(.*?);(.+?);(.*)$", line)
     return Module(m.group(2), m.group(1), m.group(3), m.group(4), m.group(5))
+
 
 # This function does not check if configuration file is sane
 # Please do check it before invoking!
@@ -44,10 +47,12 @@ def parse_configuration_file(file_handler) :
 
     return ((device_id, device_token), modules_list)
 
+
 def update_configuration_file(file_handler, system_info, modules):
     file_handler.write(str(system_info[0]) + ';' + system_info[1] + '\n')
     for module in modules:
         add_new_module(file_handler, module)
+
 
 def add_new_module(file_handler, module) :
     file_handler.write(str(module.type) + ';' + str(module.id) + ';'
