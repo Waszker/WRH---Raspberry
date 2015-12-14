@@ -17,8 +17,7 @@ deviceid = ''
 devicetoken = ''
 module = {}
 PIR = 4
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(PIR, GPIO.IN)
+
 
 temp_cnt = 0
 sleep_time = 1
@@ -28,10 +27,14 @@ def _read_arguments(argv):
 	global deviceid
 	global devicetoken
 	global module
+	global PIR
 	dev = config.get_device_entry_data(argv[0])
 	deviceid = dev[0]
 	devicetoken = dev[1]
 	module = config.get_module_entry_data(argv[1])
+	PIR = int(module.gpio)
+	GPIO.setmode(GPIO.BCM)
+	GPIO.setup(PIR, GPIO.IN)
 
 
 def _read_movement():

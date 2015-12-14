@@ -227,10 +227,11 @@ def _execute_scenario(actionmoduleid, action):
 	print('wykonuje scenariusz')
 	module = []
 	for mod in availablemodules:
-		if str(mod.id) == actionmoduleid:
+		if str(mod.id) == str(actionmoduleid):
 			module = mod
 			break
 	if not module:
+		print(" >> nie znalazlem action modulu o id: " + str(mod.id))
 		return False
 
 	if action == '1':
