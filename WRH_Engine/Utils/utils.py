@@ -8,25 +8,28 @@ import datetime
 from os import listdir
 from WRH_Engine.WebApiLibrary import WebApiClient as W
 
+
 def manage_measurement(dev, module, measurement):
     path = "/var/wrh/{}_{}".format(module.type, module.id)
-    try:
-        if not os.path.exists(path):
-            os.makedirs(path)
-        with open("{}/{}.wrh".format(path, time.strftime("%Y-%d-%m.%H:%M")), 'a+') as f:
-            f.write("{}${}".format(generate_proper_date(), measurement))
-    except IOError as err:
+    if W.add_measurement(dev[0], dev[1], module.id, generate_proper_date(), measurement, "")[0] == W.Response.STATUS_OK:
+        # send old measurements
+        _send_old_measurements(path, dev, module.id)
+    else:
         try:
-            # remove the oldest file
-            file = listdir(path)[0]
-            os.remove(os.path.join(path, file))
-            # try to write measurement once again
+            if not os.path.exists(path):
+                os.makedirs(path)
             with open("{}/{}.wrh".format(path, time.strftime("%Y-%d-%m.%H:%M")), 'a+') as f:
                 f.write("{}${}".format(generate_proper_date(), measurement))
-            # send old measurements
-            _send_old_measurements(path, dev, module.id)
         except IOError as err:
-            raise IOError(err.message)
+            try:
+                # remove the oldest file
+                file = listdir(path)[0]
+                os.remove(os.path.join(path, file))
+                # try to write measurement once again
+                with open("{}/{}.wrh".format(path, time.strftime("%Y-%d-%m.%H:%M")), 'a+') as f:
+                    f.write("{}${}".format(generate_proper_date(), measurement))
+            except IOError as err:
+                raise IOError(err.message)
 
 
 def _send_old_measurements(path, dev, module_id):
