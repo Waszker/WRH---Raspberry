@@ -60,12 +60,8 @@ def main(argv):
 	
 	while True:		
 		measurement = _read_movement()
-<<<<<<< HEAD
-		_send_measurement_to_scenario_manager(measurement)
 		U.manage_measurement(deviceid,  devicetoken, module.id,  module.type, measurement, '')
-=======
-		U.manage_measurement(deviceid,  devicetoken, module.id,  module.type, measurement)
->>>>>>> 33bfe489bba5a71a009a242a4e79191c8bb66afd
+
 		if measurement == 0:
 			time.sleep(sleep_time)
 		else:
