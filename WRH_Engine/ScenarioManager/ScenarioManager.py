@@ -84,10 +84,7 @@ def _socket_communicate(clientsocket):
 	scens = _get_scenarios_to_execute()
 	lock.release()
 	if len(scens) > 0:
-		print('rule spelniona, uruchamiam event')
 		event.set()
-	else:
-		print('niespelnia zadnej')
 	print('socket_communicate() end')
 
 # wait for incoming connections, and accept them. Accepted connection are then handled by _socket_communicate()
@@ -199,7 +196,9 @@ def _get_scenarios_to_execute():
 			if wilg > scen["ValueInt"]:
 				conditionMet = True
 		if scen["Condition"] == 5: # Wykryto ruch
+			print('Condition scenariusza - czy wykryto ruch?')
 			if value > 0:
+				print('value=' + str(value)+ '> 0, czyli tak')
 				conditionMet = True
 		if conditionMet:
 			result.append(scen)
