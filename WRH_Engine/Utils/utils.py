@@ -56,7 +56,12 @@ def _send_old_measurements(path, device_id,  device_token, module_id):
 
 def generate_proper_date():
     # YYYY-MM-DDThh:mm:ss
-    return time.strftime("%Y-%d-%mT%H:%M:%S", time.gmtime())
+    hour = int(time.strftime("%H"))
+    if hour == 24:
+        hour = 00
+    else:
+        hour = hour + 1
+    return time.strftime("%Y-%d-%mT{}:%M:%S".format(hour), time.gmtime())
 
 
 # make a python datetime object based on our datetime string
