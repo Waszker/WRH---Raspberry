@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 
 import socket
 import time
@@ -20,8 +20,8 @@ def _send_measurement_to_scenario_manager(measurement):
 	clientsocket.send(measurement)
 
 
-dev=''
-module=''
+dev = ''
+module = ''
 
 
 def main(argv):
@@ -49,12 +49,9 @@ def _signal_handler():
 
 
 def _sigalrm_handler(signal, frame):
-    timestamp = U.generate_proper_date_format()
     measurement = _get_measurement(module.gpio)
     _send_measurement_to_scenario_manager(measurement)
-    print str(measurement)
-    if not W.add_measurement(dev[0], dev[1], module.id, timestamp, measurement, "")[0] == W.Response.STATUS_OK:
-        U.write_measurement(module.type, module.id, measurement)
+    U.manage_measurement(dev, module, measurement)
 
 
 if __name__ == "__main__":
