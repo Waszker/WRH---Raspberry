@@ -29,6 +29,8 @@ def _read_arguments(argv):
 	global devicetoken
 	global module
 	dev = config.get_device_entry_data(argv[0])
+	deviceid = dev[0]
+	devicetoken = dev[1]
 	module = config.get_module_entry_data(argv[1])
 
 def _send_measurement_to_scenario_manager(measurement):

@@ -17,13 +17,14 @@ def manage_measurement(device_id, device_token,  module_id,  module_type, measur
         print('dev token')
     if not isinstance(module_id, basestring):
         print('mid')
-    send_result = W.add_measurement(device_id, device_token, module_id, str(generate_proper_date()), measurement, "")
+    print('probuje wyslac: ' + device_id + ' ' + device_token + ' ' + str(module_id) + ' ' + str(generate_proper_date()) + ' ' + str(measurement))
+    send_result = W.add_measurement(device_id, device_token, str(module_id), str(generate_proper_date()), measurement, "")
     if send_result[0] == W.Response.STATUS_OK:
         # send old measurements
         print('man_meas: udalo sie wyslac')
         _send_old_measurements(path, device_id,  device_token, module_id)
     else:
-        print('man_meas: nie udalo sie wyslac, code:' + str(send_result[0])
+        print('man_meas: nie udalo sie wyslac, code:' + str(send_result[0]))
         try:
             if not os.path.exists(path):
                 os.makedirs(path)
