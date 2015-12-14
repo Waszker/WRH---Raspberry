@@ -30,8 +30,7 @@ def _read_arguments(argv):
 	print('argv[0] = ' + argv[0])
 	print('argv[1] = ' + argv[1])
 	dev = config.get_device_entry_data(argv[0])
-	mod = config.get_module_entry_data(argv[1])
-	module = config.get_module_entry_data(mod)
+	module = config.get_module_entry_data(argv[1])
 
 def _send_measurement_to_scenario_manager(measurement):
 	print('wysylam measurement do scenario manager')
