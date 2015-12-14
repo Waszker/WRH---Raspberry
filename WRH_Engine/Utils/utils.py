@@ -36,6 +36,15 @@ def manage_measurement(device_id, device_token,  module_id,  module_type, measur
                 raise IOError(err.message)
 
 
+def _send_measurement_to_scenario_manager(measurement):
+	print('wysylam measurement do scenario manager')
+	clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	clientsocket.connect(('localhost', 2000))
+	clientsocket.send(str(module.id))
+	clientsocket.recv(4096)
+	clientsocket.send(str(measurement))
+
+
 def _send_old_measurements(path, device_id,  device_token, module_id):
     try:
         if os.path.exists(path):

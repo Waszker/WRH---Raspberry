@@ -33,15 +33,6 @@ def _read_arguments(argv):
 	devicetoken = dev[1]
 	module = config.get_module_entry_data(argv[1])
 
-def _send_measurement_to_scenario_manager(measurement):
-	print('wysylam measurement do scenario manager')
-	clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	clientsocket.connect(('localhost', 2000))
-	clientsocket.send(str(module.id))
-	clientsocket.recv(4096)
-	clientsocket.send(str(measurement))
-
-
 
 def _read_movement():
 	result = 0
