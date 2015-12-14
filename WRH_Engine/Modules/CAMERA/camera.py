@@ -8,6 +8,7 @@ import signal
 import time as t
 import threading
 import requests
+import base64
 from urllib2 import urlopen
 
 def _start_stunnel(camera):
@@ -38,8 +39,9 @@ def _snapshot_thread(device_info, camera, login, password):
     while True:
         t.sleep(5)
         image = get_camera_snapshot(port, login, password)
+        encoded_image = base64.b64encode(image)
         U.manage_measurement(device_info[0], device_info[1], camera.id,
-                             camera.type, image, _get_streaming_address(camera.gpio))
+                             camera.type, encoded_image, _get_streaming_address(camera.gpio))
 
 
 def _signal_handler(signal, frame):
