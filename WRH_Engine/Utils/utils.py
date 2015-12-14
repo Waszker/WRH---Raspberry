@@ -26,6 +26,8 @@ def generate_proper_date_format():
 # YYYY-MM-DDThh:mm:ss
 # returns: (success, datetime)
 def _convert_datetime_to_python(our_datetime):
+	if not our_datetime:
+		return (False,  '')
 	datetimepattern = re.compile("^([0-9][0-9][0-9][0-9])-([0-9][0-9])-([0-9][0-9])T([0-9][0-9]):([0-9][0-9]):([0-9][0-9])$")
 	does_match = datetimepattern.match(our_datetime)
 	if not does_match:

@@ -2,7 +2,7 @@ import unittest
 import WRH_Engine.ScenarioManager.ScenarioManager as scenariomanager
 import WRH_Engine.Utils.utils as utils
 
-class TestScenarioManager(unittest.TestCase):
+class TestUtils(unittest.TestCase):
 
 	def test_stub(self):
 		self.assertEqual(1 == 1, True)
@@ -24,7 +24,22 @@ class TestScenarioManager(unittest.TestCase):
 	def test_convert_datetime_to_python_incorrect_date(self):
 		(success, datetime) = utils._convert_datetime_to_python("2015-12-1416:23:30")
 		self.assertEqual(success, False)
+	
+	def test_convert_datetime_to_python_nullorempty(self):
+		(success, datetime) = utils._convert_datetime_to_python("")
+		self.assertEqual(success, False)
+		(success, datetime) = utils._convert_datetime_to_python(None)
+		self.assertEqual(success, False)
 
+class TestScenarioManager(unittest.TestCase):
+	
+	def test_get_active_scenarios_by_date(self):
+		scenarios = []
+		scen = {"Id" : 1,  "Name" : "pierwszy",  "startDate" : None,  "endDate" : ''}
+		scenarios.append(scen)
+		result = scenariomanager._get_active_scenarios_by_date(scenarios)
+		self.assertEqual(len(result),  1)
+		self.assertEqual(result[0]["Id"],  1)
 
 if __name__ == '__main__':
     unittest.main()
