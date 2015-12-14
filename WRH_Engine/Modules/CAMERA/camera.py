@@ -37,11 +37,10 @@ def _snapshot_thread(device_info, camera, login, password):
     port = camera.address;
 
     while True:
-        t.sleep(5)
+        t.sleep(60)
         image = get_camera_snapshot(port, login, password)
-        encoded_image = base64.b64encode(image)
         U.manage_measurement(device_info[0], device_info[1], camera.id,
-                             camera.type, encoded_image, _get_streaming_address(camera.gpio))
+                             camera.type, image, _get_streaming_address(camera.gpio))
 
 
 def _signal_handler(signal, frame):
@@ -71,7 +70,8 @@ def _start_camera_thread(device_info, camera):
 def get_camera_snapshot(port, login, password):
     r = requests.get("http://localhost:" + str(port) + "?action=snapshot",
                      auth=(str(login), str(password)))
-    return r.content
+    image = base64.b64encode(r.content)
+    return image
 
 
 if __name__ == "__main__":
