@@ -30,7 +30,7 @@ def _start_stunnel(camera):
 def _get_streaming_address(port):
     address = "https://"
     address = address + str(urlopen('http://ip.42.pl/raw').read())
-    address = address + ":" + str(port)
+    address = address + ":1" + str(port)
     return address
 
 def _snapshot_thread(device_info, camera, login, password):
@@ -40,7 +40,7 @@ def _snapshot_thread(device_info, camera, login, password):
         t.sleep(60)
         image = get_camera_snapshot(port, login, password)
         U.manage_measurement(device_info[0], device_info[1], camera.id,
-                             camera.type, image, _get_streaming_address(camera.gpio))
+                             camera.type, image, _get_streaming_address(port))
 
 
 def _signal_handler(signal, frame):
