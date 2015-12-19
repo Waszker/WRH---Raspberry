@@ -5,11 +5,8 @@ import time
 import sys
 import signal
 import Adafruit_DHT
-from WRH_Engine.Modules.TEMPERATURE import get_dallas_temperature as DT
 from WRH_Engine.Configuration import configuration as C
-from WRH_Engine.WebApiLibrary import WebApiClient as W
 from WRH_Engine.Utils import utils as U
-from WRH_Engine.module.module import Module
 
 
 def _send_measurement_to_scenario_manager(measurement):
@@ -36,15 +33,14 @@ def main(argv):
     dev = C.get_device_entry_data(argv[0])
     module = C.get_module_entry_data(argv[1])
 
-	while True:
-		time.sleep(300)
-		measurement = DT.get_dallas_temperature()
-		meas = str(measurement) + ';' + str(0)
-		U.manage_measurement(dev[0],  dev[1], module.id,  module.type, meas, "")
+    while True:
+		time.sleep(60)
+		measurement = _get_measurement(module.gpio)
+		U.manage_measurement(dev[0],  dev[1], module.id,  module.type, measurement, "")
 
 def _get_measurement(gpio):
     humidity, temperature = Adafruit_DHT.read_retry(Adafruit_DHT.AM2302, gpio)
-    return "{0:0.1f};{1:0.1f}".format(temperature, humidity)
+    return "{0:0.1f};{1:0.1f}".format(float(temperature), float(humidity))
 
 
 def _signal_handler():
@@ -57,8 +53,7 @@ def _sigalrm_handler(signal, frame):
 
 
 if __name__ == "__main__":
-    time.sleep(5)
     signal.signal(signal.SIGINT, _signal_handler)
     #signal.signal(signal.SIGALRM, _sigalrm_handler)
-    #signal.alarm(3)
+    # signal.alarm(3)
     main(sys.argv[1:])
