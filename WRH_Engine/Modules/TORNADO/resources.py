@@ -1,9 +1,19 @@
 #!/bin/python2
+from WRH_Engine.Configuration import configuration as C
 import Adafruit_DHT
 import urllib2
 
 DHT_DATA = "/tmp/.dht_data"
 
+def get_camera_streaming_ports():
+    ports = []
+    with open(".wrh.config") as f:
+        ((d, dd), modules_list) = C.parse_configuration_file(f)
+        for i, module in enumerate(modules_list):
+            if module.type == 2:
+                ports.append(module.address)
+
+    return ports
 def get_cpu_temp():
     tempFile = open("/sys/class/thermal/thermal_zone0/temp")
     cpu_temp = tempFile.read()

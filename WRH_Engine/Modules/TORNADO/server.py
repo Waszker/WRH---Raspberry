@@ -1,5 +1,4 @@
 #!/bin/python2
-from WRH_Engine.Configuration import configuration as C
 import tornado
 import tornado.ioloop
 import tornado.web
@@ -32,7 +31,7 @@ class Userform(BaseHandler):
     def get(self):
         isuservalid(self)
         items = []
-        cameraPorts = []
+        cameraPorts = resources.get_camera_streaming_ports()
         ip = str(self.request.host).split(":")[0]
         for file in os.listdir(__UPLOADS__):
             items.append(file)
