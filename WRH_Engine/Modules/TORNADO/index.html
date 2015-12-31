@@ -37,9 +37,6 @@
 			<div class="tabContent" id="general_info">
 				<h2>Statystyki systemu</h2>
 				<div>
-					<p>
-						Być może będzie tutaj tabelka z informacjami takimi jak uptime czy inne.
-					</p>
                     <div id="systemDiv"></div>
                     <br />
                     <button type="button" onclick="getUptime()">Refresh</button>
@@ -63,7 +60,9 @@
 			<div class="tabContent" id="monitoring">
 				<h2>Podgląd z kamer</h2>
 				<div>
-					<img src="https://{{ipaddress}}:1234/?action=stream" />
+                    {%for cameraPort in cameraPorts%}
+                        <img src="https://{{ipaddress}}:{{cameraPort}}/?action=stream" />
+                    {%end%}
 				</div>
 			</div>
 
