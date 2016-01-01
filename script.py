@@ -71,7 +71,7 @@ def _run_maintenance_work():
         (system_info, modules) = config.parse_configuration_file(f)
 
     while True :
-        print '\n=== LIST OF REGISTERED MODULES==='
+        print '\n=== LIST OF REGISTERED MODULES ==='
         for i, module in enumerate(modules) :
             print (str(i+1) + ') '),
             module.print_information_string()

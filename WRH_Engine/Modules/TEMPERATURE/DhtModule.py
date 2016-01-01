@@ -34,7 +34,7 @@ def main(argv):
     module = C.get_module_entry_data(argv[1])
 
     while True:
-		time.sleep(60)
+		time.sleep(15 * 60)
 		measurement = _get_measurement(module.gpio)
 		U.manage_measurement(dev[0],  dev[1], module.id,  module.type, measurement, "")
 
