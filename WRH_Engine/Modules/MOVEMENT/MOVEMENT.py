@@ -12,16 +12,25 @@ import RPi.GPIO as GPIO
 import sys
 
 
-#na sztywno dane rasberaka uzytkownika przem321@wp.pl
+# OPTIONS
+
+relaxationSleepTime = 3 # time to sleep after detecting movement
+
+# ~OPTIONS
+
+# GLOBAL VARIABLES
+
 deviceid = ''
 devicetoken = ''
 module = {}
 PIR = 4
+movementDetectedValue = 1
+
+# ~GLOBAL VARIABLES
 
 
-temp_cnt = 0
-sleep_time = 1
-after_sleep_time = 5
+
+
 
 def _read_arguments(argv):
 	global deviceid
@@ -37,6 +46,7 @@ def _read_arguments(argv):
 	GPIO.setup(PIR, GPIO.IN)
 
 
+# OBSOLETE
 def _read_movement():
 	result = 0
 	try:
@@ -52,15 +62,16 @@ def main(argv):
 	_read_arguments(argv)
 	time.sleep(4)
 	
-	while True:		
-		measurement = _read_movement()
-		U.manage_measurement(deviceid,  devicetoken, module.id,  module.type, measurement, '')
+	while True:
+		try:
+			GPIO.wait_for_edge(PIR, GPIO.FALLING)
+		except:
+			print('MOVEMENT: Failure on GPIO.wait_for_edge(). Exiting...')
+			sys.exit(0)
+		
+		U.manage_measurement(deviceid,  devicetoken, module.id,  module.type, movementDetectedValue, '')
 
-		if measurement == 0:
-			time.sleep(sleep_time)
-		else:
-			time.sleep(after_sleep_time)		
-		#break
+		time.sleep(relaxationSleepTime)
 	print('main() end')
 
 if __name__ == "__main__":
