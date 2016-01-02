@@ -1,27 +1,32 @@
 #!/bin/python2
 from WRH_Engine.Configuration import configuration as C
-import Adafruit_DHT
 import urllib2
 
-DHT_DATA = "/tmp/.dht_data"
-
-def get_camera_streaming_ports():
+def get_camera_streaming_ports(filename):
     ports = []
-    with open(".wrh.config") as f:
+    with open(filename) as f:
         ((d, dd), modules_list) = C.parse_configuration_file(f)
         for i, module in enumerate(modules_list):
             if module.type == 2:
                 ports.append(module.address)
 
     return ports
+
+def get_sockets(config_filename):
+    sockets = []
+    with open(config_filename) as f:
+        ((d, dd), modules_list) = C.parse_configuration_file(f)
+        for i, module in enumerate(modules_list):
+            if module.type == 4:
+                sockets.append(module)
+
+    return sockets
+
 def get_cpu_temp():
     tempFile = open("/sys/class/thermal/thermal_zone0/temp")
     cpu_temp = tempFile.read()
     tempFile.close()
     return float(cpu_temp)/1000
-
-def get_dht_readings(gpio_pin):
-    return Adafruit_DHT.read_retry(Adafruit_DHT.AM2302, gpio_pin)
 
 def getuptime():
     uptime_string = ""
@@ -51,26 +56,29 @@ def getuptime():
     return uptime_string
 
 def getsystemstats():
-    hum = temp = ""
-
-    with open(DHT_DATA, "r", 0) as f:
-        temp = f.readline()
-        hum = f.readline()
-
     stat_string = ""
     stat_string += "Uptime: " + getuptime() + "<br />"
     stat_string += "CPU temp: " + str(round(get_cpu_temp(), 1)) + "*C <br />"
-    stat_string += "Temp: " + temp + "*C <br/>"
-    stat_string += "Humidity: " + hum + "% <br/>"
 
     return stat_string
 
-def getelectricalsocketstate():
-    url = "http://192.168.0.100/cgi-bin/relay.cgi?state"
-    request = urllib2.Request(url)
-    return urllib2.urlopen(request).read()
+def getelectricalsocketstate(config_filename, id):
+    with open(config_filename) as f:
+        ((d, dd), modules_list) = C.parse_configuration_file(f)
+        for i, module in enumerate(modules_list):
+            if int(module.id) == int(id):
+                url = module.address + "?state"
+                request = urllib2.Request(url)
+                return urllib2.urlopen(request).read()
 
-def setelectrcalsocketstate(state):
-    url = "http://192.168.0.100/cgi-bin/relay.cgi?" + state
-    request = urllib2.Request(url)
-    return urllib2.urlopen(request).read()
+    return "?"
+
+def setelectrcalsocketstate(config_filename, id, state):
+    with open(config_filename) as f:
+        ((d, dd), modules_list) = C.parse_configuration_file(f)
+        for i, module in enumerate(modules_list):
+            if int(module.id) == int(id):
+                url = module.address + "?" + state
+                request = urllib2.Request(url)
+                return urllib2.urlopen(request).read()
+    return "?"

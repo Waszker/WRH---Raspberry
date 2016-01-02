@@ -3,8 +3,8 @@ var contentDivs = new Array();
 
 function init() {
     getUptime();
-    getSocket();
-    initCharts();
+    getSockets();
+    // initCharts();
 
     // Grab the tab links and content divs from the page
     var tabListItems = document.getElementById('tabs').childNodes;
@@ -52,22 +52,27 @@ function getUptime() {
      xmlHttp.send();
 }
 
-function getSocket() {
-     var xmlHttp = new XMLHttpRequest();
-     xmlHttp.onreadystatechange = function()
-     {
-         if(xmlHttp.readyState == 4 && xmlHttp.status == 200)
-             document.getElementById("socketDiv").innerHTML = xmlHttp.responseText;
-     }
-     xmlHttp.open("GET", "socket", true);
-     xmlHttp.send();
+function getSockets() {
+     var sockets = document.getElementsByClassName("socketDiv");
+
+     [].forEach.call(sockets, function(socket) {
+         var number = socket.id.substring(9);
+         var xmlHttp = new XMLHttpRequest();
+         xmlHttp.onreadystatechange = function()
+         {
+             if(xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                 document.getElementById("socketDiv" + number).innerHTML = xmlHttp.responseText;
+         }
+         xmlHttp.open("GET", "socket?number=" + number, true);
+         xmlHttp.send();
+     });
 }
 
-function setSocket(isTurnOn) {
+function setSocket(number, isTurnOn) {
      var xmlHttp = new XMLHttpRequest();
-     xmlHttp.open("POST", "socket?state=" + (isTurnOn ? "on" : "off"), true);
+     xmlHttp.open("POST", "socket?state=" + (isTurnOn ? "on" : "off") + "&number=" + number, true);
      xmlHttp.send();
-     getSocket();
+     getSockets();
 }
 
 

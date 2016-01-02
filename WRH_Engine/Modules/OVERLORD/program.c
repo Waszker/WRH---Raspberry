@@ -60,7 +60,7 @@ void restart_stopped_child(process* processes, int processes_number)
     }
 }
 
-void fill_processes_details(process* processes, int processes_number, FILE* config)
+void fill_processes_details(process* processes, FILE* config)
 {
     int line_number = 0;
     char* buffer;
@@ -73,11 +73,15 @@ void fill_processes_details(process* processes, int processes_number, FILE* conf
             // so we add there ScenarioManager module instead
             processes[line_number - 1].type = SCENARIO;
             processes[line_number - 1].device_config = buffer;
+
+            // Second unconditional module is TORNADO one
+            processes[line_number].type = TORNADO;
+            processes[line_number].device_config = CONFIGURATION_FILE;
             continue;
         }
-        processes[line_number - 1].type = get_module_type_from_config_line(buffer);
-        processes[line_number - 1].device_config = processes[0].device_config;
-        processes[line_number - 1].arguments_from_config = buffer;
+        processes[line_number].type = get_module_type_from_config_line(buffer);
+        processes[line_number].device_config = processes[0].device_config;
+        processes[line_number].arguments_from_config = buffer;
     }
 }
 
@@ -103,17 +107,19 @@ int main()
     /* Variables */
     sigset_t mask;
     FILE* config_file = open_file(CONFIGURATION_FILE, "r");
+    // TODO: Pass configuration file name as argument
 
     /* Get number of modules */
     printf("Program start\n");
-    int number_of_modules = get_number_of_lines_in_config(config_file);
+    int number_of_modules = get_number_of_lines_in_config(config_file) + 1;
     // first line is not module line but ScenarioManager will be started instead
-    if(0 == (number_of_modules-1))
+    // second unconditional module is Tornado server
+    if(0 == (number_of_modules-2))
     {
         printf("No modules registered. Nothing to do, exiting.");
         exit(EXIT_SUCCESS);
     }
-    printf("Number of registered modules: %d\n", number_of_modules - 1);
+    printf("Number of registered modules: %d\n", number_of_modules - 2);
 
     /* Setting child signal handler */
     set_signal_handler(SIGINT, sig_handler);
@@ -126,7 +132,7 @@ int main()
     /* Start subprocesses */
     printf("Starting server\n");
     process* subprocesses = (process*)safe_malloc(number_of_modules * sizeof(process));
-    fill_processes_details(subprocesses, number_of_modules, config_file);
+    fill_processes_details(subprocesses, config_file);
     fclose(config_file); // TODO: Check for errors
     start_subprocesses(subprocesses, number_of_modules);
 

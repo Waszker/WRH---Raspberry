@@ -3,10 +3,12 @@ import tornado
 import tornado.ioloop
 import tornado.web
 import os
+import sys
 import resources
 from resources import getsystemstats
 
 __UPLOADS__ = "/tmp/"
+__CONFIG_FILE__ = ".wrh.config"
 
 class BaseHandler(tornado.web.RequestHandler):
     def get_current_user(self):
@@ -31,12 +33,13 @@ class Userform(BaseHandler):
     def get(self):
         isuservalid(self)
         items = []
-        cameraPorts = resources.get_camera_streaming_ports()
+        cameraPorts = resources.get_camera_streaming_ports(__CONFIG_FILE__)
+        sockets = resources.get_sockets(__CONFIG_FILE__)
         ip = str(self.request.host).split(":")[0]
         for file in os.listdir(__UPLOADS__):
             items.append(file)
 
-        self.render("index.html", items=items, ipaddress=ip, cameraPorts = cameraPorts)
+        self.render("index.html", items=items, ipaddress=ip, cameraPorts = cameraPorts, sockets = sockets)
 
 class Upload(BaseHandler):
     def post(self):
@@ -65,12 +68,14 @@ class Uptime(BaseHandler):
 class Socket(BaseHandler):
     def get(self):
         if isuservalid(self) == False: return
-        self.finish(resources.getelectricalsocketstate())
+        id = self.get_argument("number")
+        self.finish(resources.getelectricalsocketstate(__CONFIG_FILE__, id))
 
     def post(self):
         if isuservalid(self) == False: return
         state = self.get_argument("state")
-        resources.setelectrcalsocketstate(state)
+        id = self.get_argument("number")
+        resources.setelectrcalsocketstate(__CONFIG_FILE__, id, state)
 
 application = tornado.web.Application([
     (r"/", Userform),
@@ -82,7 +87,7 @@ application = tornado.web.Application([
 ],
     debug=True,
     cookie_secret="59711y60254197251521521",
-    static_path=os.path.join(os.path.dirname("/var/www/Website"), "/var/www/Website"))
+    static_path=os.path.join(os.path.dirname("WRH_Engine/Modules/TORNADO"), "TORNADO"))
 
 def isuservalid(handler):
     if not handler.current_user:
@@ -92,5 +97,6 @@ def isuservalid(handler):
     return True
 
 if __name__ == "__main__":
+    __CONFIG_FILE__ = sys.argv[1]
     application.listen(8888)
     tornado.ioloop.IOLoop.instance().start()

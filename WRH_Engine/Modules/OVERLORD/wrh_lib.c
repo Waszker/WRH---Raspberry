@@ -5,12 +5,13 @@
 #include "common.h"
 #include "wrh_lib.h"
 
-static enum module_type module_types[] = { SCENARIO, DHT, CAMERA, MOTION, SOCKET };
+static enum module_type module_types[] = { SCENARIO, TORNADO, DHT, CAMERA, MOTION, SOCKET };
 static int modules_number = sizeof(module_types) / sizeof(enum module_type);
 
 // https://trello.com/c/1oOLJIQW/60-module-type
 static command commands[] = {
     { { NULL }, { "/usr/bin/python2.7", "-m", "WRH_Engine.ScenarioManager.ScenarioManager", NULL } },
+    { { NULL }, { "/usr/bin/python2.7", "-m", "WRH_Engine.Modules.TORNADO.server", NULL } },
     { { NULL }, { "/usr/bin/python2.7", "-m", "WRH_Engine.Modules.TEMPERATURE.DhtModule", NULL } },
     { { NULL }, { "/usr/bin/python2.7", "-m", "WRH_Engine.Modules.CAMERA.camera", NULL } },
     { { NULL }, { "/usr/bin/python2.7", "-m", "WRH_Engine.Modules.MOVEMENT.MOVEMENT", NULL } },
@@ -34,7 +35,8 @@ enum module_type int_to_module_type(int number)
     enum module_type type;
 
     if(number > modules_number) type = UNDEFINED;
-    else type = module_types[number];
+    else type = module_types[number + 1];
+    // adding one is required since DHT module has int 1
 
     return type;
 }
@@ -61,7 +63,7 @@ pid_t start_service(command* pcommand)
     switch(ppid = fork())
     {
         case 0:
-            printf("Starting %s\n", pcommand->arg[0]);
+            printf("Starting %s\n", pcommand->arg[2]);
             set_signal_behaviour(SIG_UNBLOCK, &mask, 2, SIGINT, SIGCHLD);
             execve(pcommand->arg[0], pcommand->arg, pcommand->env);
             perror("execve");
