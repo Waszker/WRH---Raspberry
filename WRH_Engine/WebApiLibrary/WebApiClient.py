@@ -19,6 +19,7 @@ remove_module_url = base_address + 'api/wrh/removemodule'
 get_scenarios_url = base_address + 'api/wrh/getscenariosdevice'
 add_measurement_url = base_address + 'api/wrh/addmeasurement'
 scenarios_changed_url = base_address + 'api/wrh/scenarioschanged'
+add_execution_url = base_address + 'api/wrh/addexecution'
 
 
 def do_post_request(url, content):
@@ -62,5 +63,10 @@ def add_measurement(device_id, device_token, module_id, timestamp, value, stream
 
 
 def scenarios_changed(device_id, device_token):
-	content = {'Id': device_id, 'Token': device_token}
-	return do_post_request(scenarios_changed_url, content)
+    content = {'Id': device_id, 'Token': device_token}
+    return do_post_request(scenarios_changed_url, content)
+
+
+def add_execution(device_id, device_token, value_condition, value_action, timestamp, scenario_id, condition, action):
+    content = {'DeviceId': device_id, 'Devicetoken': device_token, 'ValueCondition' : value_condition, 'ValueAction' : value_action, 'Timestamp' : timestamp, 'ScenarioId' : scenario_id, 'Condition' : condition, 'Action' : action }
+    return do_post_request(add_execution_url, content)

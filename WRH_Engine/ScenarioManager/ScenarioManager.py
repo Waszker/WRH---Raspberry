@@ -129,15 +129,6 @@ def _get_active_scenarios_by_date(scenarios):
     result = []
     for scen in scenarios:
         active = True
-        #(successStart, datetimeStart) = utils._convert_datetime_to_python(scen["startDate"])
-        #(successEnd, datetimeEnd) = utils._convert_datetime_to_python(scen["startDate"])
-
-        #if successStart:
-        #	if datetimeStart > now:
-        #		active = False
-        #if successEnd:
-        #	if datetimeEnd < now:
-        #		active = False
 
         if active:
             result.append(scen)
