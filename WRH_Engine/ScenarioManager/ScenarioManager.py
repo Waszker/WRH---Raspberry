@@ -13,12 +13,28 @@ import signal
 import re
 from datetime import datetime, timedelta
 
+# SCENARIO MANAGER
+# Module responsible for managing Scenarios assigned to this Device
+# This Module is started by the Overlord
+# Scenario Manager periodically checks for updated Scenarios...
+# ...and communicated with other running Modules, to see if any of their most recent Measurements...
+# ...matches any of the Scenarios...
+# ...if yes, then Scenario is executed, and Execution object uploaded
+
+
+# region OPTIONS
+
 verbose = True # should I print comments what is happening?
 CONFIGURATION_FILE = '.wrh.config'
+socket_port = 2000
+
+# endregion ~OPTIONS
+
+
+# region GLOBAL VARIABLES
 
 deviceid = ''
 devicetoken = ''
-socket_port = 2000
 scenarios = []
 measurements = dict() # // pairs, moduleId and Value
 doneScenarios = dict() # // pairs, scenarioId - number of times the scenario was executed
@@ -26,20 +42,13 @@ lock = threading.Lock()
 event = threading.Event() # triggered when scenarios changed OR some measurement meet some scenarios' conditions
 availablemodules = []
 
+# endregion ~GLOBAL VARIABLES
 
-# get streaming address, port, login and password encoded into one field - streamingaddress
-def _extract_info_from_streamingaddress(streaming_address):
-    # TODO zrobic to (Piotrek zrobi)
-    # we have encoded into camera module's streamingaddress four things:
-    address = "" # actual streaming address
-    port = ""
-    login = "login"
-    password = "password" # login and password are needed to make a snapshot
-    return (address, port, login, password)
 
+# region STARTUP AND CONFIGURATION METHODS
 
 def signal_handler(signal, frame):
-    print 'Scenario Manager SIGINT routine'
+    print 'Scenario Manager shutting down...'
     sys.exit(0)
 
 
@@ -55,20 +64,39 @@ def _read_available_modules():
     devicetoken = system_info[1]
 
 
-# download Scenarios from WebApi
-def _get_scenarios():
-    # lock is acquired
-    global scenarios
-    print('gettingscenarios')
-    (status_code, result_content) = webapi.get_scenarios(deviceid, devicetoken)
-    if status_code != 200: # TODO magic number
-        if verbose:
-            print('_get_scenarios() status_code=' + str(status_code))
-        scenarios = []
-        return
-    result_object = json.loads(result_content)
-    scenarios = result_object
+# TODO: is it used? if so, is it working?
+# get streaming address, port, login and password encoded into one field - streamingaddress
+def _extract_info_from_streamingaddress(streaming_address):
+    # TODO zrobic to (Piotrek zrobi)
+    # we have encoded into camera module's streamingaddress four things:
+    address = "" # actual streaming address
+    port = ""
+    login = "login"
+    password = "password" # login and password are needed to make a snapshot
+    return (address, port, login, password)
 
+
+# endregion ~STARTUP AND CONFIGURATION METHODS
+
+
+# region COMMUNICATION WITH OTHER RUNNING MODULES
+
+
+# wait for incoming connections, and accept them. Accepted connection are then handled by _socket_communicate()
+def _socket_accept():
+    global socket_port
+    print('accept_socket_messages() start')
+    serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    serversocket.bind(('localhost', socket_port))
+    print('_socket_accept bind: ' + str('localhost') + ' ' + str(socket_port))
+    serversocket.listen(5)
+    while 1:
+        (clientsocket, address) = serversocket.accept()
+        t = threading.Thread(target=_socket_communicate, args=(clientsocket,))
+        t.daemon = True
+        t.start()
+
+    print('accept_socket_messages() end')
 
 # communicate with client (some Module in our case). Read measurement from it
 def _socket_communicate(clientsocket):
@@ -89,23 +117,10 @@ def _socket_communicate(clientsocket):
         event.set()
     print('socket_communicate() end')
 
+# endregion ~COMMUNICATION WITH OTHER RUNNING MODULES
 
-# wait for incoming connections, and accept them. Accepted connection are then handled by _socket_communicate()
-def _socket_accept():
-    global socket_port
-    print('accept_socket_messages() start')
-    serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    serversocket.bind(('localhost', socket_port))
-    print('_socket_accept bind: ' + str('localhost') + ' ' + str(socket_port))
-    serversocket.listen(5)
-    while 1:
-        (clientsocket, address) = serversocket.accept()
-        t = threading.Thread(target=_socket_communicate, args=(clientsocket,))
-        t.daemon = True
-        t.start()
 
-    print('accept_socket_messages() end')
-
+# region UPDATE SCENARIOS
 
 # periodically check with WebApi if scenarios has changed. If yes, then trigger event.
 def _scenarios_changed():
@@ -122,11 +137,32 @@ def _scenarios_changed():
             break
     print('scenarios_changed() end')
 
+# download Scenarios from WebApi
+def _get_scenarios():
+    # lock is acquired
+    global scenarios
+    print('gettingscenarios')
+    (status_code, result_content) = webapi.get_scenarios(deviceid, devicetoken)
+    if status_code != 200: # TODO magic number
+        if verbose:
+            print('_get_scenarios() status_code=' + str(status_code))
+        scenarios = []
+        return
+    result_object = json.loads(result_content)
+    scenarios = result_object
+
+
+# endregion ~UPDATE SCENARIOS
+
+
+# region DETERMINE SCENARIOS TO BE EXECUTED
+
 
 # from list of scenarios, get scenarios that are active (startDate <= DateTime.Now <= endDate)
 def _get_active_scenarios_by_date(scenarios):
     now = datetime.utcnow()
     result = []
+    # TODO: not implemented
     for scen in scenarios:
         active = True
 
@@ -139,7 +175,7 @@ def _get_active_scenarios_by_date(scenarios):
 # from list of scenarios, exclude scenarios with the lowest priority within scenarios with the same action module
 def _get_active_scenarios_by_priority(scenarios):
     result = []
-    #TODO
+    # TODO not implemented
     for scen in scenarios:
         result.append(scen)
 
@@ -199,6 +235,10 @@ def _get_scenarios_to_execute():
 
     return result
 
+# endregion ~DETERMINE SCENARIOS TO BE EXECUTED
+
+
+# region SCENARIO EXECUTION
 
 # try to execute all scenarios taken from _get_scenarios_to_execute()
 def _try_execute_scenarios():
@@ -256,6 +296,11 @@ def _execute_scenario(actionmoduleid, action):
         return True
     return False
 
+# endregion ~SCENARIO EXECUTION
+
+
+
+
 
 # in loop wait for event to be triggered, try to execute scenarios
 def _main_event_waiting():
@@ -290,7 +335,7 @@ def _main_event_waiting():
 
 def main():
 
-    print('main() start SCENARIOMANAGER')
+    print('Scenario Manager started')
     _read_available_modules()
 
     _get_scenarios()
@@ -306,7 +351,7 @@ def main():
 
     signal.pause()
 
-    print('main() end')
+    print('Scenario Manager ended')
 
 
 if __name__ == "__main__":
