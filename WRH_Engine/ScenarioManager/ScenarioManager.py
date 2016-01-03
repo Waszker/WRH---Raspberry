@@ -24,7 +24,6 @@ from datetime import datetime, timedelta
 
 # region OPTIONS
 
-verbose = True # should I print comments what is happening?
 CONFIGURATION_FILE = '.wrh.config'
 socket_port = 2000
 
@@ -33,14 +32,14 @@ socket_port = 2000
 
 # region GLOBAL VARIABLES
 
-deviceid = ''
-devicetoken = ''
+device_id = ''
+device_token = ''
 scenarios = []
 measurements = dict() # // pairs, moduleId and Value
 doneScenarios = dict() # // pairs, scenarioId - number of times the scenario was executed
 lock = threading.Lock()
 event = threading.Event() # triggered when scenarios changed OR some measurement meet some scenarios' conditions
-availablemodules = []
+available_modules = []
 
 # endregion ~GLOBAL VARIABLES
 
@@ -54,14 +53,13 @@ def signal_handler(signal, frame):
 
 # read deviceId, deviceToken and Modules from configuration file
 def _read_available_modules():
-    print('reading available modules')
-    global availablemodules
-    global deviceid
-    global devicetoken
+    global available_modules
+    global device_id
+    global device_token
     with open(CONFIGURATION_FILE, 'r') as f:
-        (system_info, availablemodules) = config.parse_configuration_file(f)
-    deviceid = system_info[0]
-    devicetoken = system_info[1]
+        (system_info, available_modules) = config.parse_configuration_file(f)
+    device_id = system_info[0]
+    device_token = system_info[1]
 
 
 # TODO: is it used? if so, is it working?
@@ -86,34 +84,34 @@ def _extract_info_from_streamingaddress(streaming_address):
 def _socket_accept():
     global socket_port
     print('accept_socket_messages() start')
-    serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    serversocket.bind(('localhost', socket_port))
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind(('localhost', socket_port))
     print('_socket_accept bind: ' + str('localhost') + ' ' + str(socket_port))
-    serversocket.listen(5)
+    server_socket.listen(5)
     while 1:
-        (clientsocket, address) = serversocket.accept()
-        t = threading.Thread(target=_socket_communicate, args=(clientsocket,))
+        (client_socket, address) = server_socket.accept()
+        t = threading.Thread(target=_socket_communicate, args=(client_socket,))
         t.daemon = True
         t.start()
 
     print('accept_socket_messages() end')
+
 
 # communicate with client (some Module in our case). Read measurement from it
 def _socket_communicate(clientsocket):
     print('socket_communicate() start')
     global measurements
     # read measurement, update global measurements array
-    moduleid = clientsocket.recv(4096)
-    print('przyszedl measurement od modulu o id: ' + str(moduleid))
+    module_id = clientsocket.recv(4096)
+    print('przyszedl measurement od modulu o id: ' + str(module_id))
     clientsocket.send('ACK')
     value = clientsocket.recv(4096)
     print('przyszla wartosc rowna: ' + str(value))
-    matchrule = False
     lock.acquire()
-    measurements[str(moduleid)] = value
-    scens = _get_scenarios_to_execute()
+    measurements[str(module_id)] = value
+    scenarios_to_execute = _get_scenarios_to_execute()
     lock.release()
-    if len(scens) > 0:
+    if len(scenarios_to_execute) > 0:
         event.set()
     print('socket_communicate() end')
 
@@ -127,7 +125,7 @@ def _scenarios_changed():
     print('scenarios_changed() start')
     while True:
         time.sleep(5) #TODO magic number
-        (status_code, result_content) = webapi.scenarios_changed(deviceid, devicetoken)
+        (status_code, result_content) = webapi.scenarios_changed(device_id, device_token)
         # check if scenarios changed, signal main() if yes (signal via Event)
         # event.set()
         # then exit, will be started again by main()
@@ -137,15 +135,15 @@ def _scenarios_changed():
             break
     print('scenarios_changed() end')
 
+
 # download Scenarios from WebApi
 def _get_scenarios():
     # lock is acquired
     global scenarios
-    print('gettingscenarios')
-    (status_code, result_content) = webapi.get_scenarios(deviceid, devicetoken)
+    print('getting scenarios')
+    (status_code, result_content) = webapi.get_scenarios(device_id, device_token)
     if status_code != 200: # TODO magic number
-        if verbose:
-            print('_get_scenarios() status_code=' + str(status_code))
+        print('_get_scenarios() status_code=' + str(status_code))
         scenarios = []
         return
     result_object = json.loads(result_content)
@@ -262,7 +260,7 @@ def _try_execute_scenarios():
 def _execute_scenario(actionmoduleid, action):
     print('wykonuje scenariusz')
     module = []
-    for mod in availablemodules:
+    for mod in available_modules:
         if str(mod.id) == str(actionmoduleid):
             module = mod
             break
@@ -297,10 +295,6 @@ def _execute_scenario(actionmoduleid, action):
     return False
 
 # endregion ~SCENARIO EXECUTION
-
-
-
-
 
 # in loop wait for event to be triggered, try to execute scenarios
 def _main_event_waiting():
