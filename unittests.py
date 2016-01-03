@@ -1,6 +1,7 @@
 import unittest
 import WRH_Engine.ScenarioManager.ScenarioManager as scenariomanager
 import WRH_Engine.Utils.utils as utils
+import time
 
 
 class TestUtils(unittest.TestCase):
@@ -35,13 +36,21 @@ class TestUtils(unittest.TestCase):
 
 class TestScenarioManager(unittest.TestCase):
 
-    def test_get_active_scenarios_by_date(self):
+    def test_get_active_scenarios_by_date_no_date(self):
         scenarios = []
-        scen = {"Id" : 1,  "Name" : "pierwszy",  "startDate" : None,  "endDate" : ''}
+        scen = {"Id": 1,  "Name": "pierwszy",  "startDate": None,  "endDate": ''}
         scenarios.append(scen)
         result = scenariomanager._get_active_scenarios_by_date(scenarios)
         self.assertEqual(len(result),  1)
         self.assertEqual(result[0]["Id"],  1)
+
+    def test_get_active_scenarios_by_date_ended(self):
+        scenarios = []
+        scen = {"Id": 1,  "Name": "pierwszy",  "startDate": None,  "endDate": utils.generate_proper_date()}
+        time.sleep(2)  # scenario ends
+        scenarios.append(scen)
+        result = scenariomanager._get_active_scenarios_by_date(scenarios)
+        self.assertEqual(len(result),  0)
 
 if __name__ == '__main__':
     unittest.main()

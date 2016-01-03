@@ -38,29 +38,29 @@ def manage_measurement(device_id, device_token,  module_id,  module_type, measur
 
 
 def _send_measurement_to_scenario_manager(measurement, module_id):
-	print('wysylam measurement do scenario manager')
-	clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	clientsocket.connect(('localhost', 2000))
-	clientsocket.send(str(module_id))
-	clientsocket.recv(4096)
-	clientsocket.send(str(measurement))
+    print('wysylam measurement do scenario manager')
+    clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    clientsocket.connect(('localhost', 2000))
+    clientsocket.send(str(module_id))
+    clientsocket.recv(4096)
+    clientsocket.send(str(measurement))
 
 
 def _send_old_measurements(path, device_id,  device_token, module_id):
     try:
         if os.path.exists(path):
-			# ... for each file in measurement directory
-			for file in listdir(path):
-				content = ''
-				# read content
-				with open(os.path.join(path, file), 'r') as content_file:
-					content = content_file.read()
-				# pull out timestamp and measuremet
-				pair = content.split('$')
-				# send measurement
-				if W.add_measurement(device_id, device_token, str(module_id), pair[0], pair[1], "")[0] == W.Response.STATUS_OK:
-					# remove file if ok
-					os.remove(os.path.join(path, file))
+            # ... for each file in measurement directory
+            for file in listdir(path):
+                content = ''
+                # read content
+                with open(os.path.join(path, file), 'r') as content_file:
+                    content = content_file.read()
+                # pull out timestamp and measuremet
+                pair = content.split('$')
+                # send measurement
+                if W.add_measurement(device_id, device_token, str(module_id), pair[0], pair[1], "")[0] == W.Response.STATUS_OK:
+                    # remove file if ok
+                    os.remove(os.path.join(path, file))
     except IOError as err:
         raise IOError(err.message)
 
@@ -79,19 +79,19 @@ def generate_proper_date():
 # YYYY-MM-DDThh:mm:ss
 # returns: (success, datetime)
 def _convert_datetime_to_python(our_datetime):
-	if not our_datetime:
-		return (False,  '')
-	datetimepattern = re.compile("^([0-9][0-9][0-9][0-9])-([0-9][0-9])-([0-9][0-9])T([0-9][0-9]):([0-9][0-9]):([0-9][0-9])$")
-	does_match = datetimepattern.match(our_datetime)
-	if not does_match:
-		return (False,  '')
-	groups = re.search(datetimepattern,  our_datetime)
-	success = True
-	result = ''
-	try:
-		result = datetime.datetime(int(groups.group(1)), int(groups.group(2)), int(groups.group(3)), int(groups.group(4)), int(groups.group(5)), int(groups.group(6)))
-	except:
-		success = False
-		result = ''
-	
-	return (success,  result)
+    if not our_datetime:
+        return (False,  '')
+    datetimepattern = re.compile("^([0-9][0-9][0-9][0-9])-([0-9][0-9])-([0-9][0-9])T([0-9][0-9]):([0-9][0-9]):([0-9][0-9])$")
+    does_match = datetimepattern.match(our_datetime)
+    if not does_match:
+        return (False,  '')
+    groups = re.search(datetimepattern,  our_datetime)
+    success = True
+    result = ''
+    try:
+        result = datetime.datetime(int(groups.group(1)), int(groups.group(2)), int(groups.group(3)), int(groups.group(4)), int(groups.group(5)), int(groups.group(6)))
+    except:
+        success = False
+        result = ''
+
+    return (success,  result)
