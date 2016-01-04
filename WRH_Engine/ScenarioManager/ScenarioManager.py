@@ -22,6 +22,7 @@ from datetime import datetime, timedelta
 # ..matches any of the Scenarios' Conditions..
 # ..if yes, then Scenario is executed, and Execution object uploaded
 
+# TODO: change scenario["Id"] to scenario.Id etc (create Scenario.py file)
 
 # region OPTIONS
 
@@ -250,63 +251,74 @@ def _get_scenarios_to_execute():
 
 # region SCENARIO EXECUTION
 
+# upload Execution object to WebApi, after successfully executing Scenario
+def _add_execution(scenario, action_value, condition_value):
+    # TODO not implemented
+    now = utils.generate_proper_date()
+    return
+
+
 # get a list of Scenarios which are supposed to be executed
-# and try to execute them
-# also, upload Execution object
+# and try to execute them one by one
+# also, upload Execution object of successfully executed Scenarios
 def _try_execute_scenarios():
     global measurements
     global done_scenarios
     global scenarios
-    print('try_execute_scenarios, scenariuszy jest: ' + str(len(scenarios)))
 
-    scensToExecute = _get_scenarios_to_execute()
-    for scen in scensToExecute:
-        print('trying to execute scenario ' + str(scen["Id"]))
-        result = _execute_scenario(str(scen["ActionModuleId"]), str(scen["Action"]))
-        if result == True:
-            done_scenarios[str(scen["Id"])] = done_scenarios[str(scen["Id"])] + 1
+    scenarios_to_execute = _get_scenarios_to_execute()
+    for scenario in scenarios_to_execute:
+        (success, action_value) = _execute_scenario(scenario)
+        if success:
+            done_scenarios[str(scenario["Id"])] += 1
+            print 'Scenario Manager: successfully executed Scenario: ' + str(scenario["Name"]) + '\n'
+            _add_execution(scenario, action_value, measurements[str(scenario["ConditionModuleId"])])
         else:
-            print('nie udalo sie wykonac scenariusza')
+            print 'Scenario Manager: failed to execute Scenario: ' + str(scenario["Name"]) + '\n'
     return
 
 
-# execute one scenario
-def _execute_scenario(actionmoduleid, action):
-    print('wykonuje scenariusz')
-    module = []
-    for mod in available_modules:
-        if str(mod.id) == str(actionmoduleid):
-            module = mod
+# execute a Scenario, return (success, value)
+# if Action == take snapshot, then value = snapshot
+def _execute_scenario(scenario):
+    action_module_id = str(scenario["ActionModuleId"])
+    action = str(scenario["Action"])
+
+    for module in available_modules:
+        if str(module.id) == str(action_module_id):
+            module = module
             break
     if not module:
-        print(" >> nie znalazlem action modulu o id: " + str(mod.id))
-        return False
+        return False, ''  # Action module not found
 
+    # TODO: refactor this three ifs
     if action == '1':
-        address = module.address + '?on'
-        # TODO try catch
-        urllib2.urlopen(address).read()
-        return True
+        try:
+            urllib2.urlopen(module.address + '?on').read()
+        except:
+            return False, ''
+        return True, ''
     if action == '2':
-        address = module.address + '?off'
-        # TODO try catch
-        urllib2.urlopen(address).read()
-        return True
+        try:
+            urllib2.urlopen(module.address + '?off').read()
+        except:
+            return False, ''
+        return True, ''
     if action == '3':
-        address = module.address + '?toggle'
-        print('probuje togglowac gniazdko pod adresem: ' + address)
-        # TODO try catch
-        urllib2.urlopen(address).read()
-        return True
+        try:
+            urllib2.urlopen(module.address + '?toggle').read()
+        except:
+            return False, ''
+        return True, ''
+
     if action == '4':
-        # TODO take snapshot
-        print('taking snapshot, port=' + str(module.address) + ' login:password')
-        content = camera.get_camera_snapshot(str(module.address), "login", "password")
-        print('snapshot taken, content = ')
-        print(str(content))
-        print('TODO: wyslac snapshot jako measurement')
-        return True
-    return False
+        try:
+            content = camera.get_camera_snapshot(str(module.address), "login", "password")
+        except:
+            return False, ''
+        return True, content
+
+    return False, ''
 
 
 # endregion ~SCENARIO EXECUTION
