@@ -1,6 +1,6 @@
 #!/usr/bin/python2.7
 from WRH_Engine.WebApiLibrary import Response
-from ..WebApiLibrary import WebApiClient as webapi
+from ..WebApiLibrary import WebApiClient as WebApiClient
 from WRH_Engine.Configuration import configuration as config
 import WRH_Engine.Modules.CAMERA.camera as camera
 import WRH_Engine.Utils.utils as utils
@@ -11,7 +11,6 @@ import time
 import socket
 import urllib2
 import signal
-import re
 from datetime import datetime, timedelta
 
 
@@ -41,7 +40,7 @@ device_id = ''
 device_token = ''
 scenarios = []
 measurements = dict()  # // [moduleId] - [Value]
-doneScenarios = dict()  # // [scenarioId] - [number of times the scenario was executed]
+done_scenarios = dict()  # // [scenarioId] - [number of times the scenario was executed]
 lock = threading.Lock()
 event = threading.Event()  # triggered when scenarios changed OR some measurement meet some scenarios' conditions
 available_modules = []
@@ -118,27 +117,27 @@ def _scenarios_changed():
     global scenarios_changed
     while True:
         time.sleep(scenarios_changed_wait_time)
-        (status_code, result_content) = webapi.scenarios_changed(device_id, device_token)
+        (status_code, result_content) = WebApiClient.scenarios_changed(device_id, device_token)
         if status_code == Response.STATUS_OK:
             lock.acquire()
             scenarios_changed = True
             lock.release()
             event.set()
         elif status_code != Response.NO_CONTENT:
-            print 'SM: webapi.scenarios_changed returned status code ' \
+            print 'Scenario Manager: WebApiClient.scenarios_changed returned status code ' \
                   + str(status_code) \
-                  + '. (in method _scenarios_changed'
+                  + '. (in method _scenarios_changed()'
 
 
 # download Scenarios from WebApi
 # lock must be acquired when invoking this method
 def _get_scenarios():
     global scenarios
-    (status_code, result_content) = webapi.get_scenarios(device_id, device_token)
+    (status_code, result_content) = WebApiClient.get_scenarios(device_id, device_token)
     if status_code != Response.STATUS_OK:
-        print 'SM: webapi.get_scenarios returned status code ' \
+        print 'Scenario Manager: WebApiClient.get_scenarios returned status code ' \
                   + str(status_code) \
-                  + '. (in method _get_scenarios'
+                  + '. (in method _get_scenarios()'
         scenarios = []
         return
     result_object = json.loads(result_content)
@@ -182,13 +181,19 @@ def _get_active_scenarios_by_priority(scenario_list):
 def _get_active_scenarios_by_done(scenario_list):
     result = []
     for scenario in scenario_list:
-        if not str(scenario["Id"]) in doneScenarios:
-            doneScenarios[str(scenario["Id"])] = 0
-        done = doneScenarios[str(scenario["Id"])]
+        if not str(scenario["Id"]) in done_scenarios:
+            done_scenarios[str(scenario["Id"])] = 0
+        done = done_scenarios[str(scenario["Id"])]
         if done > 0 and int(scenario["Recurring"]) == 0:
             continue  # exclude this Scenario
         result.append(scenario)
     return result
+
+
+# return a tuple of Temperature and Humidity from single string value
+def _decode_dht_value(encoded_value):
+    v = encoded_value.split(';')
+    return int(float(v[0])), int(float(v[1]))
 
 
 # from a list of Scenarios, return Scenarios that should be executed based on recent Measurements
@@ -203,11 +208,7 @@ def _get_active_scenarios_by_measurements(scenario_list):
         temperature = ''
         humidity = ''
         if scenario["Condition"] < 5:
-            v = value.split(';')
-            if len(v) != 2:
-                continue  # not properly encoded value.
-            temperature = int(float(v[0]))
-            humidity = int(float(v[1]))
+            (temperature, humidity) = _decode_dht_value(value)
 
         if scenario["Condition"] == 1:  # Temperature below...
             if temperature < int(scenario["ValueInt"]):
@@ -254,7 +255,7 @@ def _get_scenarios_to_execute():
 # also, upload Execution object
 def _try_execute_scenarios():
     global measurements
-    global doneScenarios
+    global done_scenarios
     global scenarios
     print('try_execute_scenarios, scenariuszy jest: ' + str(len(scenarios)))
 
@@ -263,7 +264,7 @@ def _try_execute_scenarios():
         print('trying to execute scenario ' + str(scen["Id"]))
         result = _execute_scenario(str(scen["ActionModuleId"]), str(scen["Action"]))
         if result == True:
-            doneScenarios[str(scen["Id"])] = doneScenarios[str(scen["Id"])] + 1
+            done_scenarios[str(scen["Id"])] = done_scenarios[str(scen["Id"])] + 1
         else:
             print('nie udalo sie wykonac scenariusza')
     return

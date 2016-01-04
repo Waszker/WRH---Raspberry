@@ -15,11 +15,10 @@ def manage_measurement(device_id, device_token,  module_id,  module_type, measur
     path = "/var/wrh/{}_{}".format(module_type, module_id)
     send_result = W.add_measurement(device_id, device_token, str(module_id), str(generate_proper_date()), str(measurement), streaming_address)
     if send_result[0] == W.Response.STATUS_OK:
-        # send old measurements
-        print('man_meas: udalo sie wyslac')
+        # sending this measurement succeeded, so try to send Measurements stored on memory card
         _send_old_measurements(path, device_id,  device_token, module_id)
     else:
-        print('man_meas: nie udalo sie wyslac, code:' + str(send_result[0]))
+        # sending this measurement failed, so store it on card
         try:
             if not os.path.exists(path):
                 os.makedirs(path)
@@ -38,12 +37,11 @@ def manage_measurement(device_id, device_token,  module_id,  module_type, measur
 
 
 def _send_measurement_to_scenario_manager(measurement, module_id):
-    print('wysylam measurement do scenario manager')
-    clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    clientsocket.connect(('localhost', 2000))
-    clientsocket.send(str(module_id))
-    clientsocket.recv(4096)
-    clientsocket.send(str(measurement))
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_socket.connect(('localhost', 2000))
+    client_socket.send(str(module_id))
+    client_socket.recv(4096)
+    client_socket.send(str(measurement))
 
 
 def _send_old_measurements(path, device_id,  device_token, module_id):
@@ -51,11 +49,10 @@ def _send_old_measurements(path, device_id,  device_token, module_id):
         if os.path.exists(path):
             # ... for each file in measurement directory
             for file in listdir(path):
-                content = ''
                 # read content
                 with open(os.path.join(path, file), 'r') as content_file:
                     content = content_file.read()
-                # pull out timestamp and measuremet
+                # pull out timestamp and measurement
                 pair = content.split('$')
                 # send measurement
                 if W.add_measurement(device_id, device_token, str(module_id), pair[0], pair[1], "")[0] == W.Response.STATUS_OK:
@@ -71,7 +68,7 @@ def generate_proper_date():
     if hour == 24:
         hour = 00
     else:
-        hour = hour + 1
+        hour += 1
     return time.strftime("%Y-%d-%mT{}:%M:%S".format(hour), time.gmtime())
 
 
@@ -80,18 +77,18 @@ def generate_proper_date():
 # returns: (success, datetime)
 def _convert_datetime_to_python(our_datetime):
     if not our_datetime:
-        return (False,  '')
-    datetimepattern = re.compile("^([0-9][0-9][0-9][0-9])-([0-9][0-9])-([0-9][0-9])T([0-9][0-9]):([0-9][0-9]):([0-9][0-9])$")
-    does_match = datetimepattern.match(our_datetime)
+        return False, ''
+    date_time_pattern = re.compile("^([0-9][0-9][0-9][0-9])-([0-9][0-9])-([0-9][0-9])T([0-9][0-9]):([0-9][0-9]):([0-9][0-9])$")
+    does_match = date_time_pattern.match(our_datetime)
     if not does_match:
-        return (False,  '')
-    groups = re.search(datetimepattern,  our_datetime)
+        return False, ''
+    groups = re.search(date_time_pattern,  our_datetime)
     success = True
-    result = ''
     try:
-        result = datetime.datetime(int(groups.group(1)), int(groups.group(2)), int(groups.group(3)), int(groups.group(4)), int(groups.group(5)), int(groups.group(6)))
+        result = datetime.datetime(int(groups.group(1)), int(groups.group(2)), int(groups.group(3)),
+                                   int(groups.group(4)), int(groups.group(5)), int(groups.group(6)))
     except:
         success = False
         result = ''
 
-    return (success,  result)
+    return success, result
