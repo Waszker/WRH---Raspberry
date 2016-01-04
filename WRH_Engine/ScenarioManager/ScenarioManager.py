@@ -18,10 +18,10 @@ from datetime import datetime, timedelta
 # SCENARIO MANAGER
 # Module responsible for managing Scenarios assigned to this Device
 # This Module is started by the Overlord
-# Scenario Manager periodically checks for updated Scenarios...
-# ...and communicates with other running Modules, to see if any of their most recent Measurements...
-# ...matches any of the Scenarios' Conditions...
-# ...if yes, then Scenario is executed, and Execution object uploaded
+# Scenario Manager periodically checks for updated Scenarios..
+# ..and communicates with other running Modules, to see if any of their most recent Measurements..
+# ..matches any of the Scenarios' Conditions..
+# ..if yes, then Scenario is executed, and Execution object uploaded
 
 
 # region OPTIONS
@@ -151,82 +151,96 @@ def _get_scenarios():
 # region DETERMINE SCENARIOS TO BE EXECUTED
 
 
-# from list of scenarios, get scenarios that are active (startDate <= DateTime.Now <= endDate)
-def _get_active_scenarios_by_date(scenarios):
+# from a list of Scenarios, get scenarios that are active (startDate <= DateTime.Now <= endDate)
+def _get_active_scenarios_by_date(scenario_list):
     now = datetime.utcnow()
     result = []
     # TODO: not implemented
-    for scen in scenarios:
+    for scenario in scenario_list:
         active = True
 
         if active:
-            result.append(scen)
+            result.append(scenario)
 
     return result
 
 
-# from list of scenarios, exclude scenarios with the lowest priority within scenarios with the same action module
-def _get_active_scenarios_by_priority(scenarios):
+# from a list of Scenarios, exclude scenarios with the lowest priority within scenarios with the same action module
+def _get_active_scenarios_by_priority(scenario_list):
     result = []
     # TODO not implemented
-    for scen in scenarios:
-        result.append(scen)
+    for scenario in scenario_list:
+        active = True
+
+        if active:
+            result.append(scenario)
 
     return result
 
 
-# get a list of Ids of scenarios which are to be executed
-# list is prepared based on: measurements, doneScenarios, and current time
-def _get_scenarios_to_execute():
-    global scenarios
+# from a list of Scenarios, exclude scenarios that were done (and not recurring)
+def _get_active_scenarios_by_done(scenario_list):
     result = []
-    # active_date_scenarios = _get_active_scenarios_by_date(scenarios)
-    # active_scenarios = _get_active_scenarios_by_priority(active_date_scenarios)
-    active_scenarios = scenarios
+    for scenario in scenario_list:
+        if not str(scenario["Id"]) in doneScenarios:
+            doneScenarios[str(scenario["Id"])] = 0
+        done = doneScenarios[str(scenario["Id"])]
+        if done > 0 and int(scenario["Recurring"]) == 0:
+            continue  # exclude this Scenario
+        result.append(scenario)
+    return result
 
-    for scen in active_scenarios:
-        if not str(scen["ConditionModuleId"]) in measurements:
-            continue  # there is no Measurement from Module with this Id (yet)
-        value = measurements[str(scen["ConditionModuleId"])]
-        print('>> sprawdzam scenariusze, ostatnia wartosc dla modulu o id: ' + str(
-                scen["ConditionModuleId"]) + ' wynosi: ' + str(value))
 
-        if not str(scen["Id"]) in doneScenarios:
-            doneScenarios[str(scen["Id"])] = 0
-        done = doneScenarios[str(scen["Id"])]
-        if done > 0 and int(scen["Recurring"]) == 0:
-            continue  # // scenario was already executed, and is not recurring
+# from a list of Scenarios, return Scenarios that should be executed based on recent Measurements
+def _get_active_scenarios_by_measurements(scenario_list):
+    result = []
+    for scenario in scenario_list:
+        if not str(scenario["ConditionModuleId"]) in measurements:
+            continue  # there is no Measurement from Condition Module (yet)
+        value = measurements[str(scenario["ConditionModuleId"])]
 
-        conditionMet = False
-        temp = ''
-        wilg = ''
-        if scen["Condition"] < 5:
+        condition_met = False
+        temperature = ''
+        humidity = ''
+        if scenario["Condition"] < 5:
             v = value.split(';')
             if len(v) != 2:
                 continue  # not properly encoded value.
-            temp = v[0]
-            wilg = v[1]
+            temperature = int(float(v[0]))
+            humidity = int(float(v[1]))
 
-        if scen["Condition"] == 1:  # Temperatura ponizej..
-            if temp < scen["ValueInt"]:
-                conditionMet = True
-        if scen["Condition"] == 2:  # Temperatura powyzej..
-            if temp > scen["ValueInt"]:
-                conditionMet = True
-        if scen["Condition"] == 3:  # Wilgotnosc ponizej..
-            if wilg < scen["ValueInt"]:
-                conditionMet = True
-        if scen["Condition"] == 4:  # Wilgotnosc powyzej..
-            if wilg > scen["ValueInt"]:
-                conditionMet = True
-        if scen["Condition"] == 5:  # Wykryto ruch
-            print('Condition scenariusza - czy wykryto ruch?')
+        if scenario["Condition"] == 1:  # Temperature below...
+            if temperature < int(scenario["ValueInt"]):
+                condition_met = True
+        if scenario["Condition"] == 2:  # Temperature above...
+            if temperature > int(scenario["ValueInt"]):
+                condition_met = True
+        if scenario["Condition"] == 3:  # Humidity below...
+            if humidity < int(scenario["ValueInt"]):
+                condition_met = True
+        if scenario["Condition"] == 4:  # Humidity above...
+            if humidity > int(scenario["ValueInt"]):
+                condition_met = True
+        if scenario["Condition"] == 5:  # Movement
             if int(value) > 0:
-                print('value=' + str(value) + '> 0, czyli tak')
-                conditionMet = True
-        if conditionMet:
-            result.append(scen)
+                condition_met = True
 
+        if condition_met:
+            result.append(scenario)
+
+    return result
+
+
+# get a list of Scenarios that should be executed
+# based on recent Measurements and current time..
+# ..also consider if Scenarios were already executed
+def _get_scenarios_to_execute():
+    global scenarios
+    result = scenarios
+    result = _get_active_scenarios_by_done(result)
+    result = _get_active_scenarios_by_date(result)
+    result = _get_active_scenarios_by_priority(result)
+    result = _get_active_scenarios_by_measurements(result)
     return result
 
 
