@@ -60,7 +60,7 @@ def get_scenarios(device_id, device_token):
 
 
 def add_measurement(device_id, device_token, module_id, timestamp, value, streamingaddress):
-    content = {'DeviceId': device_id, 'Devicetoken': device_token, 'ModuleId' : module_id, 'Timestamp' : timestamp, 'Value' : value, 'StreamingAddress' : streamingaddress}
+    content = {'DeviceId': device_id, 'Devicetoken': device_token, 'ModuleId': module_id, 'Timestamp': timestamp, 'Value': value, 'StreamingAddress': streamingaddress}
     return do_post_request(add_measurement_url, content)
 
 
@@ -70,5 +70,5 @@ def scenarios_changed(device_id, device_token):
 
 
 def add_execution(device_id, device_token, value_condition, value_action, timestamp, scenario_id, condition, action):
-    content = {'DeviceId': device_id, 'Devicetoken': device_token, 'ValueCondition' : value_condition, 'ValueAction' : value_action, 'Timestamp' : timestamp, 'ScenarioId' : scenario_id, 'Condition' : condition, 'Action' : action }
+    content = {'DeviceId': device_id, 'Devicetoken': device_token, 'ValueCondition': value_condition, 'ValueAction': value_action, 'Timestamp': timestamp, 'ScenarioId': scenario_id, 'Condition': condition, 'Action': action }
     return do_post_request(add_execution_url, content)

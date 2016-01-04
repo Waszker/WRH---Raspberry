@@ -23,6 +23,7 @@ from datetime import datetime, timedelta
 # ..if yes, then Scenario is executed, and Execution object uploaded
 
 # TODO: change scenario["Id"] to scenario.Id etc (create Scenario.py file)
+# TODO: also, Execution.py
 
 # region OPTIONS
 
@@ -46,6 +47,7 @@ lock = threading.Lock()
 event = threading.Event()  # triggered when scenarios changed OR some measurement meet some scenarios' conditions
 available_modules = []
 scenarios_changed = True
+executions = []  # does not need lock, because used only by one thread
 
 
 # endregion ~GLOBAL VARIABLES
@@ -253,8 +255,13 @@ def _get_scenarios_to_execute():
 
 # upload Execution object to WebApi, after successfully executing Scenario
 def _add_execution(scenario, action_value, condition_value):
-    # TODO not implemented
+    global executions
     now = utils.generate_proper_date()
+
+    (status_code, content) = WebApiClient.add_execution(device_id, device_token,
+                                                        condition_value, action_value, now, scenario["Id"],
+                                                        scenario["Condition"], scenario["Action"])
+    # TODO: on failure add to executions array, and try later
     return
 
 
