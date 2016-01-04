@@ -108,7 +108,7 @@ class Module:
             name = raw_input('Give ' + Module.get_type_name(type) + ' module name: ')
             if name : break
         gpio = raw_input('Enter GPIO or device name (e.g. for camera /dev/video0\'): ')
-        address = raw_input('Enter web address at which device will be accessed: ')
+        address = raw_input('Enter web address at which device will be accessed\ne.g. 192.168.0.10: ')
         print 'Ok, all good. Now wait for registration procedure to finish...'
         (status, response_content) = W.add_module(device_id, device_token, name, type)
         if status != W.Response.STATUS_OK :

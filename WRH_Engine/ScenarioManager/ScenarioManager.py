@@ -301,19 +301,19 @@ def _execute_scenario(scenario):
     # TODO: refactor this three ifs
     if action == '1':
         try:
-            urllib2.urlopen(module.address + '?on').read()
+            urllib2.urlopen('http://' + module.address + '/cgi-bin/relay.cgi?on').read()
         except:
             return False, ''
         return True, ''
     if action == '2':
         try:
-            urllib2.urlopen(module.address + '?off').read()
+            urllib2.urlopen('http://' + module.address + '/cgi-bin/relay.cgi?off').read()
         except:
             return False, ''
         return True, ''
     if action == '3':
         try:
-            urllib2.urlopen(module.address + '?toggle').read()
+            urllib2.urlopen('http://' + module.address + '/cgi-bin/relay.cgi?toggle').read()
         except:
             return False, ''
         return True, ''
