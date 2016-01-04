@@ -36,9 +36,11 @@ class TestUtils(unittest.TestCase):
 
 class TestScenarioManager(unittest.TestCase):
 
+    # region _get_active_scenarios_by_date()
+
     def test_get_active_scenarios_by_date_no_date(self):
         scenarios = []
-        scen = {"Id": 1,  "Name": "pierwszy",  "startDate": None,  "endDate": ''}
+        scen = {"Id": 1,  "Name": "first",  "startDate": None,  "endDate": ''}
         scenarios.append(scen)
         result = scenariomanager._get_active_scenarios_by_date(scenarios)
         self.assertEqual(len(result),  1)
@@ -46,11 +48,33 @@ class TestScenarioManager(unittest.TestCase):
 
     def test_get_active_scenarios_by_date_ended(self):
         scenarios = []
-        scen = {"Id": 1,  "Name": "pierwszy",  "startDate": None,  "endDate": utils.generate_proper_date()}
+        scen = {"Id": 1,  "Name": "first",  "startDate": None,  "endDate": utils.generate_proper_date()}
         time.sleep(2)  # scenario ends
         scenarios.append(scen)
         result = scenariomanager._get_active_scenarios_by_date(scenarios)
         self.assertEqual(len(result),  0)
+
+    # endregion
+
+    # region _get_active_scenarios_by_priority()
+
+    def test_get_active_scenarios_by_priority(self):
+        scenarios = []
+        scen = {"Id": 1,  "Name": "first",  "startDate": None,  "endDate": '', "Priority": 1, "ActionModuleId": 7}
+        scenarios.append(scen)
+        scen = {"Id": 2,  "Name": "second",  "startDate": None,  "endDate": '', "Priority": 3, "ActionModuleId": 7}  #
+        scenarios.append(scen)
+        scen = {"Id": 3,  "Name": "third",  "startDate": None,  "endDate": '', "Priority": 2, "ActionModuleId": 7}
+        scenarios.append(scen)
+        scen = {"Id": 4,  "Name": "fourth",  "startDate": None,  "endDate": '', "Priority": 5, "ActionModuleId": 55}  #
+        scenarios.append(scen)
+        scen = {"Id": 5,  "Name": "fifth",  "startDate": None,  "endDate": '', "Priority": 5, "ActionModuleId": 55}  #
+        scenarios.append(scen)
+
+        result = scenariomanager._get_active_scenarios_by_date(scenarios)
+        self.assertEqual(len(result),  3)
+
+    # endregion
 
 if __name__ == '__main__':
     unittest.main()
