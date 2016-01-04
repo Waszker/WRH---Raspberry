@@ -31,7 +31,7 @@ def manage_measurement(device_id, device_token,  module_id,  module_type, measur
                 os.remove(os.path.join(path, file))
                 # try to write measurement once again
                 with open("{}/{}.wrh".format(path, time.strftime("%Y-%d-%m.%H:%M:%S")), 'a+') as f:
-                    f.write("{}${}".format(generate_proper_date(), measurement))
+                    f.write("{}${}".format(generate_proper_date(), str(measurement)))
             except IOError as err:
                 raise IOError(err.message)
 
