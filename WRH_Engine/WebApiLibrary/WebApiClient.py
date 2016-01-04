@@ -3,11 +3,13 @@ import requests
 import json
 from enum import Enum
 
+
 class Response(Enum):
     STATUS_OK = 200
     STATUS_UNAUTHORIZED = 401
     STATUS_BAD_REQUEST = 400
     INTERNAL_SERVER_ERROR = 500
+    NO_CONTENT = 204
     CONNECTION_ERROR = -1
 
 headers = {'content-type': 'application/json'}

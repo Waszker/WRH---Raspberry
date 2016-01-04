@@ -14,14 +14,15 @@ import sys
 
 # OPTIONS
 
-relaxationSleepTime = 3 # time to sleep after detecting movement
+relaxationSleepTime = 3  # time to sleep after detecting movement
 
 # ~OPTIONS
 
+
 # GLOBAL VARIABLES
 
-deviceid = ''
-devicetoken = ''
+device_id = ''
+device_token = ''
 module = {}
 PIR = 4
 movementDetectedValue = 1
@@ -30,28 +31,17 @@ movementDetectedValue = 1
 
 
 def _read_arguments(argv):
-    global deviceid
-    global devicetoken
+    global device_id
+    global device_token
     global module
     global PIR
     dev = config.get_device_entry_data(argv[0])
-    deviceid = dev[0]
-    devicetoken = dev[1]
+    device_id = dev[0]
+    device_token = dev[1]
     module = config.get_module_entry_data(argv[1])
     PIR = int(module.gpio)
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(PIR, GPIO.IN)
-
-
-# OBSOLETE
-def _read_movement():
-    result = 0
-    try:
-        if GPIO.input(PIR):
-            result = 1
-    except:
-        result = 0
-    return result
 
 
 def main(argv):
@@ -66,7 +56,7 @@ def main(argv):
             print('MOVEMENT: Failure on GPIO.wait_for_edge(). Exiting...')
             sys.exit(0)
 
-        U.manage_measurement(deviceid,  devicetoken, module.id,  module.type, movementDetectedValue, '')
+        U.manage_measurement(device_id,  device_token, module.id,  module.type, movementDetectedValue, '')
 
         time.sleep(relaxationSleepTime)
     print('main() end')

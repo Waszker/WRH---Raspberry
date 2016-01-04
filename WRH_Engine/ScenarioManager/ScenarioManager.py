@@ -14,6 +14,7 @@ import signal
 import re
 from datetime import datetime, timedelta
 
+
 # SCENARIO MANAGER
 # Module responsible for managing Scenarios assigned to this Device
 # This Module is started by the Overlord
@@ -39,11 +40,12 @@ scenarios_changed_wait_time = 5  # (seconds) how often check with WebApi if Scen
 device_id = ''
 device_token = ''
 scenarios = []
-measurements = dict()  # // moduleId - Value
-doneScenarios = dict()  # // scenarioId - number of times the scenario was executed
+measurements = dict()  # // [moduleId] - [Value]
+doneScenarios = dict()  # // [scenarioId] - [number of times the scenario was executed]
 lock = threading.Lock()
 event = threading.Event()  # triggered when scenarios changed OR some measurement meet some scenarios' conditions
 available_modules = []
+scenarios_changed = True
 
 
 # endregion ~GLOBAL VARIABLES
@@ -81,7 +83,7 @@ def _socket_accept():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind(('localhost', socket_port))
     server_socket.listen(5)
-    while 1:
+    while True:
         (client_socket, address) = server_socket.accept()
         t = threading.Thread(target=_socket_communicate, args=(client_socket,))
         t.daemon = True
@@ -113,13 +115,16 @@ def _socket_communicate(client_socket):
 
 # periodically check with WebApi if scenarios has changed. If yes, then set the event.
 def _scenarios_changed():
+    global scenarios_changed
     while True:
         time.sleep(scenarios_changed_wait_time)
         (status_code, result_content) = webapi.scenarios_changed(device_id, device_token)
         if status_code == Response.STATUS_OK:
+            lock.acquire()
+            scenarios_changed = True
+            lock.release()
             event.set()
-            break  # when event is set then break the loop and finish the method, it will be started again
-        else:
+        elif status_code != Response.NO_CONTENT:
             print 'SM: webapi.scenarios_changed returned status code ' \
                   + str(status_code) \
                   + '. (in method _scenarios_changed'
@@ -291,58 +296,58 @@ def _execute_scenario(actionmoduleid, action):
 
 # endregion ~SCENARIO EXECUTION
 
+
+# region ENTRY AND MAIN METHOD
+
 # in loop wait for event to be triggered, try to execute scenarios
-def _main_event_waiting():
+def _main():
     global measurements
-    t_scenarios_changed = threading.Thread(target=_scenarios_changed)
-    t_scenarios_changed.daemon = True
-    t_scenarios_changed.start()
+    global scenarios_changed
+
     while True:
-        event.clear()
         event.wait()
         lock.acquire()
-        print('event triggered')
-        time.sleep(1)
-        # if t_scenarios_changed finished then I know that scenarios changed. Download new scenarios
-        if not t_scenarios_changed.isAlive():
-            print('event triggered by scenarios changed')
-            t_scenarios_changed.join()
-            time.sleep(2)
+
+        if scenarios_changed:
             _get_scenarios()
-            _try_execute_scenarios()
-            t_scenarios_changed = threading.Thread(target=_scenarios_changed)
-            t_scenarios_changed.daemon = True
-            t_scenarios_changed.start()
-        else:
-            print('event triggered by measurement meeting some rule')
-            _try_execute_scenarios()
+            scenarios_changed = False
 
-        # clear measurements, zeby nie byl wykonany scenariusz znowu na podstawie tego samego measurement
+        _try_execute_scenarios()
+
+        # measurements need to be cleared, as to no Scenario is executed twice based on the same Measurement
         measurements = dict()
+
+        event.clear()
         lock.release()
-
-
-def main():
-    print('Scenario Manager started')
-    _read_configuration_file()
-
-    _get_scenarios()
-    print str(len(scenarios))
-
-    t_accept = threading.Thread(target=_socket_accept)
-    t_accept.daemon = True
-    t_accept.start()
-
-    t_event = threading.Thread(target=_main_event_waiting)
-    t_event.daemon = True
-    t_event.start()
-
-    signal.pause()
-
-    print('Scenario Manager ended')
 
 
 if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_handler)
 
-    main()
+    print('Scenario Manager: Started.')
+    _read_configuration_file()
+
+    _get_scenarios()
+
+    # thread responsible for communicating with running Modules
+    t_accept = threading.Thread(target=_socket_accept)
+    t_accept.daemon = True
+    t_accept.start()
+
+    # main routine thread
+    t_main = threading.Thread(target=_main)
+    t_main.daemon = True
+    t_main.start()
+
+    # checking with WebApi if Scenarios changed thread
+    t_scenarios_changed = threading.Thread(target=_scenarios_changed)
+    t_scenarios_changed.daemon = True
+    t_scenarios_changed.start()
+
+    signal.pause()  # wait for SIGINT, then shutdown
+
+    print('Scenario Manager: Ended.')
+
+
+# endregion ~ENTRY AND MAIN METHOD
+
