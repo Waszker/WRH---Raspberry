@@ -2,6 +2,8 @@
 from WRH_Engine.WebApiLibrary import Response
 from ..WebApiLibrary import WebApiClient as WebApiClient
 from WRH_Engine.Configuration import configuration as config
+from WRH_Engine.ScenarioManager.Scenario import Scenario
+from WRH_Engine.ScenarioManager.Execution import Execution
 import WRH_Engine.Modules.CAMERA.camera as camera
 import WRH_Engine.Utils.utils as utils
 import sys
@@ -22,7 +24,7 @@ from datetime import datetime, timedelta
 # ..matches any of the Scenarios' Conditions..
 # ..if yes, then Scenario is executed, and Execution object uploaded
 
-# TODO: change scenario["Id"] to scenario.Id etc (create Scenario.py file)
+# TODO: change scenario["Id"] to scenario.Id etc (create Scenario.py file) - DONE
 # TODO: also, Execution.py
 
 # region OPTIONS
@@ -144,7 +146,15 @@ def _get_scenarios():
         scenarios = []
         return
     result_object = json.loads(result_content)
-    scenarios = result_object  # lock is acquired
+    scenarios = _convert_json_scenarios_to_python_objects(result_object)  # lock is acquired
+
+
+# Convert dict type Scenarios to Scenario objects
+def _convert_json_scenarios_to_python_objects(json_scenarios):
+    object_scenarios = []
+    for json_scenario in json_scenarios:
+        object_scenarios.append(Scenario(json_scenario))
+    return object_scenarios
 
 
 # endregion ~UPDATE SCENARIOS
@@ -184,10 +194,10 @@ def _get_active_scenarios_by_priority(scenario_list):
 def _get_active_scenarios_by_done(scenario_list):
     result = []
     for scenario in scenario_list:
-        if not str(scenario["Id"]) in done_scenarios:
-            done_scenarios[str(scenario["Id"])] = 0
-        done = done_scenarios[str(scenario["Id"])]
-        if done > 0 and int(scenario["Recurring"]) == 0:
+        if not str(scenario.id) in done_scenarios:
+            done_scenarios[str(scenario.id)] = 0
+        done = done_scenarios[str(scenario.id)]
+        if done > 0 and scenario.recurring == 0:
             continue  # exclude this Scenario
         result.append(scenario)
     return result
@@ -203,29 +213,29 @@ def _decode_dht_value(encoded_value):
 def _get_active_scenarios_by_measurements(scenario_list):
     result = []
     for scenario in scenario_list:
-        if not str(scenario["ConditionModuleId"]) in measurements:
+        if not str(scenario.condition_module_id) in measurements:
             continue  # there is no Measurement from Condition Module (yet)
-        value = measurements[str(scenario["ConditionModuleId"])]
+        value = measurements[str(scenario.condition_module_id)]
 
         condition_met = False
         temperature = ''
         humidity = ''
-        if scenario["Condition"] < 5:
+        if scenario.condition < 5:
             (temperature, humidity) = _decode_dht_value(value)
 
-        if scenario["Condition"] == 1:  # Temperature below...
-            if temperature < int(scenario["ValueInt"]):
+        if scenario.condition == 1:  # Temperature below...
+            if temperature < scenario.value_int:
                 condition_met = True
-        if scenario["Condition"] == 2:  # Temperature above...
-            if temperature > int(scenario["ValueInt"]):
+        if scenario.condition == 2:  # Temperature above...
+            if temperature > scenario.value_int:
                 condition_met = True
-        if scenario["Condition"] == 3:  # Humidity below...
-            if humidity < int(scenario["ValueInt"]):
+        if scenario.condition == 3:  # Humidity below...
+            if humidity < scenario.value_int:
                 condition_met = True
-        if scenario["Condition"] == 4:  # Humidity above...
-            if humidity > int(scenario["ValueInt"]):
+        if scenario.condition == 4:  # Humidity above...
+            if humidity > scenario.value_int:
                 condition_met = True
-        if scenario["Condition"] == 5:  # Movement
+        if scenario.condition == 5:  # Movement
             if int(value) > 0:
                 condition_met = True
 
@@ -259,8 +269,8 @@ def _add_execution(scenario, action_value, condition_value):
     now = utils.generate_proper_date()
 
     (status_code, content) = WebApiClient.add_execution(device_id, device_token,
-                                                        condition_value, action_value, now, scenario["Id"],
-                                                        scenario["Condition"], scenario["Action"])
+                                                        condition_value, action_value, now, scenario.id,
+                                                        scenario.condition, scenario.action)
     # TODO: on failure add to executions array, and try later
     return
 
@@ -277,19 +287,19 @@ def _try_execute_scenarios():
     for scenario in scenarios_to_execute:
         (success, action_value) = _execute_scenario(scenario)
         if success:
-            done_scenarios[str(scenario["Id"])] += 1
-            print 'Scenario Manager: successfully executed Scenario: ' + str(scenario["Name"]) + '\n'
-            _add_execution(scenario, action_value, measurements[str(scenario["ConditionModuleId"])])
+            done_scenarios[str(scenario.id)] += 1
+            print 'Scenario Manager: successfully executed Scenario: ' + scenario.name + '\n'
+            _add_execution(scenario, action_value, measurements[str(scenario.condition_module_id)])
         else:
-            print 'Scenario Manager: failed to execute Scenario: ' + str(scenario["Name"]) + '\n'
+            print 'Scenario Manager: failed to execute Scenario: ' + scenario.name + '\n'
     return
 
 
 # execute a Scenario, return (success, value)
 # if Action == take snapshot, then value = snapshot
 def _execute_scenario(scenario):
-    action_module_id = str(scenario["ActionModuleId"])
-    action = str(scenario["Action"])
+    action_module_id = str(scenario.action_module_id)
+    action = str(scenario.action)
 
     for module in available_modules:
         if str(module.id) == str(action_module_id):
