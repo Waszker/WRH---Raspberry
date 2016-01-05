@@ -304,7 +304,6 @@ def _try_execute_scenarios():
 def _execute_scenario(scenario):
     action_module_id = str(scenario.action_module_id)
     action = scenario.action
-    print 'action = ' + action
     for module in available_modules:
         if str(module.id) == str(action_module_id):
             module = module
@@ -326,12 +325,13 @@ def _execute_scenario(scenario):
         except:
             print 'ScenarioManager: Unable to communicate with wi-fi socket.'
             return False, ''
+        return True, ''
 
     if action == 4:
         try:
             content = camera.get_camera_snapshot(str(module.address), "login", "password")
         except:
-            print 'ScenarioManager: Unable to take camera snaphot.'
+            print 'ScenarioManager: Unable to take camera snapshot.'
             return False, ''
         return True, content
 
