@@ -303,7 +303,7 @@ def _try_execute_scenarios():
 # if Action == take snapshot, then value = snapshot
 def _execute_scenario(scenario):
     action_module_id = str(scenario.action_module_id)
-    action = str(scenario.action)
+    action = scenario.action
 
     for module in available_modules:
         if str(module.id) == str(action_module_id):
@@ -312,11 +312,11 @@ def _execute_scenario(scenario):
     if not module:
         return False, ''  # Action module not found
 
-    if action == '1':
+    if action == 1:
         suffix = '?on'
-    if action == '2':
+    if action == 2:
         suffix = '?off'
-    if action == '3':
+    if action == 3:
         suffix = '?toggle'
 
     if 1 <= action <= 3:
@@ -325,7 +325,7 @@ def _execute_scenario(scenario):
         except:
             return False, ''
 
-    if action == '4':
+    if action == 4:
         try:
             content = camera.get_camera_snapshot(str(module.address), "login", "password")
         except:
