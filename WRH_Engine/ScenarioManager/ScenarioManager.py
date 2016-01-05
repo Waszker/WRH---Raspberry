@@ -304,12 +304,13 @@ def _try_execute_scenarios():
 def _execute_scenario(scenario):
     action_module_id = str(scenario.action_module_id)
     action = str(scenario.action)
-
+    print 'action = ' + action
     for module in available_modules:
         if str(module.id) == str(action_module_id):
             module = module
             break
     if not module:
+        print 'ScenarioManager: Action Module not found.'
         return False, ''  # Action module not found
 
     if action == '1':
@@ -323,15 +324,18 @@ def _execute_scenario(scenario):
         try:
             urllib2.urlopen('http://' + module.address + '/cgi-bin/relay.cgi' + suffix).read()
         except:
+            print 'ScenarioManager: Unable to communicate with wi-fi socket.'
             return False, ''
 
     if action == '4':
         try:
             content = camera.get_camera_snapshot(str(module.address), "login", "password")
         except:
+            print 'ScenarioManager: Unable to take camera snaphot.'
             return False, ''
         return True, content
 
+    print 'ScenarioManager: Unsupported scenario action.'
     return False, ''
 
 
