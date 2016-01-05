@@ -15,10 +15,10 @@ moduleid = '15'
 # zmiany w planach, nie bedzie modulu od gniazdka.
 # poniewaz pomiarow nie zbieramy z gniazdka,
 # a wykonaniem steruje bezposrednio Scenario Manager
-	
+
 
 if __name__ == "__main__":
     print('Wifi: Started.')
-	while True:
-		time.sleep(100)	
-	print('Wif: Ended.')
+    while True:
+        time.sleep(100)
+    print('Wifi: Ended.')
