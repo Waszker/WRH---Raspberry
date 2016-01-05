@@ -75,6 +75,7 @@ def get_camera_snapshot(port, login, password):
 
 
 if __name__ == "__main__":
+    print 'Camera: started.'
     signal.signal(signal.SIGINT, _signal_handler)
     device_line = sys.argv[1]
     conf_line = sys.argv[2]

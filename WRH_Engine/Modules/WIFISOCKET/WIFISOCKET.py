@@ -16,11 +16,9 @@ moduleid = '15'
 # poniewaz pomiarow nie zbieramy z gniazdka,
 # a wykonaniem steruje bezposrednio Scenario Manager
 	
-def main():
-	print('main() start wifisocket')
-	while True:
-		time.sleep(100)	
-	print('main() end')
 
 if __name__ == "__main__":
-    main()
+    print('Wifi: Started.')
+	while True:
+		time.sleep(100)	
+	print('Wif: Ended.')

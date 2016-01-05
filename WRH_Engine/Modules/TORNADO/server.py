@@ -99,4 +99,5 @@ def isuservalid(handler):
 if __name__ == "__main__":
     __CONFIG_FILE__ = sys.argv[1]
     application.listen(8888)
+	print 'Tornado: Started.'
     tornado.ioloop.IOLoop.instance().start()

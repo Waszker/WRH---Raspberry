@@ -45,7 +45,7 @@ def _read_arguments(argv):
 
 
 def main(argv):
-    print('main() start MOVEMENT')
+    print('Movement: Started.')
     _read_arguments(argv)
     time.sleep(4)
 
