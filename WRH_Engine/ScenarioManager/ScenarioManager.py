@@ -298,25 +298,18 @@ def _execute_scenario(scenario):
     if not module:
         return False, ''  # Action module not found
 
-    # TODO: refactor this three ifs
     if action == '1':
-        try:
-            urllib2.urlopen('http://' + module.address + '/cgi-bin/relay.cgi?on').read()
-        except:
-            return False, ''
-        return True, ''
+        suffix = '?on'
     if action == '2':
-        try:
-            urllib2.urlopen('http://' + module.address + '/cgi-bin/relay.cgi?off').read()
-        except:
-            return False, ''
-        return True, ''
+        suffix = '?off'
     if action == '3':
+        suffix = '?toggle'
+
+    if 1 <= action <= 3:
         try:
-            urllib2.urlopen('http://' + module.address + '/cgi-bin/relay.cgi?toggle').read()
+            urllib2.urlopen('http://' + module.address + '/cgi-bin/relay.cgi' + suffix).read()
         except:
             return False, ''
-        return True, ''
 
     if action == '4':
         try:
