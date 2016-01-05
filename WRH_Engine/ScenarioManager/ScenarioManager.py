@@ -24,8 +24,9 @@ from datetime import datetime, timedelta
 # ..matches any of the Scenarios' Conditions..
 # ..if yes, then Scenario is executed, and Execution object uploaded
 
-# TODO: change scenario["Id"] to scenario.Id etc (create Scenario.py file) - DONE
-# TODO: also, Execution.py
+
+# TODO: Periodically try to send unsent Execution objects
+
 
 # region OPTIONS
 
@@ -271,7 +272,10 @@ def _add_execution(scenario, action_value, condition_value):
     (status_code, content) = WebApiClient.add_execution(device_id, device_token,
                                                         condition_value, action_value, now, scenario.id,
                                                         scenario.condition, scenario.action)
-    # TODO: on failure add to executions array, and try later
+    if status_code != Response.STATUS_OK:
+        executions.append(Execution(device_id, device_token, condition_value, action_value,
+                                    now, scenario.id, scenario.condition, scenario.action))
+        # TODO: these need to be sent later
     return
 
 
