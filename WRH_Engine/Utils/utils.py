@@ -75,7 +75,7 @@ def generate_proper_date():
 # make a python datetime object based on our datetime string
 # YYYY-MM-DDThh:mm:ss
 # returns: (success, datetime)
-def _convert_datetime_to_python(our_datetime):
+def convert_datetime_to_python(our_datetime):
     if not our_datetime:
         return False, ''
     date_time_pattern = re.compile("^([0-9][0-9][0-9][0-9])-([0-9][0-9])-([0-9][0-9])T([0-9][0-9]):([0-9][0-9]):([0-9][0-9])$")

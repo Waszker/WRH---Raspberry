@@ -166,11 +166,23 @@ def _convert_json_scenarios_to_python_objects(json_scenarios):
 
 # from a list of Scenarios, get scenarios that are active (startDate <= DateTime.Now <= endDate)
 def _get_active_scenarios_by_date(scenario_list):
-    now = datetime.utcnow()
+    (success, now) = utils.convert_datetime_to_python(utils.generate_proper_date())
+    if not success:
+        print 'Scenario Manager: error in utils.generate_proper..() or utils.convert_datetime..().'
+        return scenario_list
     result = []
-    # TODO: not implemented
+
     for scenario in scenario_list:
         active = True
+        (success_start, start) = utils.convert_datetime_to_python(scenario.start_date)
+        (success_end, end) = utils.convert_datetime_to_python(scenario.end_date)
+
+        if success_start:  # Scenario has valid start date
+            if now < start:
+                active = False  # Scenario has not yet started
+        if success_end:
+            if now > end:
+                active = False  # Scenario has finished
 
         if active:
             result.append(scenario)
@@ -181,9 +193,15 @@ def _get_active_scenarios_by_date(scenario_list):
 # from a list of Scenarios, exclude scenarios with the lowest priority within scenarios with the same action module
 def _get_active_scenarios_by_priority(scenario_list):
     result = []
-    # TODO not implemented
+
     for scenario in scenario_list:
         active = True
+
+        for other_scenario in scenario_list:
+            if other_scenario.action_module_id == scenario.action_module_id:
+                if other_scenario.priority > scenario.priority:
+                    active = False  # there is a Scenario with higher Priority (to the same Action Module)
+                    break
 
         if active:
             result.append(scenario)
