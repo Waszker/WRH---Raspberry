@@ -15,7 +15,6 @@ import urllib2
 import signal
 from datetime import datetime, timedelta
 
-
 # SCENARIO MANAGER
 # Module responsible for managing Scenarios assigned to this Device
 # This Module is started by the Overlord
@@ -142,8 +141,8 @@ def _get_scenarios():
     (status_code, result_content) = WebApiClient.get_scenarios(device_id, device_token)
     if status_code != Response.STATUS_OK:
         print 'Scenario Manager: WebApiClient.get_scenarios returned status code ' \
-                  + str(status_code) \
-                  + '. (in method _get_scenarios()'
+              + str(status_code) \
+              + '. (in method _get_scenarios()'
         scenarios = []
         return
     result_object = json.loads(result_content)
@@ -282,19 +281,30 @@ def _get_scenarios_to_execute():
 
 # region SCENARIO EXECUTION
 
-# upload Execution object to WebApi, after successfully executing Scenario
+# create Execution object, after successfully executing Scenario
 def _add_execution(scenario, action_value, condition_value):
     global executions
     now = utils.generate_proper_date()
 
-    (status_code, content) = WebApiClient.add_execution(device_id, device_token,
-                                                        condition_value, action_value, now, scenario.id,
-                                                        scenario.condition, scenario.action)
-    if status_code != Response.STATUS_OK:
-        executions.append(Execution(device_id, device_token, condition_value, action_value,
-                                    now, scenario.id, scenario.condition, scenario.action))
-        # TODO: these need to be sent later
+    executions.append(Execution(device_id, device_token, condition_value, action_value,
+                                now, scenario.id, scenario.condition, scenario.action))
+
+    executions = _upload_executions(executions)
     return
+
+
+# upload Executions to Web Api
+# returns a list of NOT uploaded objects
+def _upload_executions(execution_list):
+    result = []
+    for execution in execution_list:
+        (status_code, content) = WebApiClient.add_execution(execution.device_id, execution.device_token,
+                                                            execution.condition_value, execution.action_value,
+                                                            execution.timestamp, execution.scenario.id,
+                                                            execution.condition, execution.action)
+        if status_code != Response.STATUS_OK:
+            result.append(execution)
+    return result
 
 
 # get a list of Scenarios which are supposed to be executed
@@ -413,4 +423,3 @@ if __name__ == "__main__":
 
 
 # endregion ~ENTRY AND MAIN METHOD
-
