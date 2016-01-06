@@ -69,7 +69,7 @@ def generate_proper_date():
         hour = 00
     else:
         hour += 1
-    return time.strftime("%Y-%d-%mT{}:%M:%S".format(hour), time.gmtime())
+    return time.strftime("%Y-%m-%dT{}:%M:%S".format(hour), time.gmtime())
 
 
 # make a python datetime object based on our datetime string
