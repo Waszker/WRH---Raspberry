@@ -67,7 +67,7 @@ def getelectricalsocketstate(config_filename, id):
         ((d, dd), modules_list) = C.parse_configuration_file(f)
         for i, module in enumerate(modules_list):
             if int(module.id) == int(id):
-                url = module.address + "?state"
+                url = "http://" + module.address + "/cgi-bin/relay.cgi?state"
                 request = urllib2.Request(url)
                 return urllib2.urlopen(request).read()
 

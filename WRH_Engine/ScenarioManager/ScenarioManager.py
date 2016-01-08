@@ -312,7 +312,7 @@ def _upload_executions(execution_list):
     for execution in execution_list:
         (status_code, content) = WebApiClient.add_execution(execution.device_id, execution.device_token,
                                                             execution.condition_value, execution.action_value,
-                                                            execution.timestamp, execution.scenario.id,
+                                                            execution.timestamp, execution.scenario_id,
                                                             execution.condition, execution.action)
         if status_code != Response.STATUS_OK:
             result.append(execution)

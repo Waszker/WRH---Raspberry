@@ -37,7 +37,7 @@ def _snapshot_thread(device_info, camera, login, password):
     port = camera.address;
 
     while True:
-        t.sleep(15 * 60)
+        t.sleep(5 * 60)
         image = get_camera_snapshot(port, login, password)
         U.manage_measurement(device_info[0], device_info[1], camera.id,
                              camera.type, image, _get_streaming_address(port))
