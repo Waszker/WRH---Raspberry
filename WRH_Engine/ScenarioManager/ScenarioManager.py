@@ -153,7 +153,19 @@ def _get_scenarios():
 def _convert_json_scenarios_to_python_objects(json_scenarios):
     object_scenarios = []
     for json_scenario in json_scenarios:
-        object_scenarios.append(Scenario(json_scenario))
+        object_scenarios.append(Scenario(json_scenario["Id"],
+                                         json_scenario["DeviceId"],
+                                         json_scenario["Condition"],
+                                         json_scenario["Action"],
+                                         json_scenario["ValueInt"],
+                                         json_scenario["ValueString"],
+                                         json_scenario["Name"],
+                                         json_scenario["Priority"],
+                                         json_scenario["ConditionModuleId"],
+                                         json_scenario["ActionModuleId"],
+                                         json_scenario["StartDate"],
+                                         json_scenario["EndDate"],
+                                         json_scenario["Recurring"], ))
     return object_scenarios
 
 
