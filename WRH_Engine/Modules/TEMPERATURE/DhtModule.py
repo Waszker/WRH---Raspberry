@@ -53,7 +53,7 @@ def _sigalrm_handler(signal, frame):
 
 
 if __name__ == "__main__":
-    print 'Dht: Started.
+    print 'Dht: Started'
     signal.signal(signal.SIGINT, _signal_handler)
     #signal.signal(signal.SIGALRM, _sigalrm_handler)
     # signal.alarm(3)
