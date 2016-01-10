@@ -2,11 +2,13 @@ import re
 import getpass
 from ..WebApiLibrary import WebApiClient as W
 
+
 def _is_device_color_convention_correct(color):
     pattern = re.compile("#[\d | A-F]{8}")
     return pattern.match(color)
 
 
+# Ask user for Device name and color
 def _get_device_information():
     while True:
         device_name = raw_input('Your device "name": ')
@@ -28,6 +30,7 @@ def _is_username_convention_correct(username):
     return pattern.match(username)
 
 
+# Ask user for his credentials
 def _get_login_information():
     while True:
         username = raw_input("Username: ")
@@ -40,6 +43,7 @@ def _get_login_information():
     return (username, password)
 
 
+# Try to register new Device in the system
 def _register_device():
     (username, password) = _get_login_information()
     (device_name, device_color) = _get_device_information()
@@ -58,7 +62,8 @@ def _register_device():
     return (is_success, result_content)
 
 
-# Runs register procedure that asks user some important questions
+# Runs register procedure
+# Procedure is interactive, waits for user input
 def register_procedure():
     print "Register procedure requires you to have an account in WRH system"
     is_user_registered = raw_input('Do you have already an account? [Y/N]: ')
@@ -67,7 +72,7 @@ def register_procedure():
         return _register_device()
     else:
         print 'Please use your browser or mobile app to create your account'
-        print 'The WWW address is: https://wrhsystem.com'
+        print 'The WWW address is: http://wildraspberryhouse.azurewebsites.net/'
         return (False, "")
 
 if __name__ == "__main__":

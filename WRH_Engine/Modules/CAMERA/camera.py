@@ -1,4 +1,9 @@
 #!/bin/python2.7
+####################################################
+# Set of functions to work with camera module
+# connected to Raspberry Pi device.
+####################################################
+
 from WRH_Engine.Configuration import configuration as C
 from WRH_Engine.Utils import utils as U
 import sys
@@ -67,6 +72,8 @@ def _start_camera_thread(device_info, camera):
     return p
 
 
+# Returns base64 encoded string containing image taken from
+# connected USB camera.
 def get_camera_snapshot(port, login, password):
     r = requests.get("http://localhost:" + str(port) + "?action=snapshot",
                      auth=(str(login), str(password)))

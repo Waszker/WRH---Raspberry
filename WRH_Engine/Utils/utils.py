@@ -10,6 +10,7 @@ from os import listdir
 from WRH_Engine.WebApiLibrary import WebApiClient as W
 
 
+# method synchronize measurements with server and send last measurement to scenario manager
 def manage_measurement(device_id, device_token,  module_id,  module_type, measurement, streaming_address):
     _send_measurement_to_scenario_manager(measurement, module_id)
     path = "/var/wrh/{}_{}".format(module_type, module_id)
@@ -62,11 +63,13 @@ def _send_old_measurements(path, device_id,  device_token, module_id):
         raise IOError(err.message)
 
 
+# generates proper date format: YYYY-MM-DDThh:mm:ss
 def generate_proper_date():
-    # YYYY-MM-DDThh:mm:ss
     hour = int(time.strftime("%H"))
     if hour == 24:
-        hour = 00
+        hour = 1
+    elif hour == 23:
+    	hour = 0
     else:
         hour += 1
     return time.strftime("%Y-%m-%dT{}:%M:%S".format(hour), time.gmtime())

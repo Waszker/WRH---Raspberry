@@ -33,6 +33,7 @@ def main(argv):
     dev = C.get_device_entry_data(argv[0])
     module = C.get_module_entry_data(argv[1])
 
+    # read measurement and sync data with a server
     while True:
 		time.sleep(5 * 60)
 		measurement = _get_measurement(module.gpio)
@@ -55,6 +56,4 @@ def _sigalrm_handler(signal, frame):
 if __name__ == "__main__":
     print 'Dht: Started'
     signal.signal(signal.SIGINT, _signal_handler)
-    #signal.signal(signal.SIGALRM, _sigalrm_handler)
-    # signal.alarm(3)
     main(sys.argv[1:])
