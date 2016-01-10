@@ -24,7 +24,6 @@ from datetime import datetime, timedelta
 # ..if yes, then Scenario is executed, and Execution object uploaded
 
 
-# TODO: Periodically try to send unsent Execution objects
 
 
 # region OPTIONS
