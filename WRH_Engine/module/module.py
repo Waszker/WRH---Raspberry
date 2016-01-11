@@ -1,5 +1,10 @@
 from ..WebApiLibrary import WebApiClient as W
 
+###############################################################
+# Class representing module connected to Raspberry Pi device.
+# Each module has methods that help in its edition
+# and registration.
+###############################################################
 class Module:
     'This class will represent generic module'
     types_strings = {
@@ -26,6 +31,9 @@ class Module:
             print ('available at address ' + self.address)
 
 
+    # Runs interactive edit module procedure.
+    # Gpio and address changes always succeed but in case of name
+    # changing errors no changes are actually performed
     def run_edit_procedure(self, system_info):
         print 'Provide new module information (leave fields blank if you don\'t want to change)'
         print 'Please note that changes other than name will always succeed'
@@ -50,6 +58,8 @@ class Module:
         return status == W.Response.STATUS_OK
 
 
+    # Tries to remove (unregister) module from the WRH system.
+    # Returns information if the procedure was sucessfull.
     def run_removal_procedure(self, system_info):
         is_success = False
         (status, response_content) = W.remove_module(system_info[0], system_info[1], self.id)
@@ -63,6 +73,8 @@ class Module:
         return is_success
 
 
+    # Returns string name of module from provided
+    # int number.
     @staticmethod
     def get_type_name(type):
         try:
@@ -72,6 +84,8 @@ class Module:
         return type_name
 
 
+    # Runs registration procedure. This method requires active Internet
+    # connection to work. Returns newly registered module.
     @staticmethod
     def register_new_module(system_info) :
         print '\n***Adding new module***'
