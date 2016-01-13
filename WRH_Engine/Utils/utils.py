@@ -86,7 +86,10 @@ def convert_datetime_to_python(our_datetime):
     date_time_pattern = re.compile("^([0-9][0-9][0-9][0-9])-([0-9][0-9])-([0-9][0-9])T([0-9][0-9]):([0-9][0-9]):([0-9][0-9])$")
     does_match = date_time_pattern.match(our_datetime)
     if not does_match:
-        return False, ''
+        our_datetime = str(our_datetime)[1:-1]
+        does_match = date_time_pattern.match(our_datetime)
+        if not does_match:
+            return False, ''
     groups = re.search(date_time_pattern,  our_datetime)
     success = True
     try:
