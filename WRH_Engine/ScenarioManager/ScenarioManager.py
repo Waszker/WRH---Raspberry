@@ -24,14 +24,14 @@ from datetime import datetime, timedelta
 # ..if yes, then Scenario is executed, and Execution object uploaded
 
 
-
-
 # region OPTIONS
 
 
 CONFIGURATION_FILE = '.wrh.config'
 socket_port = 2000
-scenarios_changed_wait_time = 5  # (seconds) how often check with WebApi if Scenarios has changed
+scenarios_changed_wait_time_user_active = 5
+scenarios_changed_wait_time_user_inactive = 30
+user_inactive_after = 60  # time (seconds) without User activity in client apps after User is deemed inactive
 
 # endregion ~OPTIONS
 
@@ -49,6 +49,7 @@ event = threading.Event()  # triggered when scenarios changed OR some measuremen
 available_modules = []
 scenarios_changed = True
 executions = []  # does not need lock, because used only by one thread
+scenarios_changed_wait_time = 5  # (seconds) how often check with WebApi if Scenarios has changed
 
 
 # endregion ~GLOBAL VARIABLES
@@ -119,8 +120,25 @@ def _socket_communicate(client_socket):
 # periodically check with WebApi if scenarios has changed. If yes, then set the event.
 def _scenarios_changed():
     global scenarios_changed
+    global scenarios_changed_wait_time
     while True:
+        print 'ScenarioManager: _scenarios_changed sleeping for ' + str(scenarios_changed_wait_time) + ' seconds.'
         time.sleep(scenarios_changed_wait_time)
+        (status_code, result_content) = WebApiClient.get_user_last_active(device_id, device_token)
+        if status_code == Response.STATUS_OK:
+            last_active_tuple = utils.convert_datetime_to_python(result_content)
+            now_tuple = utils.convert_datetime_to_python(utils.generate_proper_date())
+            if last_active_tuple[0] and now_tuple[0]:  # successfully converted
+                last_active = last_active_tuple[1]
+                now = now_tuple[1]
+                if (now-last_active).total_seconds() > user_inactive_after:
+                    if scenarios_changed_wait_time != scenarios_changed_wait_time_user_inactive:
+                        scenarios_changed_wait_time = scenarios_changed_wait_time_user_inactive
+                        print 'ScenarioManager: User is considered inactive.'
+                elif scenarios_changed_wait_time != scenarios_changed_wait_time_user_active:
+                    scenarios_changed_wait_time = scenarios_changed_wait_time_user_active
+                    print 'ScenarioManager: User is considered active.'
+
         (status_code, result_content) = WebApiClient.scenarios_changed(device_id, device_token)
         if status_code == Response.STATUS_OK:
             lock.acquire()
@@ -152,19 +170,7 @@ def _get_scenarios():
 def _convert_json_scenarios_to_python_objects(json_scenarios):
     object_scenarios = []
     for json_scenario in json_scenarios:
-        object_scenarios.append(Scenario(json_scenario["Id"],
-                                         json_scenario["DeviceId"],
-                                         json_scenario["Condition"],
-                                         json_scenario["Action"],
-                                         json_scenario["ValueInt"],
-                                         json_scenario["ValueString"],
-                                         json_scenario["Name"],
-                                         json_scenario["Priority"],
-                                         json_scenario["ConditionModuleId"],
-                                         json_scenario["ActionModuleId"],
-                                         json_scenario["StartDate"],
-                                         json_scenario["EndDate"],
-                                         json_scenario["Recurring"], ))
+        object_scenarios.append(Scenario(json_scenario))
     return object_scenarios
 
 

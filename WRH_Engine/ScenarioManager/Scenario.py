@@ -15,19 +15,3 @@ class Scenario:
         self.start_date = str(json_scenario["StartDate"])
         self.end_date = str(json_scenario["EndDate"])
         self.recurring = int(json_scenario["Recurring"])
-
-    def __init__(self, id, device_id, condition, action, value_int, value_string, name, priority, condition_module_id,
-                 action_module_id, start_date, end_date, recurring):
-        self.id = id
-        self.device_id = device_id
-        self.condition = condition
-        self.action = action
-        self.value_int = value_int
-        self.value_string = value_string
-        self.name = name
-        self.priority = priority
-        self.condition_module_id = condition_module_id
-        self.action_module_id = action_module_id
-        self.start_date = start_date
-        self.end_date = end_date
-        self.recurring = recurring

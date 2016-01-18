@@ -55,8 +55,10 @@ def _send_old_measurements(path, device_id,  device_token, module_id):
                     content = content_file.read()
                 # pull out timestamp and measurement
                 pair = content.split('$')
+                if (len(pair) != 2):
+                    os.remove(os.path.join(path, file))
                 # send measurement
-                if W.add_measurement(device_id, device_token, str(module_id), pair[0], pair[1], "")[0] == W.Response.STATUS_OK:
+                elif W.add_measurement(device_id, device_token, str(module_id), pair[0], pair[1], "")[0] == W.Response.STATUS_OK:
                     # remove file if ok
                     os.remove(os.path.join(path, file))
     except IOError as err:
@@ -84,7 +86,10 @@ def convert_datetime_to_python(our_datetime):
     date_time_pattern = re.compile("^([0-9][0-9][0-9][0-9])-([0-9][0-9])-([0-9][0-9])T([0-9][0-9]):([0-9][0-9]):([0-9][0-9])$")
     does_match = date_time_pattern.match(our_datetime)
     if not does_match:
-        return False, ''
+        our_datetime = str(our_datetime)[1:-1]
+        does_match = date_time_pattern.match(our_datetime)
+        if not does_match:
+            return False, ''
     groups = re.search(date_time_pattern,  our_datetime)
     success = True
     try:
