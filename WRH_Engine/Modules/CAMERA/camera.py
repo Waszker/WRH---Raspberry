@@ -38,11 +38,12 @@ def _get_streaming_address(port):
     address = address + ":1" + str(port)
     return address
 
+
 def _snapshot_thread(device_info, camera, login, password):
     port = camera.address;
 
     while True:
-        t.sleep(5 * 60)
+        t.sleep(60 * 60)
         image = get_camera_snapshot(port, login, password)
         U.manage_measurement(device_info[0], device_info[1], camera.id,
                              camera.type, image, _get_streaming_address(port))
@@ -56,8 +57,8 @@ def _signal_handler(signal, frame):
 
 
 def _start_camera_thread(device_info, camera):
-    os.environ['LD_LIBRARY_PATH'] = '/usr/lib'
-    command = ["/bin/mjpg_streamer",  "-i", "input_uvc.so -n -q 50 -f 1 -d " + str(camera.gpio),
+    os.environ['LD_LIBRARY_PATH'] = '/usr/local/lib/'
+    command = ["/usr/local/bin/mjpg_streamer",  "-i", "input_uvc.so -n -q 50 -f 30 -d " + str(camera.gpio),
                "-o", "output_http.so -p " + camera.address + " -c login:password"]
     print(command)
 
@@ -72,9 +73,10 @@ def _start_camera_thread(device_info, camera):
     return p
 
 
-# Returns base64 encoded string containing image taken from
-# connected USB camera.
 def get_camera_snapshot(port, login, password):
+    """
+    Returns base64 encoded string containing image taken from connected USB camera.
+    """
     r = requests.get("http://localhost:" + str(port) + "?action=snapshot",
                      auth=(str(login), str(password)))
     image = base64.b64encode(r.content)

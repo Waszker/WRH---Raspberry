@@ -94,6 +94,7 @@ def _run_maintenance_work():
         continue
     return
 
+
 def _is_configuration_file_sane():
     with open(CONFIGURATION_FILE, 'r') as f:
         print 'Configuration file found\nChecking it for errors...'
@@ -116,6 +117,7 @@ def show_options():
             with open(CONFIGURATION_FILE, 'a+') as f:
                 system_info = json.loads(response_content)
                 f.write(str(system_info['Id']) + ";" + str(system_info['Token']) + '\n')
+
 
 if __name__ == "__main__":
     if os.getuid() != 0:
