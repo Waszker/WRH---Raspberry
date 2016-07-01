@@ -174,7 +174,7 @@ class CameraModule(base_module.Module):
     def _start_camera_thread(self, device_id, device_token):
         os.environ['LD_LIBRARY_PATH'] = '/usr/local/lib/'
         command = ["/usr/local/bin/mjpg_streamer", "-i", "input_uvc.so -n -q 50 -f 30 -d " + str(self.gpio),
-                   "-o", "output_http.so -p " + self.address + " -c" + self.login + ":" + self.password]
+                   "-o", "output_http.so -p " + self.address + " -c " + self.login + ":" + self.password]
         print(command)
 
         # Preparing thread and subprocess

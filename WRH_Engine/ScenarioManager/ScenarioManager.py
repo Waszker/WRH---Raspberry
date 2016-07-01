@@ -393,7 +393,7 @@ def _execute_scenario(scenario):
 def _main():
     global measurements
     global scenarios_changed
-
+ip
     while True:
         event.wait()
         lock.acquire()
@@ -415,6 +415,8 @@ if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_handler)
 
     print('Scenario Manager: Started.')
+    # TODO: Remove this line after bugs have been fixed
+    signal.pause()
     _read_configuration_file()
 
     _get_scenarios()
