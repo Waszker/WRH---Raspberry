@@ -66,15 +66,10 @@ class ESP8266SocketModule(base_module.Module):
         """
         time.sleep(1)
         value_finding_pattern = ".+?value=\"(.+?)\".*$"
-        checker = re.compile(value_finding_pattern)
         print "About to get response"
         response = requests.get("http://" + str(self.gpio) + "/socket.lua")
         print 'Got responce ' + str(response.content)
-        if not checker.match(str(response.content)):
-            print "REGEX DOES NOT MATCH"
-            state = "UNKNOWN"
-        else:
-            state = re.search(value_finding_pattern, str(response)).group(1)
+        state = re.search(value_finding_pattern, str(response)).group(1)
         return state
 
     def get_module_description(self):
