@@ -77,29 +77,6 @@ def getsystemstats():
     return stat_string
 
 
-def getelectricalsocketstate(config_filename, id):
-    with open(config_filename) as f:
-        ((d, dd), modules_list) = c.parse_configuration_file(f)
-        for i, module in enumerate(modules_list):
-            if int(module.id) == int(id):
-                url = "http://" + module.address + "/cgi-bin/relay.cgi?state"
-                request = urllib2.Request(url)
-                return urllib2.urlopen(request).read()
-
-    return "?"
-
-
-def setelectrcalsocketstate(config_filename, id, state):
-    with open(config_filename) as f:
-        ((d, dd), modules_list) = c.parse_configuration_file(f)
-        for i, module in enumerate(modules_list):
-            if int(module.id) == int(id):
-                url = "http://" + module.address + "/cgi-bin/relay.cgi" + "?" + state
-                request = urllib2.Request(url)
-                return urllib2.urlopen(request).read()
-    return "?"
-
-
 def get_request(host, port, message=None):
     """
     Receives message from host on provided port.

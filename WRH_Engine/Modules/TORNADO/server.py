@@ -38,8 +38,8 @@ class Userform(BaseHandler):
         items = []
         classes, modules = resources.get_available_module_types(__CONFIG_FILE__)
         ip = str(self.request.host).split(":")[0]
-        for file in os.listdir(__UPLOADS__):
-            items.append(file)
+        for found_file in os.listdir(__UPLOADS__):
+            items.append(found_file)
 
         self.render("index.html", items=items, classes=classes, modules=modules, ipaddress=ip)
 
@@ -71,19 +71,6 @@ class Uptime(BaseHandler):
         self.finish(getsystemstats())
 
 
-class Socket(BaseHandler):
-    def get(self):
-        if not isuservalid(self): return
-        id = self.get_argument("number")
-        self.finish(resources.getelectricalsocketstate(__CONFIG_FILE__, id))
-
-    def post(self):
-        if not isuservalid(self): return
-        state = self.get_argument("state")
-        id = self.get_argument("number")
-        resources.setelectrcalsocketstate(__CONFIG_FILE__, id, state)
-
-
 class Request(BaseHandler):
     def get(self):
         if not isuservalid(self): return
@@ -106,7 +93,6 @@ application = tornado.web.Application([
     (r"/upload", Upload),
     (r"/show", Show),
     (r"/uptime", Uptime),
-    (r"/socket", Socket),
     (r"/request", Request)
 ],
     debug=True,
