@@ -19,9 +19,9 @@
 				<li>
 					<a href="#general_info">Informacje ogólne</a>
 				</li>
-				{%for class, _ in classes.iteritems()%}
+				{%for mclass, _ in classes.iteritems()%}
 				<li>
-					<a href="#{{class}}">{{class}}</a>
+					<a href="#{{mclass}}">{{class}}</a>
                 </li>
 				{%end%}
 				<li>
@@ -40,9 +40,9 @@
 			</div>
 
             {%for class, _ in classes.iteritems()%}
-			<div class="tabContent" id="{{class}}">
+			<div mclass="tabContent" id="{{class}}">
 			    {%for m in modules%}
-			        {%if m.type_number == class%}
+			        {%if m.type_number == mclass%}
 			        {{m.get_html_representation(ipaddress)}}
 			        {%end%}
 			    {%end%}
