@@ -153,8 +153,8 @@ class ESP8266SocketModule(base_module.Module):
                </script> \n\
                     <div id="esp8266SocketDiv' + self.id + '" class="socketDiv"> </div>\
                     <br /> \
-                    <button type="button" onclick="sendRequest(\"localhost\", ' + self.address + ', \"ON\")">ON</button> \
-                    <button type="button" onclick="sendRequest(\"localhost\", ' + self.address + ', \"OFF\")">OFF</button> \
+                    <button type="button" onclick="sendRequest(\'localhost\', ' + self.address + ', \'ON\')">ON</button> \
+                    <button type="button" onclick="sendRequest(\'localhost\', ' + self.address + ', \'OFF\')">OFF</button> \
                </div>'
 
     def _set_socket_state(self, should_turn_on, time_wait):
