@@ -69,11 +69,10 @@ class ESP8266SocketModule(base_module.Module):
         checker = re.compile(value_finding_pattern)
         print "About to get response"
         response = requests.get("http://" + str(self.gpio) + "/socket.lua")
-        print 'Got reposponce ' + response
-        if not checker.match(str(response)):
+        if not checker.match(str(response.content)):
             state = "UNKNOWN"
         else:
-            state = re.search(value_finding_pattern, str(response))
+            state = re.search(value_finding_pattern, str(response)).group(1)
         return state
 
     def get_module_description(self):
