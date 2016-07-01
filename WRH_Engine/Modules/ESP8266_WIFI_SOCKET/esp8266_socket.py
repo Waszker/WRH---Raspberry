@@ -145,7 +145,7 @@ class ESP8266SocketModule(base_module.Module):
         """
         return '<div> \
                <script> function update_state_message' + self.id + '(text) \n\
-               { document.getElementById("esp8266SocketDiv"' + self.id + ').innerHTML = text;} \n\
+               { document.getElementById(esp8266SocketDiv' + self.id + ').innerHTML = text;} \n\
                setInterval(function() { \n\
                getRequest(localhost, ' + self.address + ', STATE, update_state_message' + self.id + '); \n\
                }, 60);\n\
