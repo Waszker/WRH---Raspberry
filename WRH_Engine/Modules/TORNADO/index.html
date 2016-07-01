@@ -19,15 +19,11 @@
 				<li>
 					<a href="#general_info">Informacje ogólne</a>
 				</li>
-<!--				<li>
-					<a href="#sensors">Czujniki</a>
-                    </li> -->
+				{%for class, _ in classes.iteritems()%}
 				<li>
-					<a href="#monitoring">Podgląd z kamer</a>
-				</li>
-				<li>
-                    <a href="#sockets">Zasilanie</a>
-				</li>
+					<a href="#{{class}}">{{class}}</a>
+                </li>
+				{%end%}
 				<li>
 					<a href="#files">Przeglądarka plików</a>
 				</li>
@@ -43,40 +39,15 @@
 				</div>
 			</div>
 
-			<!-- Div containing graphs of sensor data -->
-<!--		<div class="tabContent" id="sensors">
-				<h2>Odczyty z czujników</h2>
-				<div>
-					<p>
-						Czujnik temperatury
-					</p>
-					<div id="chartContainer" style="height: 300px; width: 100%;">
-					</div>
-				</div>
-            </div> -->
-
-			<!-- Live streaming from webcams -->
-			<div class="tabContent" id="monitoring">
-				<h2>Podgląd z kamer</h2>
-				<div>
-                    {%for cameraPort in cameraPorts%}
-                        <img src="http://{{ipaddress}}:{{cameraPort}}/?action=stream" />
-                    {%end%}
-				</div>
-			</div>
-
-			<!-- Socket infos -->
-			<div class="tabContent" id="sockets">
-                {%for socket in sockets%}
-                <h2>{{socket.name}}</h2>
-                <div>
-                    <div id="socketDiv{{socket.id}}" class="socketDiv"></div>
-                    <br />
-                    <button type="button" onclick="setSocket({{socket.id}}, true)">ON</button>
-                    <button type="button" onclick="setSocket({{socket.id}}, false)">OFF</button>
-				</div>
-                {%end%}
-			</div>
+            {%for class, _ in classes.iteritems()%}
+			<div class="tabContent" id="{{class}}">
+			    {%for m in modules%}
+			        {%if m.type_number == class%}
+			        {{m.get_html_representation(ipaddress)}}
+			        {%end%}
+			    {%end%}
+            </div>
+			{%end%}
 
 			<!-- Files that can be put or retrieved -->
 			<div class="tabContent" id="files">

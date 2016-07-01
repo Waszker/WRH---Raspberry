@@ -131,6 +131,15 @@ class CameraModule(base_module.Module):
         """
         return self._start_camera_thread(device_id, device_token)
 
+    def get_html_representation(self, website_host_address):
+        """
+        Returns html code to include in website.
+        This will be img object used for live view.
+        :param website_host_address: ip address of server
+        :return:
+        """
+        return "< img src = \"http://" + website_host_address + ":" + self.address + "/?action=stream\" / >"
+
     def _start_stunnel(self):
         filename = "/tmp/stunnel" + str(self.id) + ".conf"
         with open(filename, "w") as f:

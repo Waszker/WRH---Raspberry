@@ -125,6 +125,15 @@ class Module:
         Starts working procedure.
         """
 
+    @abc.abstractmethod
+    def get_html_representation(self, website_host_address):
+        """
+        Returns html code to include in website.
+        Tornado server will be responsible for pasting it.
+        :param website_host_address: ip address of server
+        :return:
+        """
+
 
 class BadConfigurationException(Exception):
     """

@@ -30,3 +30,21 @@ def scan_and_returns_modules(path):
                     found_modules[module_name] = (tmp_path, class_name)
 
     return found_modules
+
+
+def scan_and_return_module_classes(path):
+    """
+    Dynamically scans for modules and returns their classes names for easy
+    instantiation.
+    :param path: path to scan for modules
+    :return: Dictionary with key being type_number and value class name
+    """
+    module_classes = {}
+    modules = scan_and_returns_modules(path)
+    for module_name, (module_path, class_name) in modules.iteritems():
+        module = str(module_path + module_name).replace('/', '.')
+        module = __import__(module, globals(), locals(), ['*'])
+        m_class = getattr(module, class_name)
+        module_classes[m_class.type_number] = m_class
+
+    return module_classes

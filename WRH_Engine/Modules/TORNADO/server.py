@@ -36,13 +36,12 @@ class Userform(BaseHandler):
     def get(self):
         isuservalid(self)
         items = []
-        cameraPorts = resources.get_camera_streaming_ports(__CONFIG_FILE__)
-        sockets = resources.get_sockets(__CONFIG_FILE__)
+        classes, modules = resources.get_available_module_types(__CONFIG_FILE__)
         ip = str(self.request.host).split(":")[0]
         for file in os.listdir(__UPLOADS__):
             items.append(file)
 
-        self.render("index.html", items=items, ipaddress=ip, cameraPorts=cameraPorts, sockets=sockets)
+        self.render("index.html", items=items, classes=classes, modules=modules, ipaddress=ip)
 
 
 class Upload(BaseHandler):
@@ -85,6 +84,22 @@ class Socket(BaseHandler):
         resources.setelectrcalsocketstate(__CONFIG_FILE__, id, state)
 
 
+class Request(BaseHandler):
+    def get(self):
+        if not isuservalid(self): return
+        host = self.get_argument("host")
+        port = self.get_argument("port")
+        message = self.get_argument("message")
+        self.finish(resources.get_request(host, port, message))
+
+    def post(self):
+        if not isuservalid(self): return
+        host = self.get_argument("host")
+        port = self.get_argument("port")
+        message = self.get_argument("message")
+        resources.send_request(host, port, message)
+
+
 application = tornado.web.Application([
     (r"/", Userform),
     (r"/login", LoginHandler),
@@ -92,6 +107,7 @@ application = tornado.web.Application([
     (r"/show", Show),
     (r"/uptime", Uptime),
     (r"/socket", Socket),
+    (r"/request", Request)
 ],
     debug=True,
     cookie_secret="59711y60254197251521521",

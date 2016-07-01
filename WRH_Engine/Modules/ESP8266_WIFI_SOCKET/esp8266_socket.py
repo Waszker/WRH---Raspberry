@@ -67,6 +67,7 @@ class ESP8266SocketModule(base_module.Module):
         # TODO: Implement
         # r = requests.get("http://" + str(self.address) + "/cgi-bin/relay.cgi?state")
         # return r.content
+        return "UNKNOWN"
 
     def get_module_description(self):
         """
@@ -108,7 +109,8 @@ class ESP8266SocketModule(base_module.Module):
     def start_work(self, device_id, device_token):
         """
         Starts working procedure. Module listens on specific port for commands. Client after connection should
-        send "ON" or "OFF" message followed by ; and time for which socket should be in mentioned state
+        send "ON" or "OFF" message followed by ; and time for which socket should be in mentioned state.
+        Optionally "STATE" message can be sent which results in state of the socket being returned.
         """
         host = ''
         port = self.address
@@ -126,12 +128,32 @@ class ESP8266SocketModule(base_module.Module):
             print "ESP8266 WiFi socket: " + self.gpio + " connection from " + str(address)
             data = str(connection.recv(1024)).split(',')
             state, time_wait = data[0], data[1]
-            if str(state) == "ON" or str(state, time_wait) == "on":
-                self._set_socket_state(True)
-            elif str(state) == "OFF" or str(state, time_wait) == "off":
-                self._set_socket_state(False)
+            if str(state) == "ON" or str(state) == "on":
+                self._set_socket_state(True, time_wait)
+            elif str(state) == "OFF" or str(state) == "off":
+                self._set_socket_state(False, time_wait)
+            elif str(state) == "STATE" or str(state) == "state":
+                connection.send(self.get_measurement())
             connection.close()
         s.close()
+
+    def get_html_representation(self, website_host_address):
+        """
+        Returns html code to include in website.
+        :param website_host_address: ip address of server
+        :return:
+        """
+        return '<div> \
+               <script> function update_state_message' + self.id + '(text) { document.getElementById("esp8266SocketDiv"' + self.id + ').innerHTML = text;} \
+               setInterval(function() { \
+               getRequest(localhost, ' + self.address + ', STATE, update_state_message' + self.id + '); \
+               }, 60);\
+               </script> \
+                    <div id="esp8266SocketDiv' + self.id + '" class="socketDiv"></div> \
+                    <br /> \
+                    <button type="button" onclick="sendRequest(localhost, ' + self.address + ', ON)">ON</button> \
+                    <button type="button" onclick="sendRequest(localhost, ' + self.address + ', OFF)">OFF</button> \
+                </div>'
 
     def _set_socket_state(self, should_turn_on, time_wait):
         state = "OFF"

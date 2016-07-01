@@ -1,12 +1,21 @@
 #!/bin/python2
-from WRH_Engine.Configuration import configuration as C
+from WRH_Engine.Configuration import configuration as c
+from WRH_Engine.Utils import dynamic_loader as d
 import urllib2
+import socket
+
+
+def get_available_module_types(configuration_file):
+    modules_classes = d.scan_and_return_module_classes("WRH_Engine/Modules/")
+    with open(configuration_file) as f:
+        (_, modules) = c.parse_configuration_file(f, modules_classes)
+    return modules_classes, modules
 
 
 def get_camera_streaming_ports(filename):
     ports = []
     with open(filename) as f:
-        ((d, dd), modules_list) = C.parse_configuration_file(f)
+        ((d, dd), modules_list) = c.parse_configuration_file(f)
         for i, module in enumerate(modules_list):
             if module.type == 2:
                 ports.append(module.address)
@@ -17,7 +26,7 @@ def get_camera_streaming_ports(filename):
 def get_sockets(config_filename):
     sockets = []
     with open(config_filename) as f:
-        ((d, dd), modules_list) = C.parse_configuration_file(f)
+        ((d, dd), modules_list) = c.parse_configuration_file(f)
         for i, module in enumerate(modules_list):
             if module.type == 4:
                 sockets.append(module)
@@ -26,9 +35,9 @@ def get_sockets(config_filename):
 
 
 def get_cpu_temp():
-    tempFile = open("/sys/class/thermal/thermal_zone0/temp")
-    cpu_temp = tempFile.read()
-    tempFile.close()
+    temp_file = open("/sys/class/thermal/thermal_zone0/temp")
+    cpu_temp = temp_file.read()
+    temp_file.close()
     return float(cpu_temp) / 1000
 
 
@@ -70,7 +79,7 @@ def getsystemstats():
 
 def getelectricalsocketstate(config_filename, id):
     with open(config_filename) as f:
-        ((d, dd), modules_list) = C.parse_configuration_file(f)
+        ((d, dd), modules_list) = c.parse_configuration_file(f)
         for i, module in enumerate(modules_list):
             if int(module.id) == int(id):
                 url = "http://" + module.address + "/cgi-bin/relay.cgi?state"
@@ -82,10 +91,40 @@ def getelectricalsocketstate(config_filename, id):
 
 def setelectrcalsocketstate(config_filename, id, state):
     with open(config_filename) as f:
-        ((d, dd), modules_list) = C.parse_configuration_file(f)
+        ((d, dd), modules_list) = c.parse_configuration_file(f)
         for i, module in enumerate(modules_list):
             if int(module.id) == int(id):
                 url = "http://" + module.address + "/cgi-bin/relay.cgi" + "?" + state
                 request = urllib2.Request(url)
                 return urllib2.urlopen(request).read()
     return "?"
+
+
+def get_request(host, port, message=None):
+    """
+    Receives message from host on provided port.
+    :param host:
+    :param port:
+    :param message: message to send prior to receiving (can be None)
+    :return:
+    """
+    data = None
+    with socket.socket() as s:
+        s.connect((host, port))
+        if message is not None or message != "":
+            s.send(message)
+        data = s.recv(1024)
+    return data
+
+
+def send_request(host, port, message):
+    """
+    Sends provided message to provided host and port.
+    :param host:
+    :param port:
+    :param message:
+    :return:
+    """
+    with socket.socket() as s:
+        s.connect((host, port))
+        s.send(message)
