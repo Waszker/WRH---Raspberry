@@ -39,8 +39,8 @@
 				</div>
 			</div>
 
-            {%for class, _ in classes.iteritems()%}
-			<div mclass="tabContent" id="{{class}}">
+            {%for mclass, _ in classes.iteritems()%}
+			<div class="tabContent" id="{{mclass}}">
 			    {%for m in modules%}
 			        {%if m.type_number == mclass%}
 			        {{m.get_html_representation(ipaddress)}}
