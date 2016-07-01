@@ -148,16 +148,17 @@ class ESP8266SocketModule(base_module.Module):
         return '<div> \
                <script> function update_state_message' + self.id + '(text) \n\
                { document.getElementById("esp8266SocketDiv' + self.id + '").innerHTML = text;} \n\
-               function getState() { getRequest("localhost", ' + self.address + ', "STATE", update_state_message' + self.id + '); } \
-               getState(); \
+               function getState' + self.id + '() { getRequest("localhost", ' + self.address + ', "STATE", update_state_message' + self.id + '); } \
+               function setState' + self.id + '(state) { sendRequest(\'localhost\', ' + self.address + ', state); getState' + self.id + '(); } \
+               getState' + self.id + '(); \
                setInterval(function() { \n\
-               getState(); \n\
+               getState' + self.id + '(); \n\
                }, 60*1000);\n\
                </script> \n\
                     <div id="esp8266SocketDiv' + self.id + '" class="socketDiv"> </div>\
                     <br /> \
-                    <button type="button" onclick="sendRequest(\'localhost\', ' + self.address + ', \'ON\')">ON</button> \
-                    <button type="button" onclick="sendRequest(\'localhost\', ' + self.address + ', \'OFF\')">OFF</button> \
+                    <button type="button" onclick="setState' + self.id + '(\'ON\')">ON</button> \
+                    <button type="button" onclick="setState' + self.id + '(\'ON\')">OFF</button> \
                </div>'
 
     def _set_socket_state(self, should_turn_on, time_wait):
