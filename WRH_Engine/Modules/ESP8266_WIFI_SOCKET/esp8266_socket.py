@@ -65,9 +65,14 @@ class ESP8266SocketModule(base_module.Module):
         Returns base64 encoded string containing image taken from connected USB camera.
         """
         # TODO: Implement
-        # r = requests.get("http://" + str(self.address) + "/cgi-bin/relay.cgi?state")
-        # return r.content
-        return "UNKNOWN"
+        value_finding_pattern = ".+?value=\"(.+?)\".*$"
+        checker = re.compile(value_finding_pattern)
+        response = requests.get("http://" + str(self.gpio) + "/socket.lua")
+        if not checker.match(str(response)):
+            state = "UNKNOWN"
+        else:
+            state = re.search(value_finding_pattern, str(response))
+        return state
 
     def get_module_description(self):
         """
@@ -155,10 +160,11 @@ class ESP8266SocketModule(base_module.Module):
                getState' + self.id + '(); \n\
                }, 60*1000);\n\
                </script> \n\
+                    <center>' + self.name + '</center>\
                     <div id="esp8266SocketDiv' + self.id + '" class="socketDiv"> </div>\
                     <br /> \
                     <button type="button" onclick="setState' + self.id + '(\'ON\')">ON</button> \
-                    <button type="button" onclick="setState' + self.id + '(\'ON\')">OFF</button> \
+                    <button type="button" onclick="setState' + self.id + '(\'OFF\')">OFF</button> \
                </div>'
 
     def _set_socket_state(self, should_turn_on, time_wait):
