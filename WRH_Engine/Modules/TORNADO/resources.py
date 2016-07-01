@@ -3,6 +3,7 @@ from WRH_Engine.Configuration import configuration as c
 from WRH_Engine.Utils import dynamic_loader as d
 from contextlib import closing
 import socket
+import datetime
 
 
 def get_available_module_types(configuration_file):
@@ -70,7 +71,9 @@ def getuptime():
 
 
 def getsystemstats():
-    stat_string = ""
+    now = datetime.datetime.now()
+    stat_string = "Date: %d-%d-%d <br />" % (now.day, now.month, now.year)
+    stat_string += "Hour: %d-%d <br />" % (now.hour, now.minute)
     stat_string += "Uptime: " + getuptime() + "<br />"
     stat_string += "CPU temp: " + str(round(get_cpu_temp(), 1)) + "*C <br />"
 

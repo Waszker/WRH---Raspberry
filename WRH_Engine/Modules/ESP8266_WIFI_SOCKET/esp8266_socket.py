@@ -27,7 +27,7 @@ class ESP8266SocketModule(base_module.Module):
         self.type_name = ESP8266SocketModule.type_name
 
     @staticmethod
-    def is_configuration_line_sane(configuration_line):
+    def is_configuration_line_sane(self, configuration_line):
         """
         Checks if configuration line for this module is well formed
         :param self:
@@ -132,11 +132,10 @@ class ESP8266SocketModule(base_module.Module):
                 print 'ESP8266 Wifi socket' + self.gpio + 'port bind failed. Error Code : ' + str(
                     msg[0]) + ' Message ' + msg[1]
                 time.sleep(10)  # Sleep 10 seconds before retrying
+        print "ESP8266 WiFi socket: " + self.gpio + " started listening"
         while True:
-            print "ESP8266 WiFi socket: " + self.gpio + " started listening"
             s.listen(10)
             connection, address = s.accept()
-            print "ESP8266 WiFi socket: " + self.gpio + " connection from " + str(address)
             data = str(connection.recv(1024) + ",").split(',')
             state, time_wait = data[0], data[1]
             if str(state) == "ON" or str(state) == "on":

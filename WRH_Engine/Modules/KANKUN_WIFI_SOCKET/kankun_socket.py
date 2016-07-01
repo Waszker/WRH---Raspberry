@@ -119,10 +119,10 @@ class KankunSocketModule(base_module.Module):
             except socket.error as msg:
                 print 'Kankun Wifi socket port bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
                 time.sleep(10)  # Sleep 10 seconds before retrying
+        print "Kankun Wifi socket: " + self.gpio + " started listening"
         while True:
             s.listen(10)
             connection, address = s.accept()
-            print "Kankun WiFi socket: " + self.gpio + " connection from " + str(address)
             data = connection.recv(1024)
             if str(data) == "ON" or str(data) == "on":
                 self._set_socket_state(True)
@@ -130,6 +130,15 @@ class KankunSocketModule(base_module.Module):
                 self._set_socket_state(False)
             connection.close()
         s.close()
+
+    def get_html_representation(self, website_host_address):
+        """
+        Returns html code to include in website.
+        :param website_host_address: ip address of server
+        :return:
+        """
+        # TODO: Finish this method
+        return ''
 
     def _set_socket_state(self, should_turn_on):
         state = "OFF"
