@@ -138,7 +138,8 @@ class CameraModule(base_module.Module):
         :param website_host_address: ip address of server
         :return:
         """
-        return "<div><img src = \"http://" + website_host_address + ":" + self.address + "/?action=stream\" /></div>"
+        return "<div style=\"border:1px solid black;\"><center>" + self.name + "</center> \
+        <img src = \"http://" + website_host_address + ":" + self.address + "/?action=stream\" /></div>"
 
     def _start_stunnel(self):
         filename = "/tmp/stunnel" + str(self.id) + ".conf"

@@ -20,10 +20,14 @@
 				<li>
 					<a href="#general_info">Informacje ogólne</a>
 				</li>
-				{%for mclass, _ in classes.iteritems()%}
-				<li>
-					<a href="#{{mclass}}">{{mclass}}</a>
-                </li>
+				{%for mclass, m in classes.iteritems()%}
+				{%for m in modules%}
+			        {%if m.type_number == mclass%}
+                        <li>
+                            <a href="#{{mclass}}">{{m.type_name}}</a>
+                        </li>
+                        {%break%}
+                    {%end%}
 				{%end%}
 				<li>
 					<a href="#files">Przeglądarka plików</a>

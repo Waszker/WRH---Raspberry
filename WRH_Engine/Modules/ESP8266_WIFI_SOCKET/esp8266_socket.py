@@ -73,6 +73,7 @@ class ESP8266SocketModule(base_module.Module):
         if not checker.match(str(response_content)):
             state = "UNKNOWN"
         else:
+            # Socket returns opposite state - we need to change its response
             true_state = {"ON": "OFF", "OFF": "ON"}
             state = true_state[re.search(value_finding_pattern, str(response_content)).group(1)]
         return state
@@ -153,9 +154,9 @@ class ESP8266SocketModule(base_module.Module):
         :param website_host_address: ip address of server
         :return:
         """
-        return '<div> \
+        return '<div style="border:1px solid black;"> \
                <script> function update_state_message' + self.id + '(text) \n\
-               { document.getElementById("esp8266SocketDiv' + self.id + '").innerHTML = text;} \n\
+               { document.getElementById("esp8266SocketDiv' + self.id + '").innerHTML = text; } \n\
                function getState' + self.id + '() { getRequest("localhost", ' + self.address + ', "STATE", update_state_message' + self.id + '); } \
                function setState' + self.id + '(state) { sendRequest(\'localhost\', ' + self.address + ', state); getState' + self.id + '(); } \
                getState' + self.id + '(); \
