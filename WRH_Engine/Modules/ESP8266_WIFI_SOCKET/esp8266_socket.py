@@ -69,6 +69,7 @@ class ESP8266SocketModule(base_module.Module):
         checker = re.compile(value_finding_pattern)
         print "About to get response"
         response = requests.get("http://" + str(self.gpio) + "/socket.lua")
+        print 'Got responce ' + str(response.content)
         if not checker.match(str(response.content)):
             print "REGEX DOES NOT MATCH"
             state = "UNKNOWN"
