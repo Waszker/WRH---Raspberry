@@ -67,6 +67,7 @@ class ESP8266SocketModule(base_module.Module):
         time.sleep(1)  # Too fast polling resets ESP8266!
         value_finding_pattern = ".+?value=\"(.+?)\".*$"
         checker = re.compile(value_finding_pattern)
+        # TODO: React to connection failure!
         response = requests.get("http://" + str(self.gpio) + "/socket.lua")
         # Remove all characters other than letters, numbers or = and "
         response_content = ''.join(e for e in response.content if e.isalnum() or e == '=' or e == '"')
@@ -153,6 +154,7 @@ class ESP8266SocketModule(base_module.Module):
         :param website_host_address: ip address of server
         :return:
         """
+        # TODO: Add text input for time specifying!
         return '<div style="border:1px solid black;"> \
                <script> function update_state_message' + self.id + '(text) \n\
                { document.getElementById("esp8266SocketDiv' + self.id + '").innerHTML = text; } \n\
