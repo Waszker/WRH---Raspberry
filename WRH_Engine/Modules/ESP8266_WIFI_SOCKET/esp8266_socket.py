@@ -27,7 +27,7 @@ class ESP8266SocketModule(base_module.Module):
         self.type_name = ESP8266SocketModule.type_name
 
     @staticmethod
-    def is_configuration_line_sane(self, configuration_line):
+    def is_configuration_line_sane(configuration_line):
         """
         Checks if configuration line for this module is well formed
         :param self:

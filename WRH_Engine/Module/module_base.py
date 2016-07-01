@@ -63,11 +63,11 @@ class Module:
         is_success = False
         return W.remove_module(device_id, device_token, self.id)
 
+    @staticmethod
     @abc.abstractmethod
-    def is_configuration_line_sane(self, configuration_line):
+    def is_configuration_line_sane(configuration_line):
         """
         Checks if configuration line for this module is well formed
-        :param self:
         :param configuration_line:
         :return:
         """
