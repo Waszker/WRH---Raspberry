@@ -21,12 +21,13 @@
 					<a href="#general_info">Informacje ogólne</a>
 				</li>
 				{%for mclass, m in classes.iteritems()%}
-				{%for m in modules%}
-			        {%if m.type_number == mclass%}
-                        <li>
-                            <a href="#{{mclass}}">{{m.type_name}}</a>
-                        </li>
-                        {%break%}
+                    {%for m in modules%}
+                        {%if m.type_number == mclass%}
+                            <li>
+                                <a href="#{{mclass}}">{{m.type_name}}</a>
+                            </li>
+                            {%break%}
+                        {%end%}
                     {%end%}
 				{%end%}
 				<li>
@@ -66,7 +67,7 @@
 						<li id="file">
 							<a href="http://{{ipaddress}}:8888/show?filename={{item}}">{{item}}</a>
 						</li>
-							{%end%}
+						{%end%}
 					</ul>
 					<div id="formcontainer" align="center">
 						<form action="/upload" enctype="multipart/form-data" method="post">
