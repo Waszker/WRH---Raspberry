@@ -1,7 +1,7 @@
 #!/bin/python2
 from WRH_Engine.Configuration import configuration as c
 from WRH_Engine.Utils import dynamic_loader as d
-import urllib2
+from contextlib import closing
 import socket
 
 
@@ -86,7 +86,7 @@ def get_request(host, port, message=None):
     :return:
     """
     data = None
-    with socket.socket() as s:
+    with closing(socket.socket()) as s:
         s.connect((host, port))
         if message is not None or message != "":
             s.send(message)
@@ -102,6 +102,6 @@ def send_request(host, port, message):
     :param message:
     :return:
     """
-    with socket.socket() as s:
+    with closing(socket.socket()) as s:
         s.connect((host, port))
         s.send(message)
