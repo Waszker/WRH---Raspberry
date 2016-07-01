@@ -5,7 +5,7 @@
 #include "common.h"
 #include "wrh_lib.h"
 
-static enum module_type module_types[] = { SCENARIO, TORNADO, DHT, CAMERA, MOTION, SOCKET };
+static enum module_type module_types[] = { SCENARIO, TORNADO, DHT, CAMERA, MOTION, SOCKET, ESP8266_SOCKET };
 static int modules_number = sizeof(module_types) / sizeof(enum module_type);
 
 // https://trello.com/c/1oOLJIQW/60-module-type
@@ -15,7 +15,8 @@ static command commands[] = {
     { { NULL }, { "/usr/bin/python2.7", "-m", "WRH_Engine.Modules.TEMPERATURE.DhtModule", NULL } },
     { { NULL }, { "/usr/bin/python2.7", "-m", "WRH_Engine.Modules.CAMERA.camera", NULL } },
     { { NULL }, { "/usr/bin/python2.7", "-m", "WRH_Engine.Modules.MOVEMENT.MOVEMENT", NULL } },
-    { { NULL }, { "/usr/bin/python2.7", "-m", "WRH_Engine.Modules.WIFISOCKET.WIFISOCKET", NULL } },
+    { { NULL }, { "/usr/bin/python2.7", "-m", "WRH_Engine.Modules.WIFISOCKET.KANKUN_WIFI_SOCKET.kankun_socket", NULL } },
+    { { NULL }, { "/usr/bin/python2.7", "-m", "WRH_Engine.Modules.ESP8266_WIFI_SOCKET.esp8266_socket", NULL } },
     { { NULL }, { "./lcd2.py", NULL } },
     { { NULL }, { "/bin/stunnel", "./stunnel.conf", NULL } },
 };
