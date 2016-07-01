@@ -128,7 +128,6 @@ class ESP8266SocketModule(base_module.Module):
             print "ESP8266 WiFi socket: " + self.gpio + " connection from " + str(address)
             data = str(connection.recv(1024) + ",").split(',')
             state, time_wait = data[0], data[1]
-            print 'Asking about: ' + str(state)
             if str(state) == "ON" or str(state) == "on":
                 self._set_socket_state(True, time_wait)
             elif str(state) == "OFF" or str(state) == "off":
@@ -161,6 +160,7 @@ class ESP8266SocketModule(base_module.Module):
         state = "OFF"
         if should_turn_on: state = "OFF"
         url = "http://" + self.gpio + "/socket.lua?wait=" + time_wait + "&state=" + state
+        print 'Sending request ' + url
         request = urllib2.Request(url)
         urllib2.urlopen(request).read()
 
