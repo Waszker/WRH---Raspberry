@@ -148,7 +148,7 @@ class ESP8266SocketModule(base_module.Module):
                { document.getElementById("esp8266SocketDiv' + self.id + '").innerHTML = text;} \n\
                setInterval(function() { \n\
                getRequest("localhost", ' + self.address + ', "STATE", update_state_message' + self.id + '); \n\
-               }, 60);\n\
+               }, 60*1000);\n\
                </script> \n\
                     <div id="esp8266SocketDiv' + self.id + '" class="socketDiv"> \
                     <br /> \

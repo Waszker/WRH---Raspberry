@@ -87,6 +87,7 @@ def get_request(host, port, message=None):
     """
     data = None
     with closing(socket.socket()) as s:
+        print "Connecting to " + host + " at port " + str(port)
         s.connect((host, int(port)))
         if message is not None or message != "":
             s.send(message)
