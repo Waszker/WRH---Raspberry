@@ -87,7 +87,7 @@ def get_request(host, port, message=None):
     """
     data = None
     with closing(socket.socket()) as s:
-        s.connect((host, port))
+        s.connect((host, int(port)))
         if message is not None or message != "":
             s.send(message)
         data = s.recv(1024)
@@ -103,5 +103,5 @@ def send_request(host, port, message):
     :return:
     """
     with closing(socket.socket()) as s:
-        s.connect((host, port))
+        s.connect((host, int(port)))
         s.send(message)
