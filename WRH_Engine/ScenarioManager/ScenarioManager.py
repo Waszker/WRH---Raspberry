@@ -131,7 +131,7 @@ def _scenarios_changed():
             if last_active_tuple[0] and now_tuple[0]:  # successfully converted
                 last_active = last_active_tuple[1]
                 now = now_tuple[1]
-                if (now-last_active).total_seconds() > user_inactive_after:
+                if (now - last_active).total_seconds() > user_inactive_after:
                     if scenarios_changed_wait_time != scenarios_changed_wait_time_user_inactive:
                         scenarios_changed_wait_time = scenarios_changed_wait_time_user_inactive
                         print 'ScenarioManager: User is considered inactive.'
@@ -393,7 +393,7 @@ def _execute_scenario(scenario):
 def _main():
     global measurements
     global scenarios_changed
-ip
+
     while True:
         event.wait()
         lock.acquire()
