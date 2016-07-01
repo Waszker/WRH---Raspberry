@@ -144,11 +144,12 @@ class ESP8266SocketModule(base_module.Module):
         :return:
         """
         return '<div> \
-               <script> function update_state_message' + self.id + '(text) { document.getElementById("esp8266SocketDiv"' + self.id + ').innerHTML = text;} \
-               setInterval(function() { \
-               getRequest(localhost, ' + self.address + ', STATE, update_state_message' + self.id + '); \
-               }, 60);\
-               </script> \
+               <script> function update_state_message' + self.id + '(text) \n\
+               { document.getElementById("esp8266SocketDiv"' + self.id + ').innerHTML = text;} \n\
+               setInterval(function() { \n\
+               getRequest(localhost, ' + self.address + ', STATE, update_state_message' + self.id + '); \n\
+               }, 60);\n\
+               </script> \n\
                     <div id="esp8266SocketDiv' + self.id + '" class="socketDiv"> \
                     <br /> \
                     <button type="button" onclick="sendRequest(localhost, ' + self.address + ', ON)">ON</button> \
