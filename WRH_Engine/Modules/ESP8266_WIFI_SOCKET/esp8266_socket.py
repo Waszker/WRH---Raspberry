@@ -117,7 +117,7 @@ class ESP8266SocketModule(base_module.Module):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         while True:
             try:
-                s.bind((host, port))
+                s.bind((host, int(port)))
                 break
             except socket.error as msg:
                 print 'ESP8266 Wifi socket port bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
