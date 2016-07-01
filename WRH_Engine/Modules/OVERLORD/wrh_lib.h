@@ -12,7 +12,8 @@ enum module_type
     DHT,
     CAMERA,
     MOTION,
-    SOCKET
+    SOCKET,
+    ESP8266_SOCKET
 };
 
 typedef struct command
