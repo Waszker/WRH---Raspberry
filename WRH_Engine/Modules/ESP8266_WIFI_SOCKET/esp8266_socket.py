@@ -120,9 +120,11 @@ class ESP8266SocketModule(base_module.Module):
                 s.bind((host, int(port)))
                 break
             except socket.error as msg:
-                print 'ESP8266 Wifi socket port bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
+                print 'ESP8266 Wifi socket' + self.gpio + 'port bind failed. Error Code : ' + str(
+                    msg[0]) + ' Message ' + msg[1]
                 time.sleep(10)  # Sleep 10 seconds before retrying
         while True:
+            print "ESP8266 WiFi socket: " + self.gpio + " started listening"
             s.listen(10)
             connection, address = s.accept()
             print "ESP8266 WiFi socket: " + self.gpio + " connection from " + str(address)
@@ -146,8 +148,10 @@ class ESP8266SocketModule(base_module.Module):
         return '<div> \
                <script> function update_state_message' + self.id + '(text) \n\
                { document.getElementById("esp8266SocketDiv' + self.id + '").innerHTML = text;} \n\
+               function getState() { getRequest("localhost", ' + self.address + ', "STATE", update_state_message' + self.id + '); } \
+               getState(); \
                setInterval(function() { \n\
-               getRequest("localhost", ' + self.address + ', "STATE", update_state_message' + self.id + '); \n\
+               getState(); \n\
                }, 60*1000);\n\
                </script> \n\
                     <div id="esp8266SocketDiv' + self.id + '" class="socketDiv"> </div>\
