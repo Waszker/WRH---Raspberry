@@ -9,6 +9,8 @@ from resources import getsystemstats
 
 __UPLOADS__ = "/tmp/"
 __CONFIG_FILE__ = ".wrh.config"
+modules = None
+ip = None
 
 
 class BaseHandler(tornado.web.RequestHandler):
@@ -35,10 +37,12 @@ class LoginHandler(BaseHandler):
 class Userform(BaseHandler):
     def get(self):
         isuservalid(self)
-        classes, self.modules = resources.get_available_module_types(__CONFIG_FILE__)
-        self.ip = str(self.request.host).split(":")[0]
+        global modules, ip
 
-        self.render("index.html", classes=classes, modules=self.modules)
+        classes, modules = resources.get_available_module_types(__CONFIG_FILE__)
+        ip = str(self.request.host).split(":")[0]
+
+        self.render("index.html", classes=classes, modules=modules)
 
 
 class Uptime(BaseHandler):
@@ -50,13 +54,15 @@ class Uptime(BaseHandler):
 class GetPage(BaseHandler):
     def get(self):
         if not isuservalid(self): return
+
+        global modules, ip
         class_type_number = int(self.get_argument("class"))
         if class_type_number == -1:
             # TODO: Finish index.html content here
             content = ""
         else:
-            modules = resources.get_modules_with_type_number(class_type_number, self.modules)
-            content = resources.get_page_content_for_modules(self.ip, modules)
+            modules2 = resources.get_modules_with_type_number(class_type_number, modules)
+            content = resources.get_page_content_for_modules(ip, modules2)
         self.finish(content)
 
 
