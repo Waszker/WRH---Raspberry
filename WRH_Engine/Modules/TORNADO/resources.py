@@ -13,22 +13,6 @@ def get_available_module_types(configuration_file):
     return modules_classes, modules
 
 
-def get_modules_with_type_number(type_number, modules):
-    modules_list = []
-    for m in modules:
-        if m.type_number == type_number:
-            modules_list.append(m)
-
-    return modules_list
-
-
-def get_page_content_for_modules(ip_address, modules):
-    content = "<br />"  # TODO: Add some initial content
-    for m in modules:
-        content += m.get_html_representation(ip_address) + "<br />"
-    return content
-
-
 def getsystemstats():
     now = datetime.datetime.now()
     stat_string = "Date: %d-%d-%d <br />" % (now.day, now.month, now.year)

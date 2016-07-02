@@ -39,14 +39,3 @@ function sendRequest(host, port, message) {
      xmlHttp.open("POST", "request?host=" + host + "&port=" + port + "&message=" + message, true);
      xmlHttp.send();
 }
-
-function updateMainContent(classNumber) {
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function()
-    {
-        if(xmlHttp.readyState == 4 && xmlHttp.status == 200)
-            document.getElementById("content_container").innerHTML = xmlHttp.responseText;
-    }
-    xmlHttp.open("GET", "page?class=" + classNumber, true);
-    xmlHttp.send();
-}

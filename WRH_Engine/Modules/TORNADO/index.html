@@ -40,7 +40,8 @@
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript"></script>
 	<script type="text/javascript" src="{{ static_url("scripts/canvasjs.min.js") }}"></script>
 </head>
-<body onLoad="init();">
+<!-- <body onLoad="init();"> -->
+<body>
 
 <div id="wrapper">
 
@@ -52,12 +53,12 @@
 
         <!-- Top Navigation: Left Menu -->
         <ul class="nav navbar-nav navbar-left navbar-top-links">
-            <li><a href="javascript:updateMainContent(-1);"><i class="fa fa-home fa-fw"></i>SYSTEM</a></li>
+            <li><a href="#?class=-1"><i class="fa fa-home fa-fw"></i>SYSTEM</a></li>
             {%for mclass, m in classes.iteritems()%}
                     {%for m in modules%}
                         {%if m.type_number == mclass%}
                             <li>
-                                <a href="javascript:updateMainContent({{mclass}});">{{m.type_name}}</a>
+                                <a href="#?class={{m.type_number}}">{{m.type_name}}</a>
                             </li>
                             {%break%}
                         {%end%}
@@ -90,17 +91,37 @@
 
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">System statistics</h1>
+                <h1 class="page-header">
+                    {% if target == -1 %}
+                    System statistics
+                    {% else %}
+                        {%for m in modules%}
+                            {%if m.type_number == target%}
+                                {% m.type_name %}
+                                {%break%}
+                            {%end%}
+                        {%end%}
+                    {% end %}
+                 </h1>
                 </div>
             </div>
 
             <!-- ... Your content goes here ... -->
-             <script> getUptime(); setInterval(function() { getUptime(); }, 60*1000);</script>
-			 <div>
-                 <div id="systemDiv"></div>
-                 <br />
-                 <button type="button" onclick="getUptime()">Refresh</button>
-			 </div>
+            {% if target == -1 %}
+                 <script> getUptime(); setInterval(function() { getUptime(); }, 60*1000);</script>
+                 <div>
+                     <div id="systemDiv"></div>
+                     <br />
+                     <button type="button" onclick="getUptime()">Refresh</button>
+                 </div>
+            {% else %}
+                {%for m in modules%}
+                    {%if m.type_number == target%}
+                        {{ m.get_html_representation(ipaddress) }}
+                        <br />
+                    {%end%}
+                {%end%}
+            {% end %}
         </div>
     </div>
 

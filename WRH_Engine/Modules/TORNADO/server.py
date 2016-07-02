@@ -38,32 +38,20 @@ class Userform(BaseHandler):
     def get(self):
         isuservalid(self)
         global modules, ip
-
+        try:
+            class_type_number = int(self.get_argument("class"))
+        except ValueError:
+            class_type_number = -1
         classes, modules = resources.get_available_module_types(__CONFIG_FILE__)
         ip = str(self.request.host).split(":")[0]
 
-        self.render("index.html", classes=classes, modules=modules)
+        self.render("index.html", ipaddress=ip, target=class_type_number, classes=classes, modules=modules)
 
 
 class Uptime(BaseHandler):
     def get(self):
         if not isuservalid(self): return
         self.finish(getsystemstats())
-
-
-class GetPage(BaseHandler):
-    def get(self):
-        if not isuservalid(self): return
-
-        global modules, ip
-        class_type_number = int(self.get_argument("class"))
-        if class_type_number == -1:
-            # TODO: Finish index.html content here
-            content = ""
-        else:
-            modules2 = resources.get_modules_with_type_number(class_type_number, modules)
-            content = resources.get_page_content_for_modules(ip, modules2)
-        self.finish(content)
 
 
 class Request(BaseHandler):
@@ -86,7 +74,6 @@ application = tornado.web.Application([
     (r"/", Userform),
     (r"/login", LoginHandler),
     (r"/uptime", Uptime),
-    (r"/page", GetPage),
     (r"/request", Request)
 ],
     debug=True,

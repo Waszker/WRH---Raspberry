@@ -67,8 +67,10 @@ class ESP8266SocketModule(base_module.Module):
         time.sleep(1)  # Too fast polling resets ESP8266!
         value_finding_pattern = ".+?value=\"(.+?)\".*$"
         checker = re.compile(value_finding_pattern)
-        # TODO: React to connection failure!
-        response = requests.get("http://" + str(self.gpio) + "/socket.lua")
+        try:
+            response = requests.get("http://" + str(self.gpio) + "/socket.lua")
+        except requests.ConnectionError:
+            response = ''
         # Remove all characters other than letters, numbers or = and "
         response_content = ''.join(e for e in response.content if e.isalnum() or e == '=' or e == '"')
         if not checker.match(str(response_content)):
