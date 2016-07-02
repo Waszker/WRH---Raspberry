@@ -1,7 +1,7 @@
 #!/bin/python2
 import time
 import RPi.GPIO as GPIO
-from resources import get_dht_readings, get_cpu_temp, DHT_DATA
+from resources import get_dht_readings, _get_cpu_temp, DHT_DATA
 
 # Zuordnung der GPIO Pins (ggf. anpassen)
 DISPLAY_RS = 31
@@ -43,7 +43,7 @@ def main():
     while True:
         humidity, temperature = get_dht_readings(DHT_GPIO)
         lcd_byte(DISPLAY_LINE_1, DISPLAY_CMD)
-        lcd_string("CPU Temp: " + str(round(get_cpu_temp(), 1)) + "*C")
+        lcd_string("CPU Temp: " + str(round(_get_cpu_temp(), 1)) + "*C")
         lcd_byte(DISPLAY_LINE_2, DISPLAY_CMD)
         if temperature is not None and humidity is not None:
             lcd_string('T={0:0.1f}*C H={1:0.1f}%'.format(temperature, humidity))

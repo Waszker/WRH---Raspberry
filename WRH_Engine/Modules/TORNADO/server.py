@@ -35,40 +35,29 @@ class LoginHandler(BaseHandler):
 class Userform(BaseHandler):
     def get(self):
         isuservalid(self)
-        items = []
-        classes, modules = resources.get_available_module_types(__CONFIG_FILE__)
-        ip = str(self.request.host).split(":")[0]
-        for found_file in os.listdir(__UPLOADS__):
-            items.append(found_file)
+        classes, self.modules = resources.get_available_module_types(__CONFIG_FILE__)
+        self.ip = str(self.request.host).split(":")[0]
 
-        self.render("index.html", items=items, classes=classes, modules=modules, ipaddress=ip)
-
-
-class Upload(BaseHandler):
-    def post(self):
-        if not isuservalid(self): return
-        fileinfo = self.request.files['filearg'][0]
-        print ('fileinfo is ', fileinfo)
-        # fname = fileinfo['filename']
-        # extn = os.path.splitext(fname)[1]
-        # cname = str(uuid.uuid4()) + extn
-        fh = open(__UPLOADS__ + fileinfo['filename'], 'w')
-        fh.write(fileinfo['body'])
-        self.finish(fileinfo['filename'] + " is uploaded!! Check %s folder" % __UPLOADS__)
-
-
-class Show(BaseHandler):
-    def get(self):
-        if not isuservalid(self): return
-        filename = self.get_argument("filename", default=None, strip=False)
-        fh = open(__UPLOADS__ + filename, 'r')
-        self.finish(fh.read())
+        self.render("index.html", classes=classes, modules=self.modules)
 
 
 class Uptime(BaseHandler):
     def get(self):
         if not isuservalid(self): return
         self.finish(getsystemstats())
+
+
+class GetPage(BaseHandler):
+    def get(self):
+        if not isuservalid(self): return
+        class_type_number = int(self.get_argument("class"))
+        if class_type_number == -1:
+            # TODO: Finish index.html content here
+            content = ""
+        else:
+            modules = resources.get_modules_with_type_number(class_type_number, self.modules)
+            content = resources.get_page_content_for_modules(self.ip, modules)
+        self.finish(content)
 
 
 class Request(BaseHandler):
@@ -90,9 +79,8 @@ class Request(BaseHandler):
 application = tornado.web.Application([
     (r"/", Userform),
     (r"/login", LoginHandler),
-    (r"/upload", Upload),
-    (r"/show", Show),
     (r"/uptime", Uptime),
+    (r"/page", GetPage),
     (r"/request", Request)
 ],
     debug=True,
