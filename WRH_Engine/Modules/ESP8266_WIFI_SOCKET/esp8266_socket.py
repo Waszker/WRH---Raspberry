@@ -178,8 +178,11 @@ class ESP8266SocketModule(base_module.Module):
         state = "OFF"
         if should_turn_on: state = "ON"
         url = "http://" + self.gpio + "/socket.lua?wait=" + time_wait + "&state=" + state
-        request = urllib2.Request(url)
-        urllib2.urlopen(request).read()
+        try:
+            request = urllib2.Request(url)
+            urllib2.urlopen(request).read()
+        except urllib2.URLError:
+            pass
 
 
 if __name__ == "__main__":

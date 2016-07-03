@@ -48,17 +48,17 @@
     <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">WRH HOME</a>
+            <a class="navbar-brand" href="/">WRH HOME</a>
         </div>
 
         <!-- Top Navigation: Left Menu -->
         <ul class="nav navbar-nav navbar-left navbar-top-links">
-            <li><a href="#?class=-1"><i class="fa fa-home fa-fw"></i>SYSTEM</a></li>
+            <li><a href="/?class=-1"><i class="fa fa-home fa-fw"></i>SYSTEM</a></li>
             {%for mclass, m in classes.iteritems()%}
                     {%for m in modules%}
                         {%if m.type_number == mclass%}
                             <li>
-                                <a href="#?class={{m.type_number}}">{{m.type_name}}</a>
+                                <a href="/?class={{m.type_number}}">{{m.type_name}}</a>
                             </li>
                             {%break%}
                         {%end%}
