@@ -16,7 +16,7 @@ def get_available_module_types(configuration_file):
 def getsystemstats():
     now = datetime.datetime.now()
     stat_string = "Date: %d-%d-%d <br />" % (now.day, now.month, now.year)
-    stat_string += "Hour: %d-%d <br />" % (now.hour, now.minute)
+    stat_string += "Hour: %d:%d <br />" % (now.hour, now.minute)
     stat_string += "Uptime: " + _getuptime() + "<br />"
     stat_string += "CPU temp: " + str(round(_get_cpu_temp(), 1)) + "*C <br />"
 

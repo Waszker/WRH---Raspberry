@@ -56,7 +56,7 @@ def parse_configuration_file(file_handler, modules_classes):
     This function does not check if configuration file is sane
     Please do check it before invoking!
     Returns tuple containing tuple of device id and device token
-    and list of module
+    and list of modules
     """
     device_info = get_device_entry_data(file_handler.readline())
 

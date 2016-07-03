@@ -1,5 +1,5 @@
 ####################################################
-# Set of functions to work with kankun wifi socket
+# Set of functions to work with ESP8266 WRH WiFi socket
 # connected to network with Raspberry Pi device.
 ####################################################
 
