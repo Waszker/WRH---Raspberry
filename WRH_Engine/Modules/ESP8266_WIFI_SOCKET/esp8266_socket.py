@@ -69,10 +69,10 @@ class ESP8266SocketModule(base_module.Module):
         checker = re.compile(value_finding_pattern)
         try:
             response = requests.get("http://" + str(self.gpio) + "/socket.lua")
+            # Remove all characters other than letters, numbers or = and " if connection was successful
+            response_content = ''.join(e for e in response.content if e.isalnum() or e == '=' or e == '"')
         except requests.ConnectionError:
-            response = ''
-        # Remove all characters other than letters, numbers or = and "
-        response_content = ''.join(e for e in response.content if e.isalnum() or e == '=' or e == '"')
+            response_content = ''
         if not checker.match(str(response_content)):
             state = "UNKNOWN"
         else:
