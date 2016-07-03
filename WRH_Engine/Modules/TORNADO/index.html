@@ -97,7 +97,7 @@
                     {% else %}
                         {%for m in modules%}
                             {%if m.type_number == target%}
-                                {% m.type_name %}
+                                {{ m.type_name }}
                                 {%break%}
                             {%end%}
                         {%end%}
