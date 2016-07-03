@@ -40,7 +40,7 @@ class Userform(BaseHandler):
         global modules, ip
         try:
             class_type_number = int(self.get_argument("class"))
-        except ValueError:
+        except (ValueError, tornado.web.MissingArgumentError):
             class_type_number = -1
         classes, modules = resources.get_available_module_types(__CONFIG_FILE__)
         ip = str(self.request.host).split(":")[0]
