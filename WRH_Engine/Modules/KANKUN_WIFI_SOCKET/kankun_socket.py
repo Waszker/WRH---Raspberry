@@ -6,6 +6,7 @@
 from WRH_Engine.Module import module_base as base_module
 from WRH_Engine.Configuration import configuration as c
 from WRH_Engine.Utils import utils as u
+from WRH_Engine.WebApiLibrary import WebApiClient as w
 import sys
 import re
 import requests
@@ -91,6 +92,7 @@ class KankunSocketModule(base_module.Module):
     def edit(self, device_id, device_token):
         """
         Runs interactive procedure to edit module.
+        Returns connection status and response.
         """
         print 'Provide new module information (leave fields blank if you don\'t want to change)'
         print 'Please note that changes other than name will always succeed'
@@ -103,6 +105,7 @@ class KankunSocketModule(base_module.Module):
         if new_address: self.address = new_address
         if new_name:
             return base_module.Module.update_module_information_in_wrh(self, device_id, device_token, new_name)
+        return (w.Response.STATUS_OK, '')
 
     def start_work(self, device_id, device_token):
         """
