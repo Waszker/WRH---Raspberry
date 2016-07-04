@@ -52,7 +52,7 @@ class Overlord:
 def _siginit_handler(_, __):
     print 'OVERLORD: SIGINT signal caught'
     for p in Overlord.processes:
-        os.kill(p, signal.SIGINT)
+        os.kill(p.pid, signal.SIGINT)
     sys.exit(0)
 
 
