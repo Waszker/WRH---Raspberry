@@ -7,7 +7,7 @@ from sets import Set
 import WRH_Engine.Configuration.configuration as c
 import WRH_Engine.Utils.dynamic_loader as d
 
-__CONFIG_FILE__ = '.wrh_config'
+__CONFIG_FILE__ = '.wrh.config'
 
 
 class Overlord:
