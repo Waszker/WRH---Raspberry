@@ -23,6 +23,7 @@ class Overlord:
             (_, modules) = c.parse_configuration_file(f, modules_classes)
             self.modules = modules
             self.configuration_lines = []
+            f.seek(0)
             for line in f: self.configuration_lines.append(line)
         signal.signal(signal.SIGINT, _siginit_handler)
         signal.signal(signal.SIGCHLD, _sigchld_handler)
@@ -39,22 +40,24 @@ class Overlord:
 
         index = 1
         for m in self.modules:
-            command = m.get_starting_command.append(self.configuration_lines[0], self.configuration_lines[index])
+            command = m.get_starting_command()
+            command.append(self.configuration_lines[0])
+            command.append(self.configuration_lines[1])
             process = subprocess.Popen(command)
             Overlord.processes.append(process)
             Overlord.commands.append(command)
             index += 1
 
 
-def _siginit_handler(_, _):
+def _siginit_handler(_, __):
     print 'OVERLORD: SIGINT signal caught'
     for p in Overlord.processes:
         os.kill(p, signal.SIGINT)
     sys.exit(0)
 
 
-def _sigchld_handler(_, _):
-    for i in enumerate(0, len(Overlord.processes)):
+def _sigchld_handler(_, __):
+    for i in range(0, len(Overlord.processes)):
         process, command = Overlord.processes[i], Overlord.commands[i]
         process_info = psutil.Process(process.pid)
         if process_info.status() == psutil.STATUS_ZOMBIE:
