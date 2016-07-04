@@ -42,7 +42,7 @@ class Overlord:
         for m in self.modules:
             command = m.get_starting_command()
             command.append(self.configuration_lines[0])
-            command.append(self.configuration_lines[1])
+            command.append(self.configuration_lines[index])
             process = subprocess.Popen(command)
             Overlord.processes.append(process)
             Overlord.commands.append(command)
