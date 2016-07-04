@@ -54,7 +54,6 @@ def _siginit_handler(_, __):
     signal.signal(signal.SIGINT, signal.SIG_IGN)
     for p in Overlord.processes:
         os.kill(p.pid, signal.SIGINT)
-        p.wait()
     sys.exit(0)
 
 
