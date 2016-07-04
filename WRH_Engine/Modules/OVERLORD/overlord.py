@@ -53,6 +53,7 @@ def _siginit_handler(_, __):
     print 'OVERLORD: SIGINT signal caught'
     for p in Overlord.processes:
         os.kill(p.pid, signal.SIGINT)
+        p.wait()
     sys.exit(0)
 
 
