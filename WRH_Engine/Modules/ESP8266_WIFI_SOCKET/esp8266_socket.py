@@ -43,6 +43,14 @@ class ESP8266SocketModule(base_module.Module):
             raise base_module.BadConfigurationException
         return configuration_line_pattern
 
+    @staticmethod
+    def get_starting_command():
+        """
+        Returns command used to start module as a new process.
+        :return: Command to be executed when starting new process
+        """
+        return "WRH_Engine.Modules.ESP8266_WIFI_SOCKET.esp8266_socket"
+
     def get_configuration_line(self):
         """
         Creates module configuration line
