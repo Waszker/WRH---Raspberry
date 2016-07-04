@@ -28,7 +28,7 @@ class Overlord:
         their lifetime.
         :return:
         """
-        tornado_command = "/usr/bin/python2.7 -m WRH_Engine.Modules.TORNADO.server"
+        tornado_command = ["/usr/bin/python2.7", "-m", "WRH_Engine.Modules.TORNADO.server"]
         Overlord.processes.add((subprocess.Popen(tornado_command), tornado_command))
 
         for m in self.modules:

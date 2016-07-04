@@ -110,7 +110,7 @@ def _remove_module(system_info, modules):
 
 def _run_overlord():
     signal.signal(signal.SIGINT, _siginit_handler)
-    command = " /usr/bin/python2.7 -m WRH_Engine.Modules.OVERLORD.overlord"
+    command = ["/usr/bin/python2.7", "-m", "WRH_Engine.Modules.OVERLORD.overlord"]
     process = subprocess.Popen(command)
     process.wait()
     # TODO: Remove SIGINT handler!
