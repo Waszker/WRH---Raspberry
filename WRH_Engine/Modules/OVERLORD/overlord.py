@@ -3,7 +3,6 @@ import sys
 import signal
 import subprocess
 import psutil
-from sets import Set
 import WRH_Engine.Configuration.configuration as c
 import WRH_Engine.Utils.dynamic_loader as d
 
