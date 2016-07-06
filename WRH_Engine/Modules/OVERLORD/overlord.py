@@ -61,6 +61,7 @@ def _sigchld_handler(_, __):
         process, command = Overlord.processes[i], Overlord.commands[i]
         process_info = psutil.Process(process.pid)
         if process_info.status() == psutil.STATUS_ZOMBIE:
+            print "OVERLORD resurreting " + str(command)
             process.wait()
             Overlord.processes[i] = subprocess.Popen(command)
 
