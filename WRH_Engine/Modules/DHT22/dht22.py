@@ -71,8 +71,8 @@ class DHT22Module(base_module.Module):
         matches = re.search(configuration_line_pattern, configuration_file_line)
         self.id = matches.group(2)
         self.name = matches.group(3)
-        self.gpio = float(matches.group(4))
-        self.interval = float(matches.group(5))
+        self.gpio = int(matches.group(4))
+        self.interval = int(matches.group(5))
         self.address = matches.group(6)
 
     def get_measurement(self):
