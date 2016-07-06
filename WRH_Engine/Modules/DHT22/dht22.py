@@ -69,8 +69,8 @@ class DHT22Module(base_module.Module):
         matches = re.search(configuration_line_pattern, configuration_file_line)
         self.id = matches.group(2)
         self.name = matches.group(3)
-        self.gpio = matches.group(4)
-        self.interval = matches.group(5)
+        self.gpio = float(matches.group(4))
+        self.interval = float(matches.group(5))
         self.address = matches.group(6)
 
     def get_measurement(self):
@@ -166,7 +166,7 @@ class DHT22Module(base_module.Module):
                 s.bind((host, int(port)))
                 break
             except socket.error as msg:
-                print DHT22Module.type_name + " " + self.gpio + 'port bind failed. Error Code : ' + str(
+                print DHT22Module.type_name + " " + self.name + 'port bind failed. Error Code : ' + str(
                     msg[0]) + ' Message ' + msg[1]
                 time.sleep(10)  # Sleep 10 seconds before retrying
         print DHT22Module.type_name + " " + self.name + " started listening"
@@ -190,5 +190,5 @@ if __name__ == "__main__":
     conf_line = sys.argv[2]
 
     device_info = c.get_device_entry_data(device_line)
-    dht22 = DHT22Module()
-    dht22.start_work()
+    dht22 = DHT22Module(conf_line)
+    dht22.start_work(device_line[0], device_line[1])
