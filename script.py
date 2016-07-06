@@ -176,7 +176,7 @@ def show_options():
         _run_maintenance_work(modules)
     else:
         (is_success, response_content) = register.register_procedure()
-        if (is_success):
+        if is_success:
             print 'Congratulations! Your device has successfully been registered!'
             with open(CONFIGURATION_FILE, 'a+') as f:
                 system_info = json.loads(response_content)

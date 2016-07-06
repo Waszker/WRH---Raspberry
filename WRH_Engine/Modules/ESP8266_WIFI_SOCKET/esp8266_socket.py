@@ -71,7 +71,7 @@ class ESP8266SocketModule(base_module.Module):
 
     def get_measurement(self):
         """
-        Returns base64 encoded string containing image taken from connected USB camera.
+        Returns information about socket state.
         """
         time.sleep(1)  # Too fast polling resets ESP8266!
         value_finding_pattern = ".+?value=\"(.+?)\".*$"
