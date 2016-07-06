@@ -169,7 +169,7 @@ class DHT22Module(base_module.Module):
                 print DHT22Module.type_name + " " + self.gpio + 'port bind failed. Error Code : ' + str(
                     msg[0]) + ' Message ' + msg[1]
                 time.sleep(10)  # Sleep 10 seconds before retrying
-        print DHT22Module.type_name + " " + self.gpio + " started listening"
+        print DHT22Module.type_name + " " + self.name + " started listening"
         while True:
             s.listen(10)
             connection, address = s.accept()
