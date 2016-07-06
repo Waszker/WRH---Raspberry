@@ -187,8 +187,8 @@ class DHT22Module(base_module.Module):
 
 
 def _siginit_handler(_, __):
-    print 'DHT22: SIGINT signal caught'
-    os.kill(os.getpid(), signal.SIGINT)
+    print "DHT22: SIGINT signal caught"
+    os._exit(0)
 
 
 if __name__ == "__main__":
