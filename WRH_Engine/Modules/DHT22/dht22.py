@@ -146,7 +146,7 @@ class DHT22Module(base_module.Module):
         return '<div style="border:1px solid black;"> \
                <script> function update_measurements_dht22_' + self.id + '(text) \n\
                { var res = text.split(";"); h = res[0]; t = res[1];' \
-                                                                         'document.getElementById("dht22Div' + self.id + '").innerHTML = "Humidity: " + h + "%\nTemperature" + t "*C"; } \n\
+                                                                         'document.getElementById("dht22Div' + self.id + '").innerHTML = "Humidity: " + h + "% Temperature" + t "*C"; } \n\
                function getMeasurements' + self.id + '() { getRequest("localhost", ' + self.address + ', "", update_measurements_dht22_' + self.id + '); } \
                getMeasurements' + self.id + '(); \
                setInterval(function() { \n\
