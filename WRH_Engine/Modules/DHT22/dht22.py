@@ -134,6 +134,7 @@ class DHT22Module(base_module.Module):
         Starts working procedure.
         """
         web_thread = threading.Thread(target=self._web_service_thread)
+        web_thread.daemon = True
         web_thread.start()
 
         while True:
@@ -188,7 +189,7 @@ class DHT22Module(base_module.Module):
 
 def _siginit_handler(_, __):
     print "DHT22: SIGINT signal caught"
-    os._exit(0)
+    sys.exit(0)
 
 
 if __name__ == "__main__":
