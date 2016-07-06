@@ -4,6 +4,7 @@ from WRH_Engine.Utils import utils as u
 from WRH_Engine.WebApiLibrary import WebApiClient as w
 import Adafruit_DHT
 import threading
+import os
 import sys
 import re
 import socket
@@ -147,7 +148,7 @@ class DHT22Module(base_module.Module):
         return '<div style="border:1px solid black;"> \
                <script> function update_measurements_dht22_' + self.id + '(text) \n\
                { var res = text.split(";"); var h = res[0]; var t = res[1]; \
-               document.getElementById("dht22Div' + self.id + '").innerHTML = "Humidity: " + h + "% Temperature" + t + "*C"; } \n\
+               document.getElementById("dht22Div' + self.id + '").innerHTML = "Humidity: " + h + "% Temperature: " + t + "*C"; } \n\
                function getMeasurements' + self.id + '() { getRequest("localhost", ' + self.address + ', "", update_measurements_dht22_' + self.id + '); } \
                getMeasurements' + self.id + '(); \
                setInterval(function() { \n\
@@ -174,7 +175,7 @@ class DHT22Module(base_module.Module):
         while True:
             s.listen(10)
             connection, address = s.accept()
-            connection.send(str(self.last_humidity) + ";" + str(self.last_temperature))
+            connection.send('{0:0.1f};{1:0.1f}'.format(self.last_humidity, self.last_temperature))
             connection.close()
         s.close()
 
@@ -187,7 +188,7 @@ class DHT22Module(base_module.Module):
 
 def _siginit_handler(_, __):
     print 'DHT22: SIGINT signal caught'
-    sys.exit(0)
+    os._exit(0)
 
 
 if __name__ == "__main__":
