@@ -13,6 +13,7 @@ import requests
 import socket
 import time
 import urllib2
+import signal
 
 
 class ESP8266SocketModule(base_module.Module):
@@ -196,10 +197,16 @@ class ESP8266SocketModule(base_module.Module):
             pass
 
 
+def _siginit_handler(_, __):
+    print 'ESP8266: SIGINT signal caught'
+    sys.exit(0)
+
+
 if __name__ == "__main__":
     print 'ESP8266 WiFi socket: started.'
     device_line = sys.argv[1]
     conf_line = sys.argv[2]
+    signal.signal(signal.SIGINT, _siginit_handler)
 
     device_info = c.get_device_entry_data(device_line)
     esp8266 = ESP8266SocketModule(conf_line)

@@ -8,6 +8,7 @@ import sys
 import re
 import socket
 import time
+import signal
 
 
 class DHT22Module(base_module.Module):
@@ -145,8 +146,8 @@ class DHT22Module(base_module.Module):
         """
         return '<div style="border:1px solid black;"> \
                <script> function update_measurements_dht22_' + self.id + '(text) \n\
-               { var res = text.split(";"); h = res[0]; t = res[1];' \
-                                                                         'document.getElementById("dht22Div' + self.id + '").innerHTML = "Humidity: " + h + "% Temperature" + t "*C"; } \n\
+               { var res = text.split(";"); var h = res[0]; var t = res[1]; \
+               document.getElementById("dht22Div' + self.id + '").innerHTML = "Humidity: " + h + "% Temperature" + t "*C"; } \n\
                function getMeasurements' + self.id + '() { getRequest("localhost", ' + self.address + ', "", update_measurements_dht22_' + self.id + '); } \
                getMeasurements' + self.id + '(); \
                setInterval(function() { \n\
@@ -184,10 +185,16 @@ class DHT22Module(base_module.Module):
             return -1
 
 
+def _siginit_handler(_, __):
+    print 'DHT22: SIGINT signal caught'
+    sys.exit(0)
+
+
 if __name__ == "__main__":
     print 'DHT22 module: started.'
     device_line = sys.argv[1]
     conf_line = sys.argv[2]
+    signal.signal(signal.SIGINT, _siginit_handler)
 
     device_info = c.get_device_entry_data(device_line)
     dht22 = DHT22Module(conf_line)
