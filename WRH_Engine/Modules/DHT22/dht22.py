@@ -4,7 +4,6 @@ from WRH_Engine.Utils import utils as u
 from WRH_Engine.WebApiLibrary import WebApiClient as w
 import Adafruit_DHT
 import threading
-import os
 import sys
 import re
 import socket
