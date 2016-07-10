@@ -78,7 +78,7 @@ class SpeedTestModule(base_module.Module):
             results = ""
         results = results.replace('\n', '')
         print "The results are as follows: " + str(results)
-        pattern = ".+?Download(.+?\s).+?Upload(.+?\s).*"
+        pattern = ".+?Download: (.+?/s).+?Upload: (.+?/s).*"
         checker = re.compile(pattern)
 
         if not checker.match(str(results)):
