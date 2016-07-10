@@ -139,8 +139,9 @@ class SpeedTestModule(base_module.Module):
         web_thread.start()
 
         while True:
+            print "About to make measurement"
             self.last_download, self.last_upload = self.get_measurement()
-            time.sleep(self.interval)
+            time.sleep(self.interval * 60)
 
     def get_html_representation(self, website_host_address):
         """
