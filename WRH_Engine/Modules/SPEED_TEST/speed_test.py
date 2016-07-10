@@ -22,7 +22,7 @@ class SpeedTestModule(base_module.Module):
         base_module.Module.__init__(self, configuration_file_line)
         self.type_number = SpeedTestModule.type_number
         self.type_name = SpeedTestModule.type_name
-        self.last_download, self.last_upload = "0M bit/s", "0 Mbit/s"
+        self.last_download, self.last_upload = "0 Mbit/s", "0 Mbit/s"
 
     @staticmethod
     def is_configuration_line_sane(configuration_line):
@@ -73,6 +73,7 @@ class SpeedTestModule(base_module.Module):
         command = ["/usr/bin/python2.7", "WRH_Engine/Modules/SPEED_TEST/speedtest-cli/speedtest_cli.py"]
         results = subprocess.check_output(command)
         results = ''.join(e for e in results if e.isalnum())
+        print "The results are as follows: " + str(results)
         pattern = ".+?Download: (.+?\s).+?Upload: (.+?\s).*"
         checker = re.compile(pattern)
 
@@ -129,10 +130,10 @@ class SpeedTestModule(base_module.Module):
             return base_module.Module.update_module_information_in_wrh(self, device_id, device_token, new_name)
         return (w.Response.STATUS_OK, '')
 
-    def start_work(self, device_id, device_token):
+    def start_work(self, device_id, device_token):n
         """
         Starts working procedure.
-        """
+        """n
         web_thread = threading.Thread(target=self._web_service_thread)
         web_thread.daemon = True
         web_thread.start()
