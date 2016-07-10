@@ -78,7 +78,7 @@ class DHT22Module(base_module.Module):
         """
         Returns two float variables: humidity and temperature.
         """
-        return Adafruit_DHT.read_retry(Adafruit_DHT.AM2302, self.gpio)
+        return Adafruit_DHT.read_retry(Adafruit_DHT.DHT22, self.gpio)
 
     def get_module_description(self):
         """
