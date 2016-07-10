@@ -72,10 +72,12 @@ class SpeedTestModule(base_module.Module):
         Returns measurements taken by this module: two strings with download and upload speed values.
         """
         command = ["/usr/bin/python2.7", "WRH_Engine/Modules/SPEED_TEST/speedtest-cli/speedtest_cli.py"]
-        results = subprocess.check_output(command)
+        try:
+            results = subprocess.check_output(command)
+        except subprocess.CalledProcessError:
+            results = ""
         results = ''.join(e for e in results if e.isalnum())
-        print "The results are as follows: " + str(results)
-        pattern = ".+?Download: (.+?\s).+?Upload: (.+?\s).*"
+        pattern = ".+?Download(.+?\s).+?Upload(.+?\s).*"
         checker = re.compile(pattern)
 
         if not checker.match(str(results)):
