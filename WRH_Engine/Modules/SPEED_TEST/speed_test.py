@@ -71,7 +71,7 @@ class SpeedTestModule(base_module.Module):
         Returns measurements taken by this module: two strings with download and upload speed values.
         """
         print "SpeedTest module " + str(self.name) + " starting measurements"
-        command = ["/usr/bin/python2.7", "WRH_Engine/Modules/SPEED_TEST/speedtest-cli/speeedtest_cli.py"]
+        command = ["/usr/bin/python2.7", "WRH_Engine/Modules/SPEED_TEST/speedtest-cli/speedtest_cli.py"]
         results = subprocess.check_output(command)
         pattern = ".+?Download: (.+?)\n.+?Upload: (.+?)\n.*"
         checker = re.compile(pattern)
@@ -139,7 +139,6 @@ class SpeedTestModule(base_module.Module):
         web_thread.start()
 
         while True:
-            print "About to make measurement"
             self.last_download, self.last_upload = self.get_measurement()
             time.sleep(self.interval * 60)
 
