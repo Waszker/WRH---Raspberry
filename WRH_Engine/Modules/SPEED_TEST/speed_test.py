@@ -53,7 +53,8 @@ class SpeedTestModule(base_module.Module):
         Creates module configuration line.
         :return: Properly formatted configuration file line
         """
-        return str(self.type_number) + ";" + str(self.id) + ";" + self.name + ";" + str(self.interval) + ";" + str(self.address)
+        return str(self.type_number) + ";" + str(self.id) + ";" + self.name + ";" + str(self.interval) + ";" + str(
+            self.address)
 
     def _parse_configuration_line(self, configuration_file_line):
         """
@@ -130,10 +131,10 @@ class SpeedTestModule(base_module.Module):
             return base_module.Module.update_module_information_in_wrh(self, device_id, device_token, new_name)
         return (w.Response.STATUS_OK, '')
 
-    def start_work(self, device_id, device_token):n
+    def start_work(self, device_id, device_token):
         """
         Starts working procedure.
-        """n
+        """
         web_thread = threading.Thread(target=self._web_service_thread)
         web_thread.daemon = True
         web_thread.start()
