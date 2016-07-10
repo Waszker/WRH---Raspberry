@@ -22,10 +22,6 @@ class SpeedTestModule(base_module.Module):
         base_module.Module.__init__(self, configuration_file_line)
         self.type_number = SpeedTestModule.type_number
         self.type_name = SpeedTestModule.type_name
-        self.name = ""
-        self.interval = 60  # Initial 60 minutes interval
-        self.address = None
-        self.last_upload, self.last_download = "0 Mbit/s", "0 Mbit/s"
 
     @staticmethod
     def is_configuration_line_sane(configuration_line):
