@@ -134,7 +134,7 @@ class SpeedTestModule(base_module.Module):
         """
         Starts working procedure.
         """
-        web_thread = threading.Thread(target=self._web_service_thread())
+        web_thread = threading.Thread(target=self._web_service_thread)
         web_thread.daemon = True
         web_thread.start()
 
