@@ -72,8 +72,8 @@ class SpeedTestModule(base_module.Module):
         """
         command = ["/usr/bin/python2.7", "WRH_Engine/Modules/SPEED_TEST/speedtest-cli/speedtest_cli.py"]
         results = subprocess.check_output(command)
-        results = ''.join(e for e in results if e.isalnum() or e == '=' or e == '"')
-        pattern = ".+?Download: (.+?)\n.+?Upload: (.+?)\n.*"
+        results = ''.join(e for e in results if e.isalnum())
+        pattern = ".+?Download: (.+?\s).+?Upload: (.+?\s).*"
         checker = re.compile(pattern)
 
         if not checker.match(str(results)):
