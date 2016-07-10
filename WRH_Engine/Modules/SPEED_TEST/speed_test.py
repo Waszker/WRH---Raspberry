@@ -77,6 +77,7 @@ class SpeedTestModule(base_module.Module):
         except subprocess.CalledProcessError:
             results = ""
         results = ''.join(e for e in results if e.isalnum())
+        print "The results are as follows: " + str(results)
         pattern = ".+?Download(.+?\s).+?Upload(.+?\s).*"
         checker = re.compile(pattern)
 
