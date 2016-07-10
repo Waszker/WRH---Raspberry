@@ -144,17 +144,17 @@ class SpeedTestModule(base_module.Module):
         Returns html code to include in website.
         """
         return '<div style="border:1px solid black;"> \
-               <script> function update_measurements_speedtest_' + self.id + '(text) \n\
-               { document.getElementById("speedTestDiv' + self.id + '").innerHTML = text; } \n\
-               function getMeasurements' + self.id + '() { getRequest("localhost", ' + self.address + ', "", \
-               update_measurements_speedtest_' + self.id + '); } \
-               getMeasurements' + self.id + '(); \
+               <script> function update_measurements_speedtest_' + str(self.id) + '(text) \n\
+               { document.getElementById("speedTestDiv' + str(self.id) + '").innerHTML = text; } \n\
+               function getMeasurements' + str(self.id) + '() { getRequest("localhost", ' + str(self.address) + ', "", \
+               update_measurements_speedtest_' + str(self.id) + '); } \
+               getMeasurements' + str(self.id) + '(); \
                setInterval(function() { \n\
-               getMeasurements' + self.id + '(); \n\
+               getMeasurements' + str(self.id) + '(); \n\
                }, 60*1000);\n\
                </script> \n\
-               <center>' + self.name + '</center>\
-               <div id="speedTestDiv' + self.id + '" class="speedTestDiv"> </div>\
+               <center>' + str(self.name) + '</center>\
+               <div id="speedTestDiv' + str(self.id) + '" class="speedTestDiv"> </div>\
                </div>'
 
     def _web_service_thread(self):
