@@ -34,6 +34,12 @@ class LoginHandler(BaseHandler):
             self.redirect("/")
 
 
+class LogoutHandler(BaseHandler):
+    def get(self):
+        self.clear_cookie("user")
+        self.redirect("/login")
+
+
 class Userform(BaseHandler):
     def get(self):
         isuservalid(self)
@@ -73,6 +79,7 @@ class Request(BaseHandler):
 application = tornado.web.Application([
     (r"/", Userform),
     (r"/login", LoginHandler),
+    (r"/logout", LogoutHandler),
     (r"/uptime", Uptime),
     (r"/request", Request)
 ],
