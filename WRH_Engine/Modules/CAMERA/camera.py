@@ -49,7 +49,7 @@ class CameraModule(base_module.Module):
         """
         # Configuration line for camera should look like this:
         # TYPE_NUM=2 ; ID=INT ; NAME=STRING ; GPIO=STRING ; ADDRESS=STRING ; LOGIN=STRING ; PASSWORD=STRING
-        configuration_line_pattern = "([1-9][0-9]{0,9});([1-9][0-9]{0,9});(.+?);(.+?);(.+?);(.+?);(.+)$"
+        configuration_line_pattern = "([1-9][0-9]{0,9});([1-9][0-9]{0,9});(.+?);(.+?);(.+?);(.*?);(.*)$"
         checker = re.compile(configuration_line_pattern)
         if not checker.match(configuration_line):
             raise base_module.BadConfigurationException
@@ -114,8 +114,11 @@ class CameraModule(base_module.Module):
         self.gpio = u.get_non_empty_input(
             "Please input name of the webcam device (usually /dev/video# where # is the specific number): ")
         self.address = u.get_non_empty_input("Please input port on which streamed images can be accessed: ")
-        self.login = u.get_non_empty_input("Please input login used to access the video stream: ")
-        self.password = u.get_non_empty_input("Please input password used to access the video stream: ")
+        self.login = raw_input("Please input login used to access the video stream: ")
+        if self.login:
+            self.password = u.get_non_empty_input("Please input password used to access the video stream: ")
+        else:
+            self.password = ""
         return base_module.Module.register_in_wrh(self, device_id, device_token)
 
     def edit(self, device_id, device_token):
@@ -192,9 +195,13 @@ class CameraModule(base_module.Module):
 
     def _start_camera_thread(self, device_id, device_token):
         global mjpg_streamer_pid
+        password_subcommand = ""
+        if self.password != "":
+            password_subcommand = " -c " + self.login + ":" + self.password
+
         os.environ['LD_LIBRARY_PATH'] = '/usr/local/lib/'
         command = ["/usr/local/bin/mjpg_streamer", "-i", "input_uvc.so -n -q 50 -f 30 -d " + str(self.gpio),
-                   "-o", "output_http.so -p " + self.address + " -c " + self.login + ":" + self.password]
+                   "-o", "output_http.so -p " + self.address + password_subcommand]
 
         # Preparing thread and subprocess
         thread1 = threading.Thread(target=self._snapshot_thread, args=(device_id, device_token))
