@@ -19,6 +19,11 @@ import requests
 import base64
 from urllib2 import urlopen
 
+# Those two variables will be used by sigint handler
+# CAUTION: Those are global variables - don't use them unless you're sure what you're doing!
+stunnel_pid = None
+mjpg_streamer_pi = None
+
 
 class CameraModule(base_module.Module):
     """
@@ -153,6 +158,7 @@ class CameraModule(base_module.Module):
         <img src = \"http://" + website_host_address + ":" + self.address + "/?action=stream\" /></div>"
 
     def _start_stunnel(self):
+        global stunnel_pid
         filename = "/tmp/stunnel" + str(self.id) + ".conf"
         with open(filename, "w") as f:
             f.write("cert=.stunnel_config/cert.pem\n")
@@ -165,6 +171,7 @@ class CameraModule(base_module.Module):
             f.write("connect = 127.0.0.1:" + str(self.address))
         command = ["/usr/bin/stunnel", filename]
         p = subprocess.Popen(command)
+        stunnel_pid = p.pid
         p.wait()
 
     def _get_streaming_address(self):
@@ -184,15 +191,16 @@ class CameraModule(base_module.Module):
                                  self.type_number, image, self._get_streaming_address())
 
     def _start_camera_thread(self, device_id, device_token):
+        global mjpg_streamer_pi
         os.environ['LD_LIBRARY_PATH'] = '/usr/local/lib/'
         command = ["/usr/local/bin/mjpg_streamer", "-i", "input_uvc.so -n -q 50 -f 30 -d " + str(self.gpio),
                    "-o", "output_http.so -p " + self.address + " -c " + self.login + ":" + self.password]
-        print(command)
 
         # Preparing thread and subprocess
         thread1 = threading.Thread(target=self._snapshot_thread, args=(device_id, device_token))
         thread2 = threading.Thread(target=self._start_stunnel, args=())
         p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ)
+        mjpg_streamer_pi = p.pid
         thread1.daemon = thread2.daemon = True
         thread1.start()
         thread2.start()
@@ -201,10 +209,9 @@ class CameraModule(base_module.Module):
 
 
 def _signal_handler():
-    # TODO: Potentially unsafe killall command!
-    command = ["/usr/bin/killall", "stunnel"]
-    p = subprocess.Popen(command)
-    p.wait()
+    global stunnel_pid, mjpg_streamer_pi
+    if stunnel_pid is not None: os.kill(stunnel_pid, signal.SIGINT)
+    if mjpg_streamer_pi is not None: os.kill(mjpg_streamer_pi, signal.SIGINT)
     sys.exit(0)
 
 
