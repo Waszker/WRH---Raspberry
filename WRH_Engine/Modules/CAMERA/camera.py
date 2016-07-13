@@ -208,7 +208,7 @@ class CameraModule(base_module.Module):
         return p
 
 
-def _signal_handler():
+def _signal_handler(_, __):
     global stunnel_pid, mjpg_streamer_pi
     if stunnel_pid is not None: os.kill(stunnel_pid, signal.SIGINT)
     if mjpg_streamer_pi is not None: os.kill(mjpg_streamer_pi, signal.SIGINT)
