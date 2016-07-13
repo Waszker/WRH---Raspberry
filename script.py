@@ -1,6 +1,7 @@
 #!/usr/bin/python2.7
 import os.path as path
 import os
+import sys
 import json
 import signal
 import subprocess
@@ -113,8 +114,7 @@ def _run_overlord():
     command = ["/usr/bin/python2.7", "-m", "WRH_Engine.Modules.OVERLORD.overlord"]
     process = subprocess.Popen(command)
     process.wait()
-    # TODO: Remove SIGINT handler!
-    signal.signal(signal.SIGINT, _siginit_handler)
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 
 def _run_maintenance_work(modules_classes):
@@ -186,4 +186,10 @@ def show_options():
 if __name__ == "__main__":
     if os.getuid() != 0:
         exit("You need to have root privileges to run this script.\nPlease try again, this time using 'sudo'. Exiting.")
+    if len(sys.argv) > 1:
+        option = sys.argv[1]
+        if option == "--start-work":
+            _run_overlord()
+            sys.exit(0)
+
     show_options()
