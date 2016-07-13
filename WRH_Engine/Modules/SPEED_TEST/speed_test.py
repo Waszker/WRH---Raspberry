@@ -13,7 +13,8 @@ import socket
 
 class SpeedTestModule(base_module.Module):
     """
-    This is speed test module that checks Internet connection speed regularly.
+    This is Internet speed test module that checks Internet connection speed regularly.
+    It's not recommended to add more than one speed test to WRH system.
     """
     type_number = 6
     type_name = "INTERNET SPEED TEST"
