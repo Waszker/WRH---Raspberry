@@ -4,22 +4,17 @@ import sys
 import signal
 
 
-class DummyModule(base_module.Module):
+class RangoIrygaModule(base_module.Module):
     """
-    This is dummy module which can be used as a starting point when writing own one.
+    Rango Iryga module makes it easier for the user to interact with Rango Irygation system.
     """
-    # TODO: Module number must be unique across all modules in order to prevent failures during WRH system boot
-    type_number = None
-    # TODO: Module name should be written in uppercase, will be displayed on Tornado web page screen and should
-    # not be too long
-    type_name = "UNDEFINED"
+    type_number = 7
+    type_name = "RANGO IRYGA"
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
-        self.type_number = DummyModule.type_number
-        self.type_name = DummyModule.type_name
-        # WARNING: No need to initialize variables here because base module initialization
-        # invokes variable initialization from configuration line
+        self.type_number = RangoIrygaModule.type_number
+        self.type_name = RangoIrygaModule.type_name
 
     @staticmethod
     def is_configuration_line_sane(configuration_line):

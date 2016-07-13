@@ -13,10 +13,20 @@ def get_available_module_types(configuration_file):
     return modules_classes, modules
 
 
+def _convert_to_two_digit_number(number):
+    result_number = str(number)
+    if number < 10:
+        result_number = "0" + str(number)
+    return result_number
+
+
 def getsystemstats():
     now = datetime.datetime.now()
-    stat_string = "Date: %d-%d-%d <br />" % (now.day, now.month, now.year)
-    stat_string += "Hour: %d:%d <br />" % (now.hour, now.minute)
+    stat_string = "Date: %s-%s-%s <br />" % (_convert_to_two_digit_number(now.day),
+                                             _convert_to_two_digit_number(now.month),
+                                             _convert_to_two_digit_number(now.year))
+    stat_string += "Hour: %s:%s <br />" % (_convert_to_two_digit_number(now.hour),
+                                           _convert_to_two_digit_number(now.minute))
     stat_string += "Uptime: " + _getuptime() + "<br />"
     stat_string += "CPU temp: " + str(round(_get_cpu_temp(), 1)) + "*C <br />"
 
