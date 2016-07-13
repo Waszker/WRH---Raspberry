@@ -175,7 +175,10 @@ class DHT22Module(base_module.Module):
         while True:
             s.listen(10)
             connection, address = s.accept()
-            connection.send('{0:0.1f};{1:0.1f}'.format(self.last_humidity, self.last_temperature))
+            if self.last_temperature is not None and self.last_humidity is not None:
+                connection.send('{0:0.1f};{1:0.1f}'.format(self.last_humidity, self.last_temperature))
+            else:
+                connection.send('?;?')
             connection.close()
         s.close()
 
