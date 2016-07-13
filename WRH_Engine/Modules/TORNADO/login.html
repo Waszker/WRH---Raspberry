@@ -1,11 +1,13 @@
 <html>
 <title>WRH System Login</title>
-<body style="margin-right: auto; margin-left: auto;">
+<body>
+    <div style="margin: auto">
     <img src="{{ static_url("images/logo.png") }}" />
     <form action="/login" method="post">
         <p>Login: <input type="text" name="name"></p>
         <p>Password: <input type="password" name="password"></p>
         <p><input type="submit" value="Sign in"></p>
     </form>
+    </div>
 </body>
 </html>
