@@ -16,6 +16,7 @@ body {
     padding: 5% 15px 0 15px;
     min-height: 568px;
     background-color: #fff;
+    width: 100%
 }
 
 @media(min-width:768px) {
@@ -23,7 +24,7 @@ body {
         position: inherit;
         // margin-left: 250px;
         text-align: center;
-        padding: 30px 30px 0 30px;
+        padding: 0% 30px 0 30px;
         border-left: 1px solid #e7e7e7;
     }
 }

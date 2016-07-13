@@ -158,7 +158,7 @@ class CameraModule(base_module.Module):
         :return:
         """
         return "<div style=\"border:1px solid black;\"><center>" + self.name + "</center> \
-        <img src = \"http://" + website_host_address + ":" + self.address + "/?action=stream\" /></div>"
+            <img style=\"width: 50%\" src = \"http://" + website_host_address + ":" + self.address + "/?action=stream\" /></div>"
 
     def _start_stunnel(self):
         global stunnel_pid
