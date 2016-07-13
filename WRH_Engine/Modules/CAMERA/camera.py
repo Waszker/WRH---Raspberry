@@ -22,7 +22,7 @@ from urllib2 import urlopen
 # Those two variables will be used by sigint handler
 # CAUTION: Those are global variables - don't use them unless you're sure what you're doing!
 stunnel_pid = None
-mjpg_streamer_pi = None
+mjpg_streamer_pid = None
 
 
 class CameraModule(base_module.Module):
@@ -191,7 +191,7 @@ class CameraModule(base_module.Module):
                                  self.type_number, image, self._get_streaming_address())
 
     def _start_camera_thread(self, device_id, device_token):
-        global mjpg_streamer_pi
+        global mjpg_streamer_pid
         os.environ['LD_LIBRARY_PATH'] = '/usr/local/lib/'
         command = ["/usr/local/bin/mjpg_streamer", "-i", "input_uvc.so -n -q 50 -f 30 -d " + str(self.gpio),
                    "-o", "output_http.so -p " + self.address + " -c " + self.login + ":" + self.password]
@@ -200,7 +200,7 @@ class CameraModule(base_module.Module):
         thread1 = threading.Thread(target=self._snapshot_thread, args=(device_id, device_token))
         thread2 = threading.Thread(target=self._start_stunnel, args=())
         p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ)
-        mjpg_streamer_pi = p.pid
+        mjpg_streamer_pid = p.pid
         thread1.daemon = thread2.daemon = True
         thread1.start()
         thread2.start()
@@ -208,10 +208,17 @@ class CameraModule(base_module.Module):
         return p
 
 
+def _try_to_kill_process(pid):
+    try:
+        os.kill(pid, signal.SIGINT)
+    except OSError:
+        pass
+
+
 def _signal_handler(_, __):
-    global stunnel_pid, mjpg_streamer_pi
-    if stunnel_pid is not None: os.kill(stunnel_pid, signal.SIGINT)
-    if mjpg_streamer_pi is not None: os.kill(mjpg_streamer_pi, signal.SIGINT)
+    global stunnel_pid, mjpg_streamer_pid
+    if stunnel_pid is not None: _try_to_kill_process(stunnel_pid)
+    if mjpg_streamer_pid is not None: _try_to_kill_process(mjpg_streamer_pid)
     sys.exit(0)
 
 
