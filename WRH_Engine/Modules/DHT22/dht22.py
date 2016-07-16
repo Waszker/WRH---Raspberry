@@ -68,11 +68,11 @@ class DHT22Module(base_module.Module):
         """
         configuration_line_pattern = self.is_configuration_line_sane(configuration_file_line)
         matches = re.search(configuration_line_pattern, configuration_file_line)
-        self.id = matches.group(2)
-        self.name = matches.group(3)
-        self.gpio = int(matches.group(4))
-        self.interval = int(matches.group(5))
-        self.address = matches.group(6)
+        self.id = matches.group(1)
+        self.name = matches.group(2)
+        self.gpio = int(matches.group(3))
+        self.interval = int(matches.group(4))
+        self.address = matches.group(5)
 
     def get_measurement(self):
         """

@@ -62,10 +62,10 @@ class RangoIrygaModule(base_module.Module):
         """
         configuration_line_pattern = self.is_configuration_line_sane(configuration_file_line)
         matches = re.search(configuration_line_pattern, configuration_file_line)
-        self.id = int(matches.group(2))
-        self.name = str(matches.group(3))
-        self.address = str(matches.group(4))
-        self.port = str(matches.group(5))
+        self.id = int(matches.group(1))
+        self.name = str(matches.group(2))
+        self.address = str(matches.group(3))
+        self.port = str(matches.group(4))
 
     def get_measurement(self):
         """
