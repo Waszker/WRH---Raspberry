@@ -155,7 +155,7 @@ class RangoIrygaModule(base_module.Module):
             s.listen(10)
             connection, address = s.accept()
             data = str(connection.recv(1024) + ",,").split(',')
-            number, state, time_wait = data[0], data[1], data[2]
+            state, number, time_wait = data[0], data[1], data[2]
             if str(state) == "ON" or str(state) == "on":
                 self._set_relay_state(number, True, time_wait)
             elif str(state) == "OFF" or str(state) == "off":
