@@ -86,7 +86,7 @@ class RangoIrygaModule(base_module.Module):
             # Socket returns opposite state - we need to change its response
             true_state = {"ON": "<a style=\"color: green\">OFF</a>", "OFF": "<a style=\"color: red\">ON</a>"}
             search = re.search(value_finding_pattern, str(response_content))
-            state = "Relay 1: " + true_state[search.group(1)] + "<br />Relay 2:" + true_state[
+            state = "Relay 1: " + true_state[search.group(1)] + "<br />Relay 2: " + true_state[
                 search.group(3)] + "<br />Relay 3: " + true_state[
                         search.group(5)] + "<br />Relay 4: " + true_state[search.group(7)]
         return state
@@ -188,21 +188,23 @@ class RangoIrygaModule(base_module.Module):
                     <center>' + self.name + '</center>\
                     <div id="rangoIrygaDiv' + my_id + '" class="rangoIrygaDiv"> </div>\
                     <br />\
-                    Relay 1 \
-                    <button type="button" onclick="setState' + my_id + '(\'ON\', 5, 10)">ON</button> \
-                    <button type="button" onclick="setState' + my_id + '(\'OFF\', 5, -1)">OFF</button> \
-                    <br />\
-                    Relay 2 \
-                    <button type="button" onclick="setState' + my_id + '(\'ON\', 4, 10)">ON</button> \
-                    <button type="button" onclick="setState' + my_id + '(\'OFF\', 4, -1)">OFF</button> \
-                    <br />\
-                    Relay 3 \
-                    <button type="button" onclick="setState' + my_id + '(\'ON\', 15, 10)">ON</button> \
-                    <button type="button" onclick="setState' + my_id + '(\'OFF\', 15, -1)">OFF</button> \
-                    <br />\
-                    Relay 4 \
-                    <button type="button" onclick="setState' + my_id + '(\'ON\', 4, 10)">ON</button> \
-                    <button type="button" onclick="setState' + my_id + '(\'OFF\', 5, -1)">OFF</button> \
+                    <table><tr><td> \
+                    Relay 1 <td />\
+                    <td><button type="button" onclick="setState' + my_id + '(\'ON\', 5, 10)">ON</button></td> \
+                    <td><button type="button" onclick="setState' + my_id + '(\'OFF\', 5, -1)">OFF</button></td></tr> \
+                    <tr>\
+                    <td>Relay 2<td/> \
+                    <td><button type="button" onclick="setState' + my_id + '(\'ON\', 4, 10)">ON</button></td> \
+                    <td><button type="button" onclick="setState' + my_id + '(\'OFF\', 4, -1)">OFF</button></td></tr> \
+                    <tr>\
+                    <td>Relay 3</td> \
+                    <td><button type="button" onclick="setState' + my_id + '(\'ON\', 15, 10)">ON</button></td> \
+                    <td><button type="button" onclick="setState' + my_id + '(\'OFF\', 15, -1)">OFF</button></td></tr> \
+                    <tr>\
+                    <td>Relay 4</td> \
+                    <td><button type="button" onclick="setState' + my_id + '(\'ON\', 4, 10)">ON</button></td> \
+                    <td><button type="button" onclick="setState' + my_id + '(\'OFF\', 5, -1)">OFF</button></td></tr> \
+                    </table> \
                </div>'
 
     def _set_relay_state(self, relay_number, should_turn_on, duration):
