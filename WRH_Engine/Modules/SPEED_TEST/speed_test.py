@@ -36,7 +36,7 @@ class SpeedTestModule(base_module.Module):
         # Configuration line for camera should look like this:
         # TYPE_NUM=6 ; ID=INT ; NAME=STRING ; INTERVAL=INT ; ADDRESS=INT
         configuration_line_pattern = str(SpeedTestModule.type_number) + \
-            ";([1-9][0-9]{0,9});(.+?);([1-9][0-9]{0,9});([1-9][0-9]{0,9});(.+)$"
+            ";([1-9][0-9]{0,9});(.+?);([1-9][0-9]{0,9});([1-9][0-9]{0,9})$"
         checker = re.compile(configuration_line_pattern)
         if not checker.match(configuration_line):
             raise base_module.BadConfigurationException
@@ -64,10 +64,10 @@ class SpeedTestModule(base_module.Module):
         """
         configuration_line_pattern = self.is_configuration_line_sane(configuration_file_line)
         matches = re.search(configuration_line_pattern, configuration_file_line)
-        self.id = matches.group(2)
-        self.name = matches.group(3)
-        self.interval = int(matches.group(4))
-        self.address = int(matches.group(5))
+        self.id = matches.group(1)
+        self.name = matches.group(2)
+        self.interval = int(matches.group(3))
+        self.address = int(matches.group(4))
 
     def get_measurement(self):
         """
