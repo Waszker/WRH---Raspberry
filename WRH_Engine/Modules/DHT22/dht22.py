@@ -38,9 +38,9 @@ class DHT22Module(base_module.Module):
         :return:
         """
         # Configuration line for camera should look like this:
-        # TYPE_NUM=4 ; ID=INT ; NAME=STRING ; GPIO=INT ; INTERVAL=INT ; ADDRESS=STRING
-        configuration_line_pattern = \
-            "([1-9][0-9]{0,9});([1-9][0-9]{0,9});(.+?);([1-9][0-9]{0,9});([1-9][0-9]{0,9});(.+)$"
+        # TYPE_NUM=1 ; ID=INT ; NAME=STRING ; GPIO=INT ; INTERVAL=INT ; ADDRESS=STRING
+        configuration_line_pattern = str(DHT22Module.type_number) + \
+            ";([1-9][0-9]{0,9});(.+?);([1-9][0-9]{0,9});([1-9][0-9]{0,9});(.+)$"
         checker = re.compile(configuration_line_pattern)
         if not checker.match(configuration_line):
             raise base_module.BadConfigurationException
