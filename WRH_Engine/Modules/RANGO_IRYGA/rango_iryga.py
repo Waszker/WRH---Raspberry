@@ -84,11 +84,11 @@ class RangoIrygaModule(base_module.Module):
             state = "Unable to obtain socket states... Try again later."
         else:
             # Socket returns opposite state - we need to change its response
-            true_state = {"ON": "OFF", "OFF": "ON"}
+            true_state = {"ON": "<a style=\"color: green\">OFF</a>", "OFF": "<a style=\"color: red\">ON</a>"}
             search = re.search(value_finding_pattern, str(response_content))
-            state = "Relay 1: " + true_state[search.group(1)] + "\nRelay 2:" + true_state[
-                search.group(3)] + "\nRelay 3: " + true_state[
-                        search.group(5)] + "\nRelay 4: " + true_state[search.group(7)]
+            state = "Relay 1: " + true_state[search.group(1)] + "<br />Relay 2:" + true_state[
+                search.group(3)] + "<br />Relay 3: " + true_state[
+                        search.group(5)] + "<br />Relay 4: " + true_state[search.group(7)]
         return state
 
     def get_module_description(self):
@@ -148,7 +148,7 @@ class RangoIrygaModule(base_module.Module):
                 s.bind((host, int(port)))
                 break
             except socket.error as msg:
-                print 'Rango Iryga ' + self.address + 'port bind failed. Error Code : ' + str(
+                print 'Rango Iryga ' + self.address + ' port bind failed. Error Code : ' + str(
                     msg[0]) + ' Message ' + msg[1]
                 time.sleep(10)  # Sleep 10 seconds before retrying
         print "Rango Iryga: " + self.address + " started listening"
