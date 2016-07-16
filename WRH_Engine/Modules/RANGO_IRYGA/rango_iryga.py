@@ -72,7 +72,7 @@ class RangoIrygaModule(base_module.Module):
         Returns measurements taken by this module
         """
         time.sleep(1)  # Too fast polling resets ESP8266!
-        value_finding_pattern = ".+?value=\"(.+?)\".*$"
+        value_finding_pattern = ".+?value=\"(.+?)\".+?value=\"(.+?)\".+?value=\"(.+?)\".+?value=\"(.+?)\".+?value=\"(.+?)\".+?value=\"(.+?)\".+?value=\"(.+?)\".+?value=\"(.+?)\".*$"
         checker = re.compile(value_finding_pattern)
         try:
             response = requests.get("http://" + self.address + "/socket.lua")
@@ -86,8 +86,8 @@ class RangoIrygaModule(base_module.Module):
             # Socket returns opposite state - we need to change its response
             true_state = {"ON": "OFF", "OFF": "ON"}
             search = re.search(value_finding_pattern, str(response_content))
-            state = true_state[search.group(1)] + ";" + true_state[search.group(2)] + ";" + true_state[
-                search.group(3)] + ";" + true_state[search.group(4)]
+            state = true_state[search.group(1)] + ";" + true_state[search.group(3)] + ";" + true_state[
+                search.group(5)] + ";" + true_state[search.group(7)]
         return state
 
     def get_module_description(self):
