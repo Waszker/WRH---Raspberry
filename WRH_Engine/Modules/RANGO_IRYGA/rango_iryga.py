@@ -86,8 +86,9 @@ class RangoIrygaModule(base_module.Module):
             # Socket returns opposite state - we need to change its response
             true_state = {"ON": "OFF", "OFF": "ON"}
             search = re.search(value_finding_pattern, str(response_content))
-            state = true_state[search.group(1)] + ";" + true_state[search.group(3)] + ";" + true_state[
-                search.group(5)] + ";" + true_state[search.group(7)]
+            state = "Relay 1: " + true_state[search.group(1)] + "\nRelay 2:" + true_state[
+                search.group(3)] + "\nRelay 3: " + true_state[
+                        search.group(5)] + "\nRelay 4: " + true_state[search.group(7)]
         return state
 
     def get_module_description(self):
