@@ -39,7 +39,7 @@ class ESP8266SocketModule(base_module.Module):
         # Configuration line for camera should look like this:
         # TYPE_NUM=5 ; ID=INT ; NAME=STRING ; GPIO=STRING ; ADDRESS=STRING
         configuration_line_pattern = str(ESP8266SocketModule.type_number) + \
-            ";([1-9][0-9]{0,9});(.+?);([1-9][0-9]{0,9});([1-9][0-9]{0,9});(.+)$"
+            ";([1-9][0-9]{0,9});(.+?);(.+?);(.+)$"
         checker = re.compile(configuration_line_pattern)
         if not checker.match(configuration_line):
             raise base_module.BadConfigurationException
@@ -193,7 +193,7 @@ class ESP8266SocketModule(base_module.Module):
         url = "http://" + self.gpio + "/socket.lua?wait=" + time_wait + "&state=" + state
         try:
             request = urllib2.Request(url)
-            urllib2.urlopen(request).read()
+            urllib2.urlopen(request, timeout=5).read()
         except urllib2.URLError:
             pass
 
