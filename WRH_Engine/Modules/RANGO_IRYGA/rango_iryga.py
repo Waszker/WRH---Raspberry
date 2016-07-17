@@ -178,7 +178,8 @@ class RangoIrygaModule(base_module.Module):
                { document.getElementById("rangoIrygaDiv' + my_id + '").innerHTML = text; } \n\
                function getState' + my_id + '() { getRequest("localhost", ' + port + ', "STATE", update_relay_state_message' + my_id + '); } \
                function setState' + my_id + '(state, gpio, input_id) { \
-                        sendRequest(\'localhost\', ' + port + ', state + "," + gpio + "," + document.getElementById(input_id).value); \
+                        time_wait = input_id == null ? -1 : document.getElementById(input_id).value \
+                        sendRequest(\'localhost\', ' + port + ', state + "," + gpio + "," + time_wait); \
                         getState' + my_id + '(); } \
                getState' + my_id + '(); \
                setInterval(function() { \n\
@@ -192,17 +193,17 @@ class RangoIrygaModule(base_module.Module):
                     Relay&nbsp;1 </td>\
                     <td><div style="margin: 3%; width: 100%"><input id=\"relay1_' + my_id + '\" type=\"number\" style="width: 90%" value="10"/></div></td> \
                     <td style="margin: 3%"><button type="button" onclick="setState' + my_id + '(\'ON\', 5, \'relay1_' + my_id + '\')">ON</button></td> \
-                    <td style="margin: 3%"><button type="button" onclick="setState' + my_id + '(\'OFF\', 5, -1)">OFF</button></td></tr> \
+                    <td style="margin: 3%"><button type="button" onclick="setState' + my_id + '(\'OFF\', 5, null)">OFF</button></td></tr> \
                     <tr>\
                     <td>Relay&nbsp;2</td> \
                     <td><div style="margin: 3%; width: 100%"><input id=\"relay2_' + my_id + '\" type=\"number\" style="width: 90%" value="10"/></div></td> \
                     <td style="margin: 3%"><button type="button" onclick="setState' + my_id + '(\'ON\', 4, \'relay2_' + my_id + '\')">ON</button></td> \
-                    <td style="margin: 3%"><button type="button" onclick="setState' + my_id + '(\'OFF\', 4, -1)">OFF</button></td></tr> \
+                    <td style="margin: 3%"><button type="button" onclick="setState' + my_id + '(\'OFF\', 4, null)">OFF</button></td></tr> \
                     <tr>\
                     <td>Relay&nbsp;3</td> \
                     <td><div style="margin: 3%; width: 100%"><input id=\"relay3_' + my_id + '\" type=\"number\" style="width: 90%" value="10"/></div></td> \
                     <td style="margin: 3%"><button type="button" onclick="setState' + my_id + '(\'ON\', 15, \'relay3_' + my_id + '\')">ON</button></td> \
-                    <td style="margin: 3%"><button type="button" onclick="setState' + my_id + '(\'OFF\', 15, -1)">OFF</button></td></tr> \
+                    <td style="margin: 3%"><button type="button" onclick="setState' + my_id + '(\'OFF\', 15, null)">OFF</button></td></tr> \
                     <tr>\
                     <td>Relay&nbsp;4</td> \
                     <td><div style="margin: 3%; width: 100%"><input id=\"relay4_' + my_id + '\" type=\"number\" style="width: 90%" value="10"/></div></td> \
