@@ -188,22 +188,22 @@ class RangoIrygaModule(base_module.Module):
                     <center>' + self.name + '</center>\
                     <div id="rangoIrygaDiv' + my_id + '" class="rangoIrygaDiv"> </div>\
                     <br />\
-                    <table style="margin: 0px auto" cellpadding="10"><tr><td> \
-                    Relay 1 <td />\
-                    <td><button type="button" onclick="setState' + my_id + '(\'ON\', 5, 10)">ON</button></td> \
-                    <td><button type="button" onclick="setState' + my_id + '(\'OFF\', 5, -1)">OFF</button></td></tr> \
+                    <table style="margin: 0px auto"><tr><td> \
+                    Relay 1 </td>\
+                    <td style="padding-left: 5px"><button type="button" onclick="setState' + my_id + '(\'ON\', 5, 10)">ON</button></td> \
+                    <td style="padding-left: 5px"><button type="button" onclick="setState' + my_id + '(\'OFF\', 5, -1)">OFF</button></td></tr> \
                     <tr>\
-                    <td>Relay 2<td/> \
-                    <td><button type="button" onclick="setState' + my_id + '(\'ON\', 4, 10)">ON</button></td> \
-                    <td><button type="button" onclick="setState' + my_id + '(\'OFF\', 4, -1)">OFF</button></td></tr> \
+                    <td>Relay 2</td> \
+                    <td style="padding-left: 5px"><button type="button" onclick="setState' + my_id + '(\'ON\', 4, 10)">ON</button></td> \
+                    <td style="padding-left: 5px"><button type="button" onclick="setState' + my_id + '(\'OFF\', 4, -1)">OFF</button></td></tr> \
                     <tr>\
                     <td>Relay 3</td> \
-                    <td><button type="button" onclick="setState' + my_id + '(\'ON\', 15, 10)">ON</button></td> \
-                    <td><button type="button" onclick="setState' + my_id + '(\'OFF\', 15, -1)">OFF</button></td></tr> \
+                    <td style="padding-left: 5px"><button type="button" onclick="setState' + my_id + '(\'ON\', 15, 10)">ON</button></td> \
+                    <td style="padding-left: 5px"><button type="button" onclick="setState' + my_id + '(\'OFF\', 15, -1)">OFF</button></td></tr> \
                     <tr>\
                     <td>Relay 4</td> \
-                    <td><button type="button" onclick="setState' + my_id + '(\'ON\', 4, 10)">ON</button></td> \
-                    <td><button type="button" onclick="setState' + my_id + '(\'OFF\', 5, -1)">OFF</button></td></tr> \
+                    <td style="padding-left: 5px"><button type="button" onclick="setState' + my_id + '(\'ON\', 4, 10)">ON</button></td> \
+                    <td style="padding-left: 5px"><button type="button" onclick="setState' + my_id + '(\'OFF\', 5, -1)">OFF</button></td></tr> \
                     </table> \
                </div>'
 
