@@ -178,7 +178,7 @@ class RangoIrygaModule(base_module.Module):
                { document.getElementById("rangoIrygaDiv' + my_id + '").innerHTML = text; } \n\
                function getState' + my_id + '() { getRequest("localhost", ' + port + ', "STATE", update_relay_state_message' + my_id + '); } \
                function setState' + my_id + '(state, gpio, input_id) { \
-                        time_wait = input_id == null ? -1 : document.getElementById(input_id).value \
+                        time_wait = input_id == null ? -1 : document.getElementById(input_id).value; \
                         sendRequest(\'localhost\', ' + port + ', state + "," + gpio + "," + time_wait); \
                         getState' + my_id + '(); } \
                getState' + my_id + '(); \
