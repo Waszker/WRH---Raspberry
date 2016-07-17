@@ -190,22 +190,22 @@ class RangoIrygaModule(base_module.Module):
                     <br />\
                     <table style="margin: 0px auto"><tr><td> \
                     Relay&nbsp;1 </td>\
-                    <td><input id=\"relay1_' + my_id + '\" type=\"number\" style="padding-left: 5%"/></td> \
+                    <td><input id=\"relay1_' + my_id + '\" type=\"number\" style="padding: 8%"/></td> \
                     <td style="padding-left: 5%"><button type="button" onclick="setState' + my_id + '(\'ON\', 5, 10)">ON</button></td> \
                     <td style="padding-left: 5%"><button type="button" onclick="setState' + my_id + '(\'OFF\', 5, -1)">OFF</button></td></tr> \
                     <tr>\
                     <td>Relay&nbsp;2</td> \
-                    <td><input id=\"relay2_' + my_id + '\" type=\"number\" style="padding-left: 5%"/></td> \
+                    <td><input id=\"relay2_' + my_id + '\" type=\"number\" style="padding: 8%"/></td> \
                     <td style="padding-left: 5%"><button type="button" onclick="setState' + my_id + '(\'ON\', 4, 10)">ON</button></td> \
                     <td style="padding-left: 5%"><button type="button" onclick="setState' + my_id + '(\'OFF\', 4, -1)">OFF</button></td></tr> \
                     <tr>\
                     <td>Relay&nbsp;3</td> \
-                    <td><input id=\"relay3_' + my_id + '\" type=\"number\" style="padding-left: 5%"/></td> \
+                    <td><input id=\"relay3_' + my_id + '\" type=\"number\" style="padding: 8%"/></td> \
                     <td style="padding-left: 5%"><button type="button" onclick="setState' + my_id + '(\'ON\', 15, 10)">ON</button></td> \
                     <td style="padding-left: 5%"><button type="button" onclick="setState' + my_id + '(\'OFF\', 15, -1)">OFF</button></td></tr> \
                     <tr>\
                     <td>Relay&nbsp;4</td> \
-                    <td><input id=\"relay4_' + my_id + '\" type=\"number\" style="padding-left: 5%"/></td> \
+                    <td><input id=\"relay4_' + my_id + '\" type=\"number\" style="padding: 8%"/></td> \
                     <td style="padding-left: 5%"><button type="button" onclick="setState' + my_id + '(\'ON\', 4, 10)">ON</button></td> \
                     <td style="padding-left: 5%"><button type="button" onclick="setState' + my_id + '(\'OFF\', 5, -1)">OFF</button></td></tr> \
                     </table> \
