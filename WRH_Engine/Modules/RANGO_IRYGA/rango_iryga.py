@@ -215,6 +215,8 @@ class RangoIrygaModule(base_module.Module):
         # First get duration for relay opening
         try:
             duration = int(duration)
+            if duration < -1 or duration > 3600:
+                raise ValueError
         except ValueError:
             if should_turn_on:
                 duration = 60
