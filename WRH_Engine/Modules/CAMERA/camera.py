@@ -50,7 +50,7 @@ class CameraModule(base_module.Module):
         # Configuration line for camera should look like this:
         # TYPE_NUM=2 ; ID=INT ; NAME=STRING ; GPIO=STRING ; ADDRESS=STRING ; LOGIN=STRING ; PASSWORD=STRING
         configuration_line_pattern = str(CameraModule.type_number) + \
-            ";([1-9][0-9]{0,9});(.+?);([1-9][0-9]{0,9});([1-9][0-9]{0,9});(.+)$"
+            ";([1-9][0-9]{0,9});(.+?);(.+?);(.+?);(.*?);(.*)$"
         checker = re.compile(configuration_line_pattern)
         if not checker.match(configuration_line):
             raise base_module.BadConfigurationException
