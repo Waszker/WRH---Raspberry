@@ -145,7 +145,7 @@ class ESP8266SocketModule(base_module.Module):
                 s.bind((host, int(port)))
                 break
             except socket.error as msg:
-                print 'ESP8266 Wifi socket' + self.gpio + 'port bind failed. Error Code : ' + str(
+                print 'ESP8266 Wifi socket' + self.gpio + ' port bind failed. Error Code : ' + str(
                     msg[0]) + ' Message ' + msg[1]
                 time.sleep(10)  # Sleep 10 seconds before retrying
         print "ESP8266 WiFi socket: " + self.gpio + " started listening"
@@ -194,7 +194,7 @@ class ESP8266SocketModule(base_module.Module):
         try:
             request = urllib2.Request(url)
             urllib2.urlopen(request, timeout=5).read()
-        except urllib2.URLError:
+        except urllib2.URLError, socket.timeout:
             pass
 
 

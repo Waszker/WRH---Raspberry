@@ -234,8 +234,8 @@ class RangoIrygaModule(base_module.Module):
                 relay_number)
             try:
                 request = urllib2.Request(url)
-                urllib2.urlopen(request).read()
-            except urllib2.URLError:
+                urllib2.urlopen(request, timeout=5).read()
+            except urllib2.URLError, socket.timeout:
                 pass
         except ValueError:
             pass
