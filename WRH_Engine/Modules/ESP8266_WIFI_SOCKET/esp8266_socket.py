@@ -75,7 +75,8 @@ class ESP8266SocketModule(base_module.Module):
         """
         Returns information about socket state.
         """
-        time.sleep(1)  # Too fast polling resets ESP8266!
+        # TODO: Remove that sleep?
+        #time.sleep(1)  # Too fast polling resets ESP8266!
         value_finding_pattern = ".+?value=\"(.+?)\".*$"
         checker = re.compile(value_finding_pattern)
         try:
@@ -188,8 +189,8 @@ class ESP8266SocketModule(base_module.Module):
                     <br /> \
                     <table style="margin: 0px auto; max-width: 95%"><tr> \
                     <td><div style="margin: 3%; width: 100%"><input id=' + text_input_name + '\" type=\"number\" style="width: 90%" value="-1"/></div></td> \
-                    <td><button type="button" onclick="setState' + self.id + '(\'ON\', ' + text_input_name + ')">ON</button></td> \
-                    <td><button type="button" onclick="setState' + self.id + '(\'OFF\', ' + text_input_name + ')">OFF</button></td> \
+                    <td><button type="button" onclick="setState' + self.id + '(\'ON\', \'' + text_input_name + '\')">ON</button></td> \
+                    <td><button type="button" onclick="setState' + self.id + '(\'OFF\', \'' + text_input_name + '\')">OFF</button></td> \
                     </tr></table> \
                </div>'
 
