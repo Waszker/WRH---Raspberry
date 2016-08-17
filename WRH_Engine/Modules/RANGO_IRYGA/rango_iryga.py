@@ -170,7 +170,6 @@ class RangoIrygaModule(base_module.Module):
         """
         Returns html code to include in website.
         """
-        # TODO: Add text input for time specifying!
         my_id = str(self.id)
         port = str(self.port)
         return '<div style="border:1px solid black;"> \
@@ -187,7 +186,9 @@ class RangoIrygaModule(base_module.Module):
                }, 60*1000);\n\
                </script> \n\
                     <center>' + self.name + '</center>\
-                    <div id="rangoIrygaDiv' + my_id + '" class="rangoIrygaDiv"> </div>\
+                    <div id="rangoIrygaDiv' + my_id + '" class="rangoIrygaDiv"> \
+                    <img src="static/images/loading_spinner.gif" style="width: 50px;" /> \
+                    </div> \
                     <br />\
                     <table style="margin: 0px auto; max-width: 95%"><tr><td> \
                     Relay&nbsp;1 </td>\
