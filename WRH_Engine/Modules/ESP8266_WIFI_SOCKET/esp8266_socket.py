@@ -188,7 +188,7 @@ class ESP8266SocketModule(base_module.Module):
                     <div id="esp8266SocketDiv' + self.id + '" class="socketDiv"> </div>\
                     <br /> \
                     <table style="margin: 0px auto; max-width: 95%"><tr> \
-                    <td><div style="margin: 3%; width: 100%"><input id=' + text_input_name + '\" type=\"number\" style="width: 90%" value="-1"/></div></td> \
+                    <td><div style="margin: 3%; width: 100%"><input id=\"' + text_input_name + '\" type=\"number\" style="width: 90%" value="-1"/></div></td> \
                     <td><button type="button" onclick="setState' + self.id + '(\'ON\', \'' + text_input_name + '\')">ON</button></td> \
                     <td><button type="button" onclick="setState' + self.id + '(\'OFF\', \'' + text_input_name + '\')">OFF</button></td> \
                     </tr></table> \
