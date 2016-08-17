@@ -172,37 +172,37 @@ class ESP8266SocketModule(base_module.Module):
         """
         text_input_name = "esp_timeout_" + self.id
         return '<div style="border:1px solid black;"> \
-               <script> \
-               function update_state_message' + self.id + '(text) \n { \
+                <center>' + self.name + '</center>\
+                <div id="esp8266SocketDiv' + self.id + '" class="socketDiv"> \
+                <img src="static/images/loading_spinner.gif" style="width: 50px;" /> \
+                </div> \
+                <br /> \
+                <table style="margin: 0px auto; max-width: 95%"><tr> \
+                <td><div style="margin: 3%; width: 100%"><input id=\"' + text_input_name + '\" type=\"number\" style="width: 90%" value="-1"/></div></td> \
+                <td><button type="button" onclick="setState' + self.id + '(\'ON\', \'' + text_input_name + '\')">ON</button></td> \
+                <td><button type="button" onclick="setState' + self.id + '(\'OFF\', \'' + text_input_name + '\')">OFF</button></td> \
+                <td><button type="button" onclick="getState' + self.id + '()">REFRESH</button></td> \
+                </tr></table> \
+                <script> \
+                function update_state_message' + self.id + '(text) \n { \
                    if (text == "OFF") text = "<a style=\\"color: green\\">OFF</a>"; \
                    else if (text == "ON") text = "<a style=\\"color: red\\">ON</a>"; \
                    document.getElementById("esp8266SocketDiv' + self.id + '").innerHTML = text; \
-               } \n\
-               function getState' + self.id + '() { \
+                } \n\
+                function getState' + self.id + '() { \
                 document.getElementById("esp8266SocketDiv' + self.id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />"; \
-                getRequest("localhost", ' + self.address + ', "STATE", update_state_message' + self.id + '); \
-               } \
-               function setState' + self.id + '(state, input_id) { \
+                    getRequest("localhost", ' + self.address + ', "STATE", update_state_message' + self.id + '); \
+                } \
+                function setState' + self.id + '(state, input_id) { \
                     time_wait = input_id == null ? -1 : document.getElementById(input_id).value; \
                     sendRequest(\'localhost\', ' + self.address + ', state + "," + time_wait); getState' + self.id + '(); \
-               } \
-               getState' + self.id + '(); \
-               setInterval(function() { \n\
-               getState' + self.id + '(); \n\
-               }, 60*1000);\n\
-               </script> \n\
-                    <center>' + self.name + '</center>\
-                    <div id="esp8266SocketDiv' + self.id + '" class="socketDiv"> \
-                    <img src="static/images/loading_spinner.gif" style="width: 50px;" /> \
-                    </div> \
-                    <br /> \
-                    <table style="margin: 0px auto; max-width: 95%"><tr> \
-                    <td><div style="margin: 3%; width: 100%"><input id=\"' + text_input_name + '\" type=\"number\" style="width: 90%" value="-1"/></div></td> \
-                    <td><button type="button" onclick="setState' + self.id + '(\'ON\', \'' + text_input_name + '\')">ON</button></td> \
-                    <td><button type="button" onclick="setState' + self.id + '(\'OFF\', \'' + text_input_name + '\')">OFF</button></td> \
-                    <td><button type="button" onclick="getState' + self.id + '()">REFRESH</button></td> \
-                    </tr></table> \
-               </div>'
+                } \
+                getState' + self.id + '(); \
+                setInterval(function() { \n\
+                getState' + self.id + '(); \n\
+                }, 60*1000);\n\
+                </script> \n\
+                </div>'
 
     def _set_socket_state(self, should_turn_on, time_wait):
         state = "OFF"
