@@ -46,7 +46,6 @@ class RangoIrygaModule(base_module.Module):
         Returns command used to start module as a new process.
         :return: Command to be executed when starting new process
         """
-        # TODO: Return command used to start module by OVERLORD program
         return ["/usr/bin/python2.7", "-m", "WRH_Engine.Modules.RANGO_IRYGA.rango_iryga"]
 
     def get_configuration_line(self):

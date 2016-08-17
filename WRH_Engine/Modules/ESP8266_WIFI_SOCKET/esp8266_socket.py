@@ -75,8 +75,6 @@ class ESP8266SocketModule(base_module.Module):
         """
         Returns information about socket state.
         """
-        # TODO: Remove that sleep?
-        #time.sleep(1)  # Too fast polling resets ESP8266!
         value_finding_pattern = ".+?value=\"(.+?)\".*$"
         checker = re.compile(value_finding_pattern)
         try:
