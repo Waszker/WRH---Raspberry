@@ -39,7 +39,7 @@ class ESP8266SocketModule(base_module.Module):
         # Configuration line for camera should look like this:
         # TYPE_NUM=5 ; ID=INT ; NAME=STRING ; GPIO=STRING ; ADDRESS=STRING
         configuration_line_pattern = str(ESP8266SocketModule.type_number) + \
-            ";([1-9][0-9]{0,9});(.+?);(.+?);(.+)$"
+                                     ";([1-9][0-9]{0,9});(.+?);(.+?);(.+)$"
         checker = re.compile(configuration_line_pattern)
         if not checker.match(configuration_line):
             raise base_module.BadConfigurationException
@@ -169,12 +169,15 @@ class ESP8266SocketModule(base_module.Module):
         :param website_host_address: ip address of server
         :return:
         """
-        # TODO: Add text input for time specifying!
+        text_input_name = "esp_timeout_" + self.id
         return '<div style="border:1px solid black;"> \
                <script> function update_state_message' + self.id + '(text) \n\
                { document.getElementById("esp8266SocketDiv' + self.id + '").innerHTML = text; } \n\
                function getState' + self.id + '() { getRequest("localhost", ' + self.address + ', "STATE", update_state_message' + self.id + '); } \
-               function setState' + self.id + '(state) { sendRequest(\'localhost\', ' + self.address + ', state); getState' + self.id + '(); } \
+               function setState' + self.id + '(state, input_id) { \
+                    time_wait = input_id == null ? -1 : document.getElementById(input_id).value; \
+                    sendRequest(\'localhost\', ' + self.address + ', state + "," + time_wait); getState' + self.id + '(); \
+               } \
                getState' + self.id + '(); \
                setInterval(function() { \n\
                getState' + self.id + '(); \n\
@@ -183,8 +186,11 @@ class ESP8266SocketModule(base_module.Module):
                     <center>' + self.name + '</center>\
                     <div id="esp8266SocketDiv' + self.id + '" class="socketDiv"> </div>\
                     <br /> \
-                    <button type="button" onclick="setState' + self.id + '(\'ON\')">ON</button> \
-                    <button type="button" onclick="setState' + self.id + '(\'OFF\')">OFF</button> \
+                    <table style="margin: 0px auto; max-width: 95%"><tr> \
+                    <td><div style="margin: 3%; width: 100%"><input id=' + text_input_name + '\" type=\"number\" style="width: 90%" value="-1"/></div></td> \
+                    <td><button type="button" onclick="setState' + self.id + '(\'ON\', ' + text_input_name + ')">ON</button></td> \
+                    <td><button type="button" onclick="setState' + self.id + '(\'OFF\', ' + text_input_name + ')">OFF</button></td> \
+                    </tr></table> \
                </div>'
 
     def _set_socket_state(self, should_turn_on, time_wait):

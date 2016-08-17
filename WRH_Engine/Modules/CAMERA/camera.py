@@ -191,8 +191,9 @@ class CameraModule(base_module.Module):
         while True:
             t.sleep(60 * 60)
             image = self.get_measurement()
-            u.manage_measurement(device_id, device_token, self.id,
-                                 self.type_number, image, self._get_streaming_address())
+            # TODO: Image could be saved somewhere?
+            # u.manage_measurement(device_id, device_token, self.id,
+            #                     self.type_number, image, self._get_streaming_address())
 
     def _start_camera_thread(self, device_id, device_token):
         global mjpg_streamer_pid
