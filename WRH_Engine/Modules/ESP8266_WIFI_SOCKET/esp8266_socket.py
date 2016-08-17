@@ -185,7 +185,9 @@ class ESP8266SocketModule(base_module.Module):
                }, 60*1000);\n\
                </script> \n\
                     <center>' + self.name + '</center>\
-                    <div id="esp8266SocketDiv' + self.id + '" class="socketDiv"> </div>\
+                    <div id="esp8266SocketDiv' + self.id + '" class="socketDiv"> \
+                    <img src="static/images/loading_spinner.gif" /> \
+                    </div> \
                     <br /> \
                     <table style="margin: 0px auto; max-width: 95%"><tr> \
                     <td><div style="margin: 3%; width: 100%"><input id=' + text_input_name + '\" type=\"number\" style="width: 90%" value="-1"/></div></td> \
