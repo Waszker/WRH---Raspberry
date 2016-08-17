@@ -174,12 +174,12 @@ class ESP8266SocketModule(base_module.Module):
         return '<div style="border:1px solid black;"> \
                <script> \
                function update_state_message' + self.id + '(text) \n { \
-                   if (text == "OFF") text = "<a style=\"color: green\">OFF</a>"; \
-                   else if (text == "ON") text = "<a style=\"color: red\">ON</a>"; \
+                   if (text == "OFF") text = "<a style=\\"color: green\\">OFF</a>"; \
+                   else if (text == "ON") text = "<a style=\\"color: red\\">ON</a>"; \
                    document.getElementById("esp8266SocketDiv' + self.id + '").innerHTML = text; \
                } \n\
                function getState' + self.id + '() { \
-                document.getElementById("esp8266SocketDiv' + self.id + '").innerHTML = "<img src=\"static/images/loading_spinner.gif\" style=\"width: 50px;\" />"; \
+                document.getElementById("esp8266SocketDiv' + self.id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />"; \
                 getRequest("localhost", ' + self.address + ', "STATE", update_state_message' + self.id + '); \
                } \
                function setState' + self.id + '(state, input_id) { \
