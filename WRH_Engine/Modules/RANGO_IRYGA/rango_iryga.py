@@ -172,20 +172,6 @@ class RangoIrygaModule(base_module.Module):
         my_id = str(self.id)
         port = str(self.port)
         return '<div style="border:1px solid black;"> \
-               <script> function update_relay_state_message' + my_id + '(text) \n\
-               { document.getElementById("rangoIrygaDiv' + my_id + '").innerHTML = text; } \n\
-               function getState' + my_id + '() { \
-                        document.getElementById("rangoIrygaDiv' + my_id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />"; \
-                        getRequest("localhost", ' + port + ', "STATE", update_relay_state_message' + my_id + '); } \
-               function setState' + my_id + '(state, gpio, input_id) { \
-                        time_wait = input_id == null ? -1 : document.getElementById(input_id).value; \
-                        sendRequest(\'localhost\', ' + port + ', state + "," + gpio + "," + time_wait); \
-                        getState' + my_id + '(); } \
-               getState' + my_id + '(); \
-               setInterval(function() { \n\
-               getState' + my_id + '(); \n\
-               }, 60*1000);\n\
-               </script> \n\
                     <center>' + self.name + '</center>\
                     <div id="rangoIrygaDiv' + my_id + '" class="rangoIrygaDiv"> \
                     <img src="static/images/loading_spinner.gif" style="width: 50px;" /> \
@@ -212,6 +198,20 @@ class RangoIrygaModule(base_module.Module):
                     <td><div style="margin: 5%; width: 100%"><button type="button" onclick="setState' + my_id + '(\'ON\', 4, \'relay4_' + my_id + '\')">ON</button></div></td> \
                     <td><div style="margin: 5%; width: 100%"><button type="button" onclick="setState' + my_id + '(\'OFF\', 5, -1)">OFF</button></div></td></tr> \
                     </table> \
+               <script> function update_relay_state_message' + my_id + '(text) \n\
+               { document.getElementById("rangoIrygaDiv' + my_id + '").innerHTML = text; } \n\
+               function getState' + my_id + '() { \
+                        document.getElementById("rangoIrygaDiv' + my_id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />"; \
+                        getRequest("localhost", ' + port + ', "STATE", update_relay_state_message' + my_id + '); } \
+               function setState' + my_id + '(state, gpio, input_id) { \
+                        time_wait = input_id == null ? -1 : document.getElementById(input_id).value; \
+                        sendRequest(\'localhost\', ' + port + ', state + "," + gpio + "," + time_wait); \
+                        getState' + my_id + '(); } \
+               getState' + my_id + '(); \
+               setInterval(function() { \n\
+               getState' + my_id + '(); \n\
+               }, 60*1000);\n\
+               </script> \n\
                </div>'
 
     def _set_relay_state(self, relay_number, should_turn_on, duration):
