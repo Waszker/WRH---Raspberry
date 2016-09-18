@@ -174,7 +174,9 @@ class RangoIrygaModule(base_module.Module):
         return '<div style="border:1px solid black;"> \
                <script> function update_relay_state_message' + my_id + '(text) \n\
                { document.getElementById("rangoIrygaDiv' + my_id + '").innerHTML = text; } \n\
-               function getState' + my_id + '() { getRequest("localhost", ' + port + ', "STATE", update_relay_state_message' + my_id + '); } \
+               function getState' + my_id + '() { \
+                        document.getElementById("rangoIrygaDiv' + my_id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />"; \
+                        getRequest("localhost", ' + port + ', "STATE", update_relay_state_message' + my_id + '); } \
                function setState' + my_id + '(state, gpio, input_id) { \
                         time_wait = input_id == null ? -1 : document.getElementById(input_id).value; \
                         sendRequest(\'localhost\', ' + port + ', state + "," + gpio + "," + time_wait); \

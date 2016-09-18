@@ -202,6 +202,7 @@ class CameraModule(base_module.Module):
             password_subcommand = " -c " + self.login + ":" + self.password
 
         os.environ['LD_LIBRARY_PATH'] = '/usr/local/lib/'
+        # os.environ['LD_PRELOAD'] = '/usr/lib/uv4l/uv4lext/armv6l/libuv4lext.so'
         command = ["/usr/local/bin/mjpg_streamer", "-i", "input_uvc.so -n -q 50 -f 30 -d " + str(self.gpio),
                    "-o", "output_http.so -p " + self.address + password_subcommand]
 
