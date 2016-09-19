@@ -195,8 +195,8 @@ class RangoIrygaModule(base_module.Module):
                     <tr>\
                     <td>Relay&nbsp;4</td> \
                     <td><div style="margin: 3%; width: 100%"><input id=\"relay4_' + my_id + '\" type=\"number\" style="width: 90%" value="10"/></div></td> \
-                    <td><div style="margin: 5%; width: 100%"><button type="button" onclick="setState' + my_id + '(\'ON\', 4, \'relay4_' + my_id + '\')">ON</button></div></td> \
-                    <td><div style="margin: 5%; width: 100%"><button type="button" onclick="setState' + my_id + '(\'OFF\', 5, -1)">OFF</button></div></td></tr> \
+                    <td><div style="margin: 5%; width: 100%"><button type="button" onclick="setState' + my_id + '(\'ON\', 14, \'relay4_' + my_id + '\')">ON</button></div></td> \
+                    <td><div style="margin: 5%; width: 100%"><button type="button" onclick="setState' + my_id + '(\'OFF\', 14, -1)">OFF</button></div></td></tr> \
                     </table> \
                <script> function update_relay_state_message' + my_id + '(text) \n\
                { document.getElementById("rangoIrygaDiv' + my_id + '").innerHTML = text; } \n\
