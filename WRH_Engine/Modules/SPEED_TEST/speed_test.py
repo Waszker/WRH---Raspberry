@@ -152,7 +152,7 @@ class SpeedTestModule(base_module.Module):
         """
         Returns html code to include in website.
         """
-        return '<div style="border:1px solid black;"> \
+        return '<div class="card-panel"> \
                <script> function update_measurements_speedtest_' + str(self.id) + '(text) \n\
                { document.getElementById("speedTestDiv' + str(self.id) + '").innerHTML = text; } \n\
                function getMeasurements' + str(self.id) + '() { getRequest("localhost", ' + str(self.address) + ', "", \
@@ -162,7 +162,7 @@ class SpeedTestModule(base_module.Module):
                getMeasurements' + str(self.id) + '(); \n\
                }, 60*1000);\n\
                </script> \n\
-               <center>' + str(self.name) + '</center>\
+               <h5>' + str(self.name) + '</h5>\
                <div id="speedTestDiv' + str(self.id) + '" class="speedTestDiv"> </div>\
                </div>'
 

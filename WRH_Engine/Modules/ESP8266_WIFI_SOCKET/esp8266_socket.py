@@ -170,16 +170,16 @@ class ESP8266SocketModule(base_module.Module):
         """
         text_input_name = "esp_timeout_" + self.id
         return '<div class="card-panel"> \
-                <center>' + self.name + '</center>\
+                <h5>' + self.name + '</h5>\
                 <div id="esp8266SocketDiv' + self.id + '" class="socketDiv"> \
                 <img src="static/images/loading_spinner.gif" style="width: 50px;" /> \
                 </div> \
                 <br /> \
-                <table style="margin: 0px auto; max-width: 95%"><tr> \
+                <table style="margin: 0px auto; max-width: 95%; width: auto"><tr> \
                 <td><div style="margin: 3%; width: 100%"><input id=\"' + text_input_name + '\" type=\"number\" style="width: 90%" value="-1"/></div></td> \
-                <td><button class="btn waves-effect" type="button" onclick="setState' + self.id + '(\'ON\', \'' + text_input_name + '\')">ON</button></td> \
-                <td><button class="btn waves-effect" type="button" onclick="setState' + self.id + '(\'OFF\', \'' + text_input_name + '\')">OFF</button></td> \
-                <td><button class="btn waves-effect" type="button" onclick="getState' + self.id + '()">REFRESH</button></td> \
+                <td><button class="waves-effect waves-light btn grey darken-3" type="button" onclick="setState' + self.id + '(\'ON\', \'' + text_input_name + '\')">ON</button></td> \
+                <td><button class="waves-effect waves-light btn grey darken-3" type="button" onclick="setState' + self.id + '(\'OFF\', \'' + text_input_name + '\')">OFF</button></td> \
+                <td><button class="waves-effect waves-light btn grey darken-3" type="button" onclick="getState' + self.id + '()">REFRESH</button></td> \
                 </tr></table> \
                 <script> \
                 function update_state_message' + self.id + '(text) \n { \

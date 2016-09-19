@@ -145,7 +145,7 @@ class DHT22Module(base_module.Module):
         """
         Returns html code to include in website.
         """
-        return '<div style="border:1px solid black;"> \
+        return '<div class="card-panel"> \
                <script> function update_measurements_dht22_' + self.id + '(text) \n\
                { var res = text.split(";"); var h = res[0]; var t = res[1]; \
                document.getElementById("dht22Div' + self.id + '").innerHTML = "Humidity: " + h + "% Temperature: " + t + "*C"; } \n\
@@ -155,7 +155,7 @@ class DHT22Module(base_module.Module):
                getMeasurements' + self.id + '(); \n\
                }, 60*1000);\n\
                </script> \n\
-               <center>' + self.name + '</center>\
+               <h5>' + self.name + '</h5>\
                <div id="dht22Div' + self.id + '" class="dht22Div"> </div>\
                </div>'
 
