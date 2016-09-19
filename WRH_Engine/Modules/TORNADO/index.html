@@ -13,8 +13,9 @@
     <!--Import Google Icon Font-->
     <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <!--Import materialize.css-->
+    <!--Import CSS styles-->
     <link type="text/css" rel="stylesheet" href="{{ static_url("css/materialize.min.css") }}">
+    <link type="text/css" rel="stylesheet" href="{{ static_url("css/style.css") }}">
 
     <!--Important Javascript functions-->
     <script type="text/javascript" src="{{ static_url("js/script.js") }}"></script>
@@ -38,9 +39,10 @@
     <nav>
         <div class="nav-wrapper grey darken-4">
             <a class="brand-logo left" href="/">WRH HOME</a>
+            <a href="#" data-activates="mobile-demo" class="button-collapse">
 
             <!-- Top Navigation: Left Menu -->
-            <ul id="nav-mobile" class="left hide-on-med-and-down">
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
                 <li><a href="/?class=-1">SYSTEM</a></li>
                 {%for mclass, m in classes.iteritems()%}
                         {%for m in modules%}
@@ -52,8 +54,19 @@
                             {%end%}
                         {%end%}
                 {%end%}
-                <!-- Dropdown Trigger -->
-                <li><a class="dropdown-button" href="#!" data-activates="dropdown1">Account<i class="material-icons right">arrow_drop_down</i></a></li>
+            </ul>
+            <ul class="side-nav" id="mobile-demo">
+                <li><a href="/?class=-1">SYSTEM</a></li>
+                {%for mclass, m in classes.iteritems()%}
+                        {%for m in modules%}
+                            {%if m.type_number == mclass%}
+                                <li>
+                                    <a href="/?class={{m.type_number}}">{{m.type_name}}</a>
+                                </li>
+                                {%break%}
+                            {%end%}
+                        {%end%}
+                {%end%}
             </ul>
         </div>
     </nav>
@@ -108,7 +121,7 @@
 
 <script>
 $( document ).ready(function() {
-    $(".dropdown-button").dropdown();
+    $(".button-collapse").sideNav();
 });
 </script>
 
