@@ -85,9 +85,9 @@ class RangoIrygaModule(base_module.Module):
             # Socket returns opposite state - we need to change its response
             true_state = {"ON": "<a style=\"color: green\">OFF</a>", "OFF": "<a style=\"color: red\">ON</a>"}
             search = re.search(value_finding_pattern, str(response_content))
-            state = "Relay 1: " + true_state[search.group(1)] + "<br />Relay 2: " + true_state[
-                search.group(3)] + "<br />Relay 3: " + true_state[
-                        search.group(5)] + "<br />Relay 4: " + true_state[search.group(7)]
+            state = "" + true_state[search.group(1)] + ";" + true_state[
+                search.group(3)] + ";" + true_state[
+                        search.group(5)] + ";" + true_state[search.group(7)]
         return state
 
     def get_module_description(self):
@@ -176,52 +176,101 @@ class RangoIrygaModule(base_module.Module):
                     <div id="rangoIrygaDiv' + my_id + '" class="rangoIrygaDiv" style="margin: auto"> \
                     <img src="static/images/loading_spinner.gif" style="width: 50px;" /> \
                     </div> \
-                    <table style="margin: 0px auto; max-width: 95%"><tr><td columnspan="2"> \
-                    <h6>Relay&nbsp;1</h6> </td></tr>\
-                    <tr><td><div style="margin: 3%; width: 100%"><p class="input-field"><input id=\"relay1_' + my_id + '\" type=\"number\" style="width: 90%" value="60"/></p></div></td> \
-                    <td><a class="dropdown-button btn grey darken-3" href="#" data-activates="dropdown1' + my_id + '">State</a></td></tr></table> \
+                    \
+                    <table style="margin: 0px auto; max-width: 95%; width: auto"><tr><td> \
+                    <h5>Linia&nbsp;1</h5> </td><td>\
+                    <div id="rangoIrygaDiv_1_' + my_id + '" style="height: 50px; margin: auto">\
+                        <img src="static/images/loading_spinner.gif" style="width: 50px;" />\
+                    </div></td></tr>\
+                    <tr><td><h6>Czas trwania (sek.):</h6></td> \
+                    <td><div style="margin: 3%; width: 100%">\
+                        <p class="input-field"><input id=\"relay1_time_' + my_id + '\" type=\"number\" style="width: 90%" value="60"/></p>\
+                    </div></td></tr>\
+                    <tr><td><h6>Liczba cykli:</h6></td> \
+                    <td><div style="margin: 3%; width: 100%">\
+                        <p class="input-field"><input id=\"relay1_cycles_' + my_id + '\" type=\"number\" style="width: 90%" value="1"/></p>\
+                    </div></td></tr>\
+                    <tr><td columnspan="2"><a class="dropdown-button btn grey darken-3" href="#" data-activates="dropdown1' + my_id + '">State</a></td></tr></table> \
                     <ul id="dropdown1' + my_id + '" class="dropdown-content"> \
-                    <li><a onclick="setState' + my_id + '(\'ON\', 5, \'relay1_' + my_id + '\')">ON</a></li> \
+                    <li><a onclick="setState' + my_id + '(\'ON\', 5, \'relay1_time_' + my_id + '\')">ON</a></li> \
                     <li><a onclick="setState' + my_id + '(\'OFF\', 5, null)">OFF</a></li> \
                     <li><a onclick="getState' + my_id + '()">REFRESH</a></li></ul></br> \
                     \
-                    <table style="margin: 0px auto; max-width: 95%"><tr><td columnspan="2"> \
-                    <h6>Relay&nbsp;2</h6> </td></tr>\
-                    <tr><td><div style="margin: 3%; width: 100%"><p class="input-field"><input id=\"relay2_' + my_id + '\" type=\"number\" style="width: 90%" value="60"/></p></div></td> \
-                    <td><a class="dropdown-button btn grey darken-3" href="#" data-activates="dropdown2' + my_id + '">State</a></td></tr></table> \
+                    <table style="margin: 0px auto; max-width: 95%; width: auto"><tr><td> \
+                    <h5>Linia&nbsp;2</h5> </td><td>\
+                    <div id="rangoIrygaDiv_2_' + my_id + '" style="height: 50px; margin: auto">\
+                        <img src="static/images/loading_spinner.gif" style="width: 50px;" />\
+                    </div></td></tr>\
+                    <tr><td><h6>Czas trwania (sek.):</h6></td> \
+                    <td><div style="margin: 3%; width: 100%">\
+                        <p class="input-field"><input id=\"relay2_time_' + my_id + '\" type=\"number\" style="width: 90%" value="60"/></p>\
+                    </div></td></tr>\
+                    <tr><td><h6>Liczba cykli:</h6></td> \
+                    <td><div style="margin: 3%; width: 100%">\
+                        <p class="input-field"><input id=\"relay2_cycles_' + my_id + '\" type=\"number\" style="width: 90%" value="1"/></p>\
+                    </div></td></tr>\
+                    <tr><td columnspan="2"><a class="dropdown-button btn grey darken-3" href="#" data-activates="dropdown2' + my_id + '">State</a></td></tr></table> \
                     <ul id="dropdown2' + my_id + '" class="dropdown-content"> \
-                    <li><a onclick="setState' + my_id + '(\'ON\', 4, \'relay2_' + my_id + '\')">ON</a></li> \
+                    <li><a onclick="setState' + my_id + '(\'ON\', 4, \'relay2_time_' + my_id + '\')">ON</a></li> \
                     <li><a onclick="setState' + my_id + '(\'OFF\', 4, null)">OFF</a></li> \
                     <li><a onclick="getState' + my_id + '()">REFRESH</a></li></ul></br> \
                     \
-                    <table style="margin: 0px auto; max-width: 95%"><tr><td columnspan="2"> \
-                    <h6>Relay&nbsp;3</h6> </td></tr>\
-                    <tr><td><div style="margin: 3%; width: 100%"><p class="input-field"><input id=\"relay3_' + my_id + '\" type=\"number\" style="width: 90%" value="60"/></p></div></td> \
-                    <td><a class="dropdown-button btn grey darken-3" href="#" data-activates="dropdown3' + my_id + '">State</a></td></tr></table> \
+                    <table style="margin: 0px auto; max-width: 95%; width: auto"><tr><td> \
+                    <h5>Linia&nbsp;3</h5> </td><td>\
+                    <div id="rangoIrygaDiv_3_' + my_id + '" style="height: 50px; margin: auto">\
+                        <img src="static/images/loading_spinner.gif" style="width: 50px;" />\
+                    </div></td></tr>\
+                    <tr><td><h6>Czas trwania (sek.):</h6></td> \
+                    <td><div style="margin: 3%; width: 100%">\
+                        <p class="input-field"><input id=\"relay3_time_' + my_id + '\" type=\"number\" style="width: 90%" value="60"/></p>\
+                    </div></td></tr>\
+                    <tr><td><h6>Liczba cykli:</h6></td> \
+                    <td><div style="margin: 3%; width: 100%">\
+                        <p class="input-field"><input id=\"relay3_cycles_' + my_id + '\" type=\"number\" style="width: 90%" value="1"/></p>\
+                    </div></td></tr>\
+                    <tr><td columnspan="2"><a class="dropdown-button btn grey darken-3" href="#" data-activates="dropdown3' + my_id + '">State</a></td></tr></table> \
                     <ul id="dropdown3' + my_id + '" class="dropdown-content"> \
-                    <li><a onclick="setState' + my_id + '(\'ON\', 15, \'relay3_' + my_id + '\')">ON</a></li> \
+                    <li><a onclick="setState' + my_id + '(\'ON\', 15, \'relay3_time_' + my_id + '\')">ON</a></li> \
                     <li><a onclick="setState' + my_id + '(\'OFF\', 15, null)">OFF</a></li> \
                     <li><a onclick="getState' + my_id + '()">REFRESH</a></li></ul></br> \
                     \
-                    <table style="margin: 0px auto; max-width: 95%"><tr><td columnspan="2"> \
-                    <h6>Relay&nbsp;4</h6> </td></tr>\
-                    <tr><td><div style="margin: 3%; width: 100%"><p class="input-field"><input id=\"relay4_' + my_id + '\" type=\"number\" style="width: 90%" value="60"/></p></div></td> \
-                    <td><a class="dropdown-button btn grey darken-3" href="#" data-activates="dropdown4' + my_id + '">State</a></td></tr></table> \
+                    <table style="margin: 0px auto; max-width: 95%; width: auto"><tr><td> \
+                    <h5>Linia&nbsp;4</h5> </td><td>\
+                    <div id="rangoIrygaDiv_4_' + my_id + '" style="height: 50px; margin: auto">\
+                        <img src="static/images/loading_spinner.gif" style="width: 50px;" />\
+                    </div></td></tr>\
+                    <tr><td><h6>Czas trwania (sek.):</h6></td> \
+                    <td><div style="margin: 3%; width: 100%">\
+                        <p class="input-field"><input id=\"relay4_time_' + my_id + '\" type=\"number\" style="width: 90%" value="60"/></p>\
+                    </div></td></tr>\
+                    <tr><td><h6>Liczba cykli:</h6></td> \
+                    <td><div style="margin: 3%; width: 100%">\
+                        <p class="input-field"><input id=\"relay4_cycles_' + my_id + '\" type=\"number\" style="width: 90%" value="1"/></p>\
+                    </div></td></tr>\
+                    <tr><td columnspan="2"><a class="dropdown-button btn grey darken-3" href="#" data-activates="dropdown4' + my_id + '">State</a></td></tr></table> \
                     <ul id="dropdown4' + my_id + '" class="dropdown-content"> \
-                    <li><a onclick="setState' + my_id + '(\'ON\', 14, \'relay2_' + my_id + '\')">ON</a></li> \
+                    <li><a onclick="setState' + my_id + '(\'ON\', 14, \'relay4_time_' + my_id + '\')">ON</a></li> \
                     <li><a onclick="setState' + my_id + '(\'OFF\', 14, null)">OFF</a></li> \
                     <li><a onclick="getState' + my_id + '()">REFRESH</a></li></ul></br> \
                     \
                <script> function update_relay_state_message' + my_id + '(text) \n\
-               { document.getElementById("rangoIrygaDiv' + my_id + '").innerHTML = text; } \n\
-               function getState' + my_id + '() { \
-                        document.getElementById("rangoIrygaDiv' + my_id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />"; \
+               { states=text.split(";");\
+                 document.getElementById("rangoIrygaDiv_1_' + my_id + '").innerHTML = states[0]; \
+                 document.getElementById("rangoIrygaDiv_1_' + my_id + '").innerHTML = states[1]; \
+                 document.getElementById("rangoIrygaDiv_1_' + my_id + '").innerHTML = states[2]; \
+                 document.getElementById("rangoIrygaDiv_1_' + my_id + '").innerHTML = states[3]; \
+               } \n\
+               function getState' + my_id + '(num) { \
+                        if(num == null || num == 5) {document.getElementById("rangoIrygaDiv_1_' + my_id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />";} \
+                        if(num == null || num == 4) {document.getElementById("rangoIrygaDiv_1_' + my_id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />";} \
+                        if(num == null || num == 15) {document.getElementById("rangoIrygaDiv_1_' + my_id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />";} \
+                        if(num == null || num == 14) {document.getElementById("rangoIrygaDiv_1_' + my_id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />";} \
                         getRequest("localhost", ' + port + ', "STATE", update_relay_state_message' + my_id + '); } \
                function setState' + my_id + '(state, gpio, input_id) { \
                         time_wait = input_id == null ? -1 : document.getElementById(input_id).value; \
                         sendRequest(\'localhost\', ' + port + ', state + "," + gpio + "," + time_wait); \
-                        getState' + my_id + '(); } \
-               getState' + my_id + '(); \
+                        getState' + my_id + '(gpio); } \
+               getState' + my_id + '(null); \
                setInterval(function() { \n\
                getState' + my_id + '(); \n\
                }, 60*1000);\n\
