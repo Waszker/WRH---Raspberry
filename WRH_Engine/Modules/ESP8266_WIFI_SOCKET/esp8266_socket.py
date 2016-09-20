@@ -171,7 +171,7 @@ class ESP8266SocketModule(base_module.Module):
         text_input_name = "esp_timeout_" + self.id
         return '<div class="card-panel"> \
                 <h5>' + self.name + '</h5>\
-                <div id="esp8266SocketDiv' + self.id + '" class="socketDiv" style="width: 50px; height: 50px"> \
+                <div id="esp8266SocketDiv' + self.id + '" class="socketDiv" style="width: 50px; height: 50px; margin: auto"> \
                 <img src="static/images/loading_spinner.gif" style="width: 50px;" /> \
                 </div> \
                 <br /> \
