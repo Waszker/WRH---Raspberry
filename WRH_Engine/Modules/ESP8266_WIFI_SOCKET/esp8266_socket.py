@@ -171,20 +171,21 @@ class ESP8266SocketModule(base_module.Module):
         text_input_name = "esp_timeout_" + self.id
         return '<div class="card-panel"> \
                 <h5>' + self.name + '</h5>\
-                <div id="esp8266SocketDiv' + self.id + '" class="socketDiv" style="width: 200px; height: 200px"> \
+                <div id="esp8266SocketDiv' + self.id + '" class="socketDiv" style="width: 50px; height: 50px"> \
                 <img src="static/images/loading_spinner.gif" style="width: 50px;" /> \
                 </div> \
                 <br /> \
                 <table style="margin: 0px auto; max-width: 95%; width: auto"><tr> \
                 <td rowspan="3"><div style="margin: 3%; width: 100%"><p class="input-field"><input id=\"' + text_input_name + '\" type="number" style="width: 90%" value="-1"/></p></div></td> \
-                </tr><tr><td><button class="waves-effect waves-light btn grey darken-3" type="button" onclick="setState' + self.id + '(\'ON\', \'' + text_input_name + '\')">ON</button></td> \
+                <td><button class="waves-effect waves-light btn grey darken-3" type="button" onclick="setState' + self.id + '(\'ON\', \'' + text_input_name + '\')">ON</button></td> \
                 </tr><tr><td><button class="waves-effect waves-light btn grey darken-3" type="button" onclick="setState' + self.id + '(\'OFF\', \'' + text_input_name + '\')">OFF</button></td> \
                 </tr><tr><td><button class="waves-effect waves-light btn grey darken-3" type="button" onclick="getState' + self.id + '()">REFRESH</button></td> \
                 </tr></table> \
                 <script> \
                 function update_state_message' + self.id + '(text) \n { \
-                   if (text == "OFF") text = "<a style=\\"color: green\\">OFF</a>"; \
-                   else if (text == "ON") text = "<a style=\\"color: red\\">ON</a>"; \
+                   if (text == "OFF") text = "<a style=\\"color: green; font-size: 25px\\">OFF</a>"; \
+                   else if (text == "ON") text = "<a style=\\"color: red; font-size: 25px\\">ON</a>"; \
+                   else text = "<a style=\\"color: black; font-size: 25px\\">UNKNOWN</a>"; \
                    document.getElementById("esp8266SocketDiv' + self.id + '").innerHTML = text; \
                 } \n\
                 function getState' + self.id + '() { \
