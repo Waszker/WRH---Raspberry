@@ -177,11 +177,11 @@ class ESP8266SocketModule(base_module.Module):
                 <br /> \
                 <table style="margin: 0px auto; max-width: 95%; width: auto"><tr> \
                 <td><div style="margin: 3%; width: 100%"><p class="input-field"><input id="' + text_input_name + '" type="number" style="width: 90%" value="-1"/></p></div></td> \
-                <td><a class="dropdown-button btn" href="#" data-activates="dropdown' + self.id + '">State</a></td></tr></table> \
+                <td><a class="dropdown-button btn grey darken-3" href="#" data-activates="dropdown' + self.id + '">State</a></td></tr></table> \
                 <ul id="dropdown' + self.id + '" class="dropdown-content"> \
-                <li><button class="waves-effect waves-light btn grey darken-3" type="button" onclick="setState' + self.id + '(\'ON\', \'' + text_input_name + '\')">ON</button></li> \
-                <li><button class="waves-effect waves-light btn grey darken-3" type="button" onclick="setState' + self.id + '(\'OFF\', \'' + text_input_name + '\')">OFF</button></li> \
-                <li><button class="waves-effect waves-light btn grey darken-3" type="button" onclick="getState' + self.id + '()">REFRESH</button></li></ul> \
+                <li><a onclick="setState' + self.id + '(\'ON\', \'' + text_input_name + '\')">ON</a></li> \
+                <li><a onclick="setState' + self.id + '(\'OFF\', \'' + text_input_name + '\')">OFF</a></li> \
+                <li><a onclick="getState' + self.id + '()">REFRESH</a></li></ul> \
                  \
                 <script> \
                 function update_state_message' + self.id + '(text) \n { \
