@@ -173,11 +173,11 @@ class RangoIrygaModule(base_module.Module):
         port = str(self.port)
         return '<div class="card-panel"> \
                     <h5>' + self.name + '</h5>\
-                    <div id="rangoIrygaDiv' + my_id + '" class="rangoIrygaDiv" style="width: 50px; height: 50px; margin: auto"> \
+                    <div id="rangoIrygaDiv' + my_id + '" class="rangoIrygaDiv" style="margin: auto"> \
                     <img src="static/images/loading_spinner.gif" style="width: 50px;" /> \
                     </div> \
                     <table style="margin: 0px auto; max-width: 95%"><tr><td columnspan="2"> \
-                    Relay&nbsp;1 </td></tr>\
+                    <h6>Relay&nbsp;1</h6> </td></tr>\
                     <tr><td><div style="margin: 3%; width: 100%"><p class="input-field"><input id=\"relay1_' + my_id + '\" type=\"number\" style="width: 90%" value="60"/></p></div></td> \
                     <td><a class="dropdown-button btn grey darken-3" href="#" data-activates="dropdown1' + my_id + '">State</a></td></tr></table> \
                     <ul id="dropdown1' + my_id + '" class="dropdown-content"> \
@@ -186,7 +186,7 @@ class RangoIrygaModule(base_module.Module):
                     <li><a onclick="getState' + my_id + '()">REFRESH</a></li></ul></br> \
                     \
                     <table style="margin: 0px auto; max-width: 95%"><tr><td columnspan="2"> \
-                    Relay&nbsp;2 </td></tr>\
+                    <h6>Relay&nbsp;2</h6> </td></tr>\
                     <tr><td><div style="margin: 3%; width: 100%"><p class="input-field"><input id=\"relay2_' + my_id + '\" type=\"number\" style="width: 90%" value="60"/></p></div></td> \
                     <td><a class="dropdown-button btn grey darken-3" href="#" data-activates="dropdown2' + my_id + '">State</a></td></tr></table> \
                     <ul id="dropdown2' + my_id + '" class="dropdown-content"> \
@@ -195,7 +195,7 @@ class RangoIrygaModule(base_module.Module):
                     <li><a onclick="getState' + my_id + '()">REFRESH</a></li></ul></br> \
                     \
                     <table style="margin: 0px auto; max-width: 95%"><tr><td columnspan="2"> \
-                    Relay&nbsp;3 </td></tr>\
+                    <h6>Relay&nbsp;3</h6> </td></tr>\
                     <tr><td><div style="margin: 3%; width: 100%"><p class="input-field"><input id=\"relay3_' + my_id + '\" type=\"number\" style="width: 90%" value="60"/></p></div></td> \
                     <td><a class="dropdown-button btn grey darken-3" href="#" data-activates="dropdown3' + my_id + '">State</a></td></tr></table> \
                     <ul id="dropdown3' + my_id + '" class="dropdown-content"> \
@@ -204,7 +204,7 @@ class RangoIrygaModule(base_module.Module):
                     <li><a onclick="getState' + my_id + '()">REFRESH</a></li></ul></br> \
                     \
                     <table style="margin: 0px auto; max-width: 95%"><tr><td columnspan="2"> \
-                    Relay&nbsp;4 </td></tr>\
+                    <h6>Relay&nbsp;4</h6> </td></tr>\
                     <tr><td><div style="margin: 3%; width: 100%"><p class="input-field"><input id=\"relay4_' + my_id + '\" type=\"number\" style="width: 90%" value="60"/></p></div></td> \
                     <td><a class="dropdown-button btn grey darken-3" href="#" data-activates="dropdown4' + my_id + '">State</a></td></tr></table> \
                     <ul id="dropdown4' + my_id + '" class="dropdown-content"> \
