@@ -173,31 +173,45 @@ class RangoIrygaModule(base_module.Module):
         port = str(self.port)
         return '<div class="card-panel"> \
                     <h5>' + self.name + '</h5>\
-                    <div id="rangoIrygaDiv' + my_id + '" class="rangoIrygaDiv"> \
+                    <div id="rangoIrygaDiv' + my_id + '" class="rangoIrygaDiv" style="width: 50px; height: 50px; margin: auto"> \
                     <img src="static/images/loading_spinner.gif" style="width: 50px;" /> \
                     </div> \
-                    <br />\
-                    <table style="margin: 0px auto; max-width: 95%"><tr><td> \
-                    Relay&nbsp;1 </td>\
-                    <td><div style="margin: 3%; width: 100%"><input id=\"relay1_' + my_id + '\" type=\"number\" style="width: 90%" value="10"/></div></td> \
-                    <td><div style="margin: 5%; width: 100%"><button class="waves-effect waves-light btn grey darken-3" type="button" onclick="setState' + my_id + '(\'ON\', 5, \'relay1_' + my_id + '\')">ON</button></div></td> \
-                    <td><div style="margin: 5%; width: 100%"><button class="waves-effect waves-light btn grey darken-3" type="button" onclick="setState' + my_id + '(\'OFF\', 5, null)">OFF</button></div></td></tr> \
-                    <tr>\
-                    <td>Relay&nbsp;2</td> \
-                    <td><div style="margin: 3%; width: 100%"><input id=\"relay2_' + my_id + '\" type=\"number\" style="width: 90%" value="10"/></div></td> \
-                    <td><div style="margin: 5%; width: 100%"><button class="waves-effect waves-light btn grey darken-3" type="button" onclick="setState' + my_id + '(\'ON\', 4, \'relay2_' + my_id + '\')">ON</button></div></td> \
-                    <td><div style="margin: 5%; width: 100%"><button class="waves-effect waves-light btn grey darken-3" type="button" onclick="setState' + my_id + '(\'OFF\', 4, null)">OFF</button></div></td></tr> \
-                    <tr>\
-                    <td>Relay&nbsp;3</td> \
-                    <td><div style="margin: 3%; width: 100%"><input id=\"relay3_' + my_id + '\" type=\"number\" style="width: 90%" value="10"/></div></td> \
-                    <td><div style="margin: 5%; width: 100%"><button class="waves-effect waves-light btn grey darken-3" type="button" onclick="setState' + my_id + '(\'ON\', 15, \'relay3_' + my_id + '\')">ON</button></div></td> \
-                    <td><div style="margin: 5%; width: 100%"><button class="waves-effect waves-light btn grey darken-3" type="button" onclick="setState' + my_id + '(\'OFF\', 15, null)">OFF</button></div></td></tr> \
-                    <tr>\
-                    <td>Relay&nbsp;4</td> \
-                    <td><div style="margin: 3%; width: 100%"><input id=\"relay4_' + my_id + '\" type=\"number\" style="width: 90%" value="10"/></div></td> \
-                    <td><div style="margin: 5%; width: 100%"><button class="waves-effect waves-light btn grey darken-3" type="button" onclick="setState' + my_id + '(\'ON\', 14, \'relay4_' + my_id + '\')">ON</button></div></td> \
-                    <td><div style="margin: 5%; width: 100%"><button class="waves-effect waves-light btn grey darken-3" type="button" onclick="setState' + my_id + '(\'OFF\', 14, -1)">OFF</button></div></td></tr> \
-                    </table> \
+                    <table style="margin: 0px auto; max-width: 95%"><tr><td columnspan="2"> \
+                    Relay&nbsp;1 </td></tr>\
+                    <tr><td><div style="margin: 3%; width: 100%"><p class="input-field"><input id=\"relay1_' + my_id + '\" type=\"number\" style="width: 90%" value="60"/></p></div></td> \
+                    <td><a class="dropdown-button btn grey darken-3" href="#" data-activates="dropdown1' + my_id + '">State</a></td></tr></table> \
+                    <ul id="dropdown1' + my_id + '" class="dropdown-content"> \
+                    <li><a onclick="setState' + my_id + '(\'ON\', 5, \'relay1_' + my_id + '\')">ON</a></li> \
+                    <li><a onclick="setState' + my_id + '(\'OFF\', 5, null)">OFF</a></li> \
+                    <li><a onclick="getState' + my_id + '()">REFRESH</a></li></ul></br> \
+                    \
+                    <table style="margin: 0px auto; max-width: 95%"><tr><td columnspan="2"> \
+                    Relay&nbsp;2 </td></tr>\
+                    <tr><td><div style="margin: 3%; width: 100%"><p class="input-field"><input id=\"relay2_' + my_id + '\" type=\"number\" style="width: 90%" value="60"/></p></div></td> \
+                    <td><a class="dropdown-button btn grey darken-3" href="#" data-activates="dropdown2' + my_id + '">State</a></td></tr></table> \
+                    <ul id="dropdown2' + my_id + '" class="dropdown-content"> \
+                    <li><a onclick="setState' + my_id + '(\'ON\', 4, \'relay2_' + my_id + '\')">ON</a></li> \
+                    <li><a onclick="setState' + my_id + '(\'OFF\', 4, null)">OFF</a></li> \
+                    <li><a onclick="getState' + my_id + '()">REFRESH</a></li></ul></br> \
+                    \
+                    <table style="margin: 0px auto; max-width: 95%"><tr><td columnspan="2"> \
+                    Relay&nbsp;3 </td></tr>\
+                    <tr><td><div style="margin: 3%; width: 100%"><p class="input-field"><input id=\"relay3_' + my_id + '\" type=\"number\" style="width: 90%" value="60"/></p></div></td> \
+                    <td><a class="dropdown-button btn grey darken-3" href="#" data-activates="dropdown3' + my_id + '">State</a></td></tr></table> \
+                    <ul id="dropdown3' + my_id + '" class="dropdown-content"> \
+                    <li><a onclick="setState' + my_id + '(\'ON\', 15, \'relay3_' + my_id + '\')">ON</a></li> \
+                    <li><a onclick="setState' + my_id + '(\'OFF\', 15, null)">OFF</a></li> \
+                    <li><a onclick="getState' + my_id + '()">REFRESH</a></li></ul></br> \
+                    \
+                    <table style="margin: 0px auto; max-width: 95%"><tr><td columnspan="2"> \
+                    Relay&nbsp;4 </td></tr>\
+                    <tr><td><div style="margin: 3%; width: 100%"><p class="input-field"><input id=\"relay4_' + my_id + '\" type=\"number\" style="width: 90%" value="60"/></p></div></td> \
+                    <td><a class="dropdown-button btn grey darken-3" href="#" data-activates="dropdown4' + my_id + '">State</a></td></tr></table> \
+                    <ul id="dropdown4' + my_id + '" class="dropdown-content"> \
+                    <li><a onclick="setState' + my_id + '(\'ON\', 14, \'relay2_' + my_id + '\')">ON</a></li> \
+                    <li><a onclick="setState' + my_id + '(\'OFF\', 14, null)">OFF</a></li> \
+                    <li><a onclick="getState' + my_id + '()">REFRESH</a></li></ul></br> \
+                    \
                <script> function update_relay_state_message' + my_id + '(text) \n\
                { document.getElementById("rangoIrygaDiv' + my_id + '").innerHTML = text; } \n\
                function getState' + my_id + '() { \

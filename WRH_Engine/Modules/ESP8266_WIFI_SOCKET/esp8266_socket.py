@@ -174,7 +174,6 @@ class ESP8266SocketModule(base_module.Module):
                 <div id="esp8266SocketDiv' + self.id + '" class="socketDiv" style="width: 50px; height: 50px; margin: auto"> \
                 <img src="static/images/loading_spinner.gif" style="width: 50px;" /> \
                 </div> \
-                <br /> \
                 <table style="margin: 0px auto; max-width: 95%; width: auto"><tr> \
                 <td><div style="margin: 3%; width: 100%"><p class="input-field"><input id="' + text_input_name + '" type="number" style="width: 90%" value="-1"/></p></div></td> \
                 <td><a class="dropdown-button btn grey darken-3" href="#" data-activates="dropdown' + self.id + '">State</a></td></tr></table> \
