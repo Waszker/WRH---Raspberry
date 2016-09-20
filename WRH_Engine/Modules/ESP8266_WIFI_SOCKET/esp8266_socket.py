@@ -176,7 +176,7 @@ class ESP8266SocketModule(base_module.Module):
                 </div> \
                 <br /> \
                 <table style="margin: 0px auto; max-width: 95%; width: auto"><tr> \
-                <td><div style="margin: 3%; width: 100%"><input id=\"' + text_input_name + '\" type=\"number\" style="width: 90%" value="-1"/></div></td> \
+                <td><div style="margin: 3%; width: 100%"><p class="range-field"><input id=\"' + text_input_name + '\" type="range" style="width: 90%" value="-1" min="-1" max="100"/></p></div></td> \
                 <td><button class="waves-effect waves-light btn grey darken-3" type="button" onclick="setState' + self.id + '(\'ON\', \'' + text_input_name + '\')">ON</button></td> \
                 <td><button class="waves-effect waves-light btn grey darken-3" type="button" onclick="setState' + self.id + '(\'OFF\', \'' + text_input_name + '\')">OFF</button></td> \
                 <td><button class="waves-effect waves-light btn grey darken-3" type="button" onclick="getState' + self.id + '()">REFRESH</button></td> \
