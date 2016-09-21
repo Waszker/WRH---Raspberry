@@ -68,11 +68,18 @@ class RangoIrygaModule(base_module.Module):
         self.address = str(matches.group(3))
         self.port = str(matches.group(4))
 
+    def _get_remaining_repeats(self):
+        remaining = []
+        for threads in self.relay_actions:
+            remaining.append(len(threads))
+
+        return remaining
+
     def get_measurement(self):
         """
         Returns measurements taken by this module
         """
-        time.sleep(1)  # Too fast polling resets ESP8266!
+        repeats = self._get_remaining_repeats()
         value_finding_pattern = ".+?value=\"(.+?)\".+?value=\"(.+?)\".+?value=\"(.+?)\".+?value=\"(.+?)\".+?value=\"(.+?)\".+?value=\"(.+?)\".+?value=\"(.+?)\".+?value=\"(.+?)\".*$"
         checker = re.compile(value_finding_pattern)
         try:
@@ -82,18 +89,18 @@ class RangoIrygaModule(base_module.Module):
         except requests.ConnectionError:
             response_content = ''
         if not checker.match(str(response_content)):
-            state = "<a style=\"color: black; font-size: 25px\">UNKNOWN</a>&" \
-                    "<a style=\"color: black; font-size: 25px\">UNKNOWN</a>&" \
-                    "<a style=\"color: black; font-size: 25px\">UNKNOWN</a>&" \
-                    "<a style=\"color: black; font-size: 25px\">UNKNOWN</a>"
+            state = "<a style=\"color: black; font-size: 25px\">? (" + str(repeats[0]) + ")</a>&" \
+                    "<a style=\"color: black; font-size: 25px\">? (" + str(repeats[1]) + ")</a>&" \
+                    "<a style=\"color: black; font-size: 25px\">? (" + str(repeats[2]) + ")</a>&" \
+                    "<a style=\"color: black; font-size: 25px\">? (" + str(repeats[3]) + ")</a>"
         else:
             # Socket returns opposite state - we need to change its response
-            true_state = {"ON": "<a style=\"color: green; font-size: 25px\">OFF</a>",
-                          "OFF": "<a style=\"color: red; font-size: 25px\">ON</a>"}
+            true_state = {"ON": "<a style=\"color: green; font-size: 25px\">OFF",
+                          "OFF": "<a style=\"color: red; font-size: 25px\">ON"}
             search = re.search(value_finding_pattern, str(response_content))
-            state = "" + true_state[search.group(1)] + "&" + true_state[
-                search.group(3)] + "&" + true_state[
-                        search.group(5)] + "&" + true_state[search.group(7)]
+            state = "" + true_state[search.group(1)] + " (" + str(repeats[0]) + ")</a>&" + true_state[
+                search.group(3)] + " (" + str(repeats[1]) + ")</a>&" + true_state[
+                        search.group(5)] + " (" + str(repeats[2]) + ")</a>&" + true_state[search.group(7)] + " (" + str(repeats[3]) + ")</a>"
         return state
 
     def get_module_description(self):
