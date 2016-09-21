@@ -80,17 +80,17 @@ class RangoIrygaModule(base_module.Module):
         except requests.ConnectionError:
             response_content = ''
         if not checker.match(str(response_content)):
-            state = "<a style=\"color: black; font-size: 25px\">UNKNOWN</a>;" \
-                    "<a style=\"color: black; font-size: 25px\">UNKNOWN</a>;" \
-                    "<a style=\"color: black; font-size: 25px\">UNKNOWN</a>;" \
+            state = "<a style=\"color: black; font-size: 25px\">UNKNOWN</a>&" \
+                    "<a style=\"color: black; font-size: 25px\">UNKNOWN</a>&" \
+                    "<a style=\"color: black; font-size: 25px\">UNKNOWN</a>&" \
                     "<a style=\"color: black; font-size: 25px\">UNKNOWN</a>"
         else:
             # Socket returns opposite state - we need to change its response
             true_state = {"ON": "<a style=\"color: green; font-size: 25px\">OFF</a>", "OFF": "<a style=\"color: red; font-size: 25px\">ON</a>"}
             search = re.search(value_finding_pattern, str(response_content))
-            state = "" + true_state[search.group(1)] + ";" + true_state[
-                search.group(3)] + ";" + true_state[
-                        search.group(5)] + ";" + true_state[search.group(7)]
+            state = "" + true_state[search.group(1)] + "&" + true_state[
+                search.group(3)] + "&" + true_state[
+                        search.group(5)] + "&" + true_state[search.group(7)]
         return state
 
     def get_module_description(self):
@@ -307,7 +307,7 @@ class RangoIrygaModule(base_module.Module):
 
 
 def _siginit_handler(_, __):
-    print "RANG IRYGA: SIGINT signal caught"
+    print "RANGO IRYGA: SIGINT signal caught"
     sys.exit(0)
 
 
