@@ -260,9 +260,9 @@ class RangoIrygaModule(base_module.Module):
                <script> function update_relay_state_message' + my_id + '(text) \n\
                { states=text.split("&");\
                  document.getElementById("rangoIrygaDiv_1_' + my_id + '").innerHTML = states[0]; \
-                 document.getElementById("rangoIrygaDiv_1_' + my_id + '").innerHTML = states[1]; \
-                 document.getElementById("rangoIrygaDiv_1_' + my_id + '").innerHTML = states[2]; \
-                 document.getElementById("rangoIrygaDiv_1_' + my_id + '").innerHTML = states[3]; \
+                 document.getElementById("rangoIrygaDiv_2_' + my_id + '").innerHTML = states[1]; \
+                 document.getElementById("rangoIrygaDiv_3_' + my_id + '").innerHTML = states[2]; \
+                 document.getElementById("rangoIrygaDiv_4_' + my_id + '").innerHTML = states[3]; \
                } \n\
                function getState' + my_id + '(num) { \
                         if(num == 0 || num == 5) {document.getElementById("rangoIrygaDiv_1_' + my_id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />";} \
