@@ -344,7 +344,7 @@ class RangoIrygaModule(base_module.Module):
 
         latency = 0
         for i in range(0, repeats):
-            thread = threading.Timer(latency, self._set_relay_state_on_test,
+            thread = threading.Timer(latency, self._set_relay_state_on_esp,
                                      args=(relay_number, should_turn_on, duration,))
             thread.daemon = True
             thread.start()
