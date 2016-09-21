@@ -9,6 +9,7 @@ import time
 import requests
 import socket
 import urllib2
+import threading
 
 
 class RangoIrygaModule(base_module.Module):
@@ -22,6 +23,7 @@ class RangoIrygaModule(base_module.Module):
         base_module.Module.__init__(self, configuration_file_line)
         self.type_number = RangoIrygaModule.type_number
         self.type_name = RangoIrygaModule.type_name
+        self.relay_actions = [[], [], [], []]
 
     @staticmethod
     def is_configuration_line_sane(configuration_line):
@@ -86,7 +88,8 @@ class RangoIrygaModule(base_module.Module):
                     "<a style=\"color: black; font-size: 25px\">UNKNOWN</a>"
         else:
             # Socket returns opposite state - we need to change its response
-            true_state = {"ON": "<a style=\"color: green; font-size: 25px\">OFF</a>", "OFF": "<a style=\"color: red; font-size: 25px\">ON</a>"}
+            true_state = {"ON": "<a style=\"color: green; font-size: 25px\">OFF</a>",
+                          "OFF": "<a style=\"color: red; font-size: 25px\">ON</a>"}
             search = re.search(value_finding_pattern, str(response_content))
             state = "" + true_state[search.group(1)] + "&" + true_state[
                 search.group(3)] + "&" + true_state[
@@ -157,12 +160,12 @@ class RangoIrygaModule(base_module.Module):
         while True:
             s.listen(10)
             connection, address = s.accept()
-            data = str(connection.recv(1024) + ",,").split(',')
-            state, number, time_wait = data[0], data[1], data[2]
+            data = str(connection.recv(1024) + ",,,").split(',')
+            state, number, time_wait, repeats = data[0], data[1], data[2], data[3]
             if str(state) == "ON" or str(state) == "on":
-                self._set_relay_state(number, True, time_wait)
+                self._set_relay_state(number, True, time_wait, repeats)
             elif str(state) == "OFF" or str(state) == "off":
-                self._set_relay_state(number, False, time_wait)
+                self._set_relay_state(number, False, time_wait, repeats)
             elif str(state) == "STATE" or str(state) == "state":
                 connection.send(self.get_measurement())
             connection.close()
@@ -255,7 +258,6 @@ class RangoIrygaModule(base_module.Module):
                     <li><a onclick="setState' + my_id + '(\'ON\', 14, \'relay4_time_' + my_id + '\')">ON</a></li> \
                     <li><a onclick="setState' + my_id + '(\'OFF\', 14, null)">OFF</a></li> \
                     <li><a onclick="getState' + my_id + '(14)">REFRESH</a></li></ul></br> \
-                    <div class="line"></div><br \>\
                     \
                <script> function update_relay_state_message' + my_id + '(text) \n\
                { states=text.split("&");\
@@ -281,18 +283,70 @@ class RangoIrygaModule(base_module.Module):
                </script> \n\
                </div>'
 
-    def _set_relay_state(self, relay_number, should_turn_on, duration):
-        # First get duration for relay opening
+    def _parse_duration_value(self, should_turn_on, duration):
         try:
             duration = int(duration)
-            if duration < -1 or duration > 3600:
+            if duration < -1 or duration > 60:
                 raise ValueError
         except ValueError:
             if should_turn_on:
-                duration = 60
+                duration = '60'
             else:
                 duration = ''
 
+        return duration
+
+    def _parse_repeats_value(self, should_turn_on, repeats):
+        try:
+            repeats = int(repeats)
+            if (should_turn_on and repeats < 1) or (not should_turn_on):
+                repeats = 1
+        except ValueError:
+            repeats = 1
+
+        return repeats
+
+    def _get_real_relay_number(self, relay_number):
+        true_relay_numbers = {14: 0, 15: 1, 4: 2, 5: 3}
+        try:
+            true_relay_number = true_relay_numbers[int(relay_number)]
+        except (KeyError, ValueError):
+            true_relay_number = -1
+
+        return true_relay_number
+
+    def _stop_already_working_relay_threads(self, relay_number):
+        thread_list = self.relay_actions[relay_number]
+        for thread in thread_list:
+            thread.cancel()
+            thread.join()
+        del thread_list[:]
+
+        return thread_list
+
+    def _set_relay_state(self, relay_number, should_turn_on, duration, repeats):
+        duration = self._parse_duration_value(should_turn_on, duration)
+        repeats = self._parse_repeats_value(should_turn_on, repeats)
+        true_relay_number = self._get_real_relay_number(relay_number)
+        thread_list = self._stop_already_working_relay_threads(true_relay_number)
+
+        latency = 0
+        for i in range(0, repeats):
+            thread = threading.Timer(latency, self._set_relay_state_on_test,
+                                     args=(relay_number, should_turn_on, duration,))
+            thread.start()
+            thread_list.append(thread)
+            latency += (duration + 120)
+
+    def _set_relay_state_on_test(self, relay_number, should_turn_on, duration):
+        state = "OFF"
+        if should_turn_on: state = "ON"
+        url = "http://" + self.address + "/socket.lua?wait=" + str(duration) + "&state=" + str(
+            state) + "&gpio_num=" + str(
+            relay_number)
+        print "Setting state for ESP with IP: " + self.address + " and url: " + url
+
+    def _set_relay_state_on_esp(self, relay_number, should_turn_on, duration):
         # Then change relay's state
         try:
             relay_number = int(relay_number)
