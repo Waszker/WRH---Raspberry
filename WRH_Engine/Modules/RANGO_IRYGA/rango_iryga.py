@@ -71,7 +71,11 @@ class RangoIrygaModule(base_module.Module):
     def _get_remaining_repeats(self):
         remaining = []
         for threads in self.relay_actions:
-            remaining.append(len(threads))
+            remaining_threads = 0
+            for thread in threads:
+                if thread.isAlive():
+                    remaining_threads += 1
+            remaining.append(remaining_threads)
 
         return remaining
 
@@ -315,7 +319,7 @@ class RangoIrygaModule(base_module.Module):
         return repeats
 
     def _get_real_relay_number(self, relay_number):
-        true_relay_numbers = {14: 0, 15: 1, 4: 2, 5: 3}
+        true_relay_numbers = {5: 0, 4: 1, 15: 2, 14: 3}
         try:
             true_relay_number = true_relay_numbers[int(relay_number)]
         except (KeyError, ValueError):
