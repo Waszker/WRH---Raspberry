@@ -3,7 +3,7 @@
 }
 
 #page-wrapper {
-    padding: 5% 15px 0 15px;
+    padding: 2% 15px 0 15px;
     min-height: 568px;
     background-color: #fff;
     width: 100%
@@ -21,4 +21,11 @@
     margin-right: auto;
     margin-left: auto;
     margin-top: 1%;
+}
+
+.line {
+    height: 1px;
+    background: black;
+    width: 90%;
+    font-size: 1px; /* IE 6 */
 }
