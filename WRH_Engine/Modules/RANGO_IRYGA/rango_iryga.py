@@ -254,7 +254,7 @@ class RangoIrygaModule(base_module.Module):
                     <li><a onclick="getState' + my_id + '()">REFRESH</a></li></ul></br> \
                     \
                <script> function update_relay_state_message' + my_id + '(text) \n\
-               { states=text.split(";");\
+               { states=text.split("&");\
                  document.getElementById("rangoIrygaDiv_1_' + my_id + '").innerHTML = states[0]; \
                  document.getElementById("rangoIrygaDiv_1_' + my_id + '").innerHTML = states[1]; \
                  document.getElementById("rangoIrygaDiv_1_' + my_id + '").innerHTML = states[2]; \
