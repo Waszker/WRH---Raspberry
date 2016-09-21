@@ -335,8 +335,8 @@ class RangoIrygaModule(base_module.Module):
         for i in range(0, repeats):
             thread = threading.Timer(latency, self._set_relay_state_on_test,
                                      args=(relay_number, should_turn_on, duration,))
-            thread.start()
             thread.daemon = True
+            thread.start()
             thread_list.append(thread)
             latency += (duration + 5)
 
