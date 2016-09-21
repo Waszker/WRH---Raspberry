@@ -194,7 +194,7 @@ class RangoIrygaModule(base_module.Module):
                     <ul id="dropdown1' + my_id + '" class="dropdown-content"> \
                     <li><a onclick="setState' + my_id + '(\'ON\', 5, \'relay1_time_' + my_id + '\')">ON</a></li> \
                     <li><a onclick="setState' + my_id + '(\'OFF\', 5, null)">OFF</a></li> \
-                    <li><a onclick="getState' + my_id + '()">REFRESH</a></li></ul></br> \
+                    <li><a onclick="getState' + my_id + '(5)">REFRESH</a></li></ul></br> \
                     <div class="line"></div><br \>\
                     \
                     <table style="margin: 0px auto; max-width: 95%; width: auto"><tr><td> \
@@ -214,7 +214,7 @@ class RangoIrygaModule(base_module.Module):
                     <ul id="dropdown2' + my_id + '" class="dropdown-content"> \
                     <li><a onclick="setState' + my_id + '(\'ON\', 4, \'relay2_time_' + my_id + '\')">ON</a></li> \
                     <li><a onclick="setState' + my_id + '(\'OFF\', 4, null)">OFF</a></li> \
-                    <li><a onclick="getState' + my_id + '()">REFRESH</a></li></ul></br> \
+                    <li><a onclick="getState' + my_id + '(4)">REFRESH</a></li></ul></br> \
                     <div class="line"></div><br \>\
                     \
                     <table style="margin: 0px auto; max-width: 95%; width: auto"><tr><td> \
@@ -234,7 +234,7 @@ class RangoIrygaModule(base_module.Module):
                     <ul id="dropdown3' + my_id + '" class="dropdown-content"> \
                     <li><a onclick="setState' + my_id + '(\'ON\', 15, \'relay3_time_' + my_id + '\')">ON</a></li> \
                     <li><a onclick="setState' + my_id + '(\'OFF\', 15, null)">OFF</a></li> \
-                    <li><a onclick="getState' + my_id + '()">REFRESH</a></li></ul></br> \
+                    <li><a onclick="getState' + my_id + '(15)">REFRESH</a></li></ul></br> \
                     <div class="line"></div><br \>\
                     \
                     <table style="margin: 0px auto; max-width: 95%; width: auto"><tr><td> \
@@ -254,7 +254,7 @@ class RangoIrygaModule(base_module.Module):
                     <ul id="dropdown4' + my_id + '" class="dropdown-content"> \
                     <li><a onclick="setState' + my_id + '(\'ON\', 14, \'relay4_time_' + my_id + '\')">ON</a></li> \
                     <li><a onclick="setState' + my_id + '(\'OFF\', 14, null)">OFF</a></li> \
-                    <li><a onclick="getState' + my_id + '()">REFRESH</a></li></ul></br> \
+                    <li><a onclick="getState' + my_id + '(14)">REFRESH</a></li></ul></br> \
                     <div class="line"></div><br \>\
                     \
                <script> function update_relay_state_message' + my_id + '(text) \n\
@@ -265,18 +265,18 @@ class RangoIrygaModule(base_module.Module):
                  document.getElementById("rangoIrygaDiv_1_' + my_id + '").innerHTML = states[3]; \
                } \n\
                function getState' + my_id + '(num) { \
-                        if(num == null || num == 5) {document.getElementById("rangoIrygaDiv_1_' + my_id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />";} \
-                        if(num == null || num == 4) {document.getElementById("rangoIrygaDiv_2_' + my_id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />";} \
-                        if(num == null || num == 15) {document.getElementById("rangoIrygaDiv_3_' + my_id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />";} \
-                        if(num == null || num == 14) {document.getElementById("rangoIrygaDiv_4_' + my_id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />";} \
+                        if(num == 0 || num == 5) {document.getElementById("rangoIrygaDiv_1_' + my_id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />";} \
+                        if(num == 0 || num == 4) {document.getElementById("rangoIrygaDiv_2_' + my_id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />";} \
+                        if(num == 0 || num == 15) {document.getElementById("rangoIrygaDiv_3_' + my_id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />";} \
+                        if(num == 0 || num == 14) {document.getElementById("rangoIrygaDiv_4_' + my_id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />";} \
                         getRequest("localhost", ' + port + ', "STATE", update_relay_state_message' + my_id + '); } \
                function setState' + my_id + '(state, gpio, input_id) { \
                         time_wait = input_id == null ? -1 : document.getElementById(input_id).value; \
                         sendRequest(\'localhost\', ' + port + ', state + "," + gpio + "," + time_wait); \
                         getState' + my_id + '(gpio); } \
-               getState' + my_id + '(null); \
+               getState' + my_id + '(0); \
                setInterval(function() { \n\
-               getState' + my_id + '(); \n\
+               getState' + my_id + '(0); \n\
                }, 60*1000);\n\
                </script> \n\
                </div>'
