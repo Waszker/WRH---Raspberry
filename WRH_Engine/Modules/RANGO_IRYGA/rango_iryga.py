@@ -349,7 +349,7 @@ class RangoIrygaModule(base_module.Module):
             thread.daemon = True
             thread.start()
             thread_list.append(thread)
-            latency += (duration + 5)
+            latency += (duration + 120)
 
     def _set_relay_state_on_test(self, relay_number, should_turn_on, duration):
         state = "OFF"
