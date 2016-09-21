@@ -80,10 +80,13 @@ class RangoIrygaModule(base_module.Module):
         except requests.ConnectionError:
             response_content = ''
         if not checker.match(str(response_content)):
-            state = "Unable to obtain socket states... Try again later."
+            state = "<a style=\"color: black; font-size: 25px\">UNKNOWN</a>;" \
+                    "<a style=\"color: black; font-size: 25px\">UNKNOWN</a>;" \
+                    "<a style=\"color: black; font-size: 25px\">UNKNOWN</a>;" \
+                    "<a style=\"color: black; font-size: 25px\">UNKNOWN</a>"
         else:
             # Socket returns opposite state - we need to change its response
-            true_state = {"ON": "<a style=\"color: green\">OFF</a>", "OFF": "<a style=\"color: red\">ON</a>"}
+            true_state = {"ON": "<a style=\"color: green; font-size: 25px\">OFF</a>", "OFF": "<a style=\"color: red; font-size: 25px\">ON</a>"}
             search = re.search(value_finding_pattern, str(response_content))
             state = "" + true_state[search.group(1)] + ";" + true_state[
                 search.group(3)] + ";" + true_state[
@@ -173,9 +176,6 @@ class RangoIrygaModule(base_module.Module):
         port = str(self.port)
         return '<div class="card-panel"> \
                     <h5>' + self.name + '</h5>\
-                    <div id="rangoIrygaDiv' + my_id + '" class="rangoIrygaDiv" style="margin: auto"> \
-                    <img src="static/images/loading_spinner.gif" style="width: 50px;" /> \
-                    </div> \
                     \
                     <table style="margin: 0px auto; max-width: 95%; width: auto"><tr><td> \
                     <h5>Linia&nbsp;1</h5> </td><td>\
