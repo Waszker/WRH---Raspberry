@@ -246,7 +246,7 @@ class RangoIrygaModule(base_module.Module):
                     </div></td></tr>\
                     <tr><td columnspan="2"><a class="dropdown-button btn grey darken-3" href="#" data-activates="dropdown3' + my_id + '">State</a></td></tr></table> \
                     <ul id="dropdown3' + my_id + '" class="dropdown-content"> \
-                    <li><a onclick="setState' + my_id + '(\'ON\', 15, \'relay3_time_' + my_id + '\', \'relay3_time_' + my_id + '\')">ON</a></li> \
+                    <li><a onclick="setState' + my_id + '(\'ON\', 15, \'relay3_time_' + my_id + '\', \'relay3_cycles_' + my_id + '\')">ON</a></li> \
                     <li><a onclick="setState' + my_id + '(\'OFF\', 15, null)">OFF</a></li> \
                     <li><a onclick="getState' + my_id + '(15)">REFRESH</a></li></ul></br> \
                     <div class="line"></div><br \>\
