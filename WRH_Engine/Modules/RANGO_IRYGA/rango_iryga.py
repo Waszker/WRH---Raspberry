@@ -198,7 +198,7 @@ class RangoIrygaModule(base_module.Module):
                     </div></td></tr>\
                     <tr><td><h6>Czas trwania (sek.):</h6></td> \
                     <td><div style="margin: 3%; width: 100%">\
-                        <p class="input-field"><input id=\"relay1_time_' + my_id + '\" type=\"number\" style="width: 90%" value="60"/></p>\
+                        <p class="input-field"><input id=\"relay1_time_' + my_id + '\" type=\"number\" style="width: 90%" value="300"/></p>\
                     </div></td></tr>\
                     <tr><td><h6>Liczba cykli:</h6></td> \
                     <td><div style="margin: 3%; width: 100%">\
@@ -218,11 +218,11 @@ class RangoIrygaModule(base_module.Module):
                     </div></td></tr>\
                     <tr><td><h6>Czas trwania (sek.):</h6></td> \
                     <td><div style="margin: 3%; width: 100%">\
-                        <p class="input-field"><input id=\"relay2_time_' + my_id + '\" type=\"number\" style="width: 90%" value="60"/></p>\
+                        <p class="input-field"><input id=\"relay2_time_' + my_id + '\" type=\"number\" style="width: 90%" value="80"/></p>\
                     </div></td></tr>\
                     <tr><td><h6>Liczba cykli:</h6></td> \
                     <td><div style="margin: 3%; width: 100%">\
-                        <p class="input-field"><input id=\"relay2_cycles_' + my_id + '\" type=\"number\" style="width: 90%" value="1"/></p>\
+                        <p class="input-field"><input id=\"relay2_cycles_' + my_id + '\" type=\"number\" style="width: 90%" value="4"/></p>\
                     </div></td></tr>\
                     <tr><td columnspan="2"><a class="dropdown-button btn grey darken-3" href="#" data-activates="dropdown2' + my_id + '">State</a></td></tr></table> \
                     <ul id="dropdown2' + my_id + '" class="dropdown-content"> \
@@ -238,7 +238,7 @@ class RangoIrygaModule(base_module.Module):
                     </div></td></tr>\
                     <tr><td><h6>Czas trwania (sek.):</h6></td> \
                     <td><div style="margin: 3%; width: 100%">\
-                        <p class="input-field"><input id=\"relay3_time_' + my_id + '\" type=\"number\" style="width: 90%" value="60"/></p>\
+                        <p class="input-field"><input id=\"relay3_time_' + my_id + '\" type=\"number\" style="width: 90%" value="300"/></p>\
                     </div></td></tr>\
                     <tr><td><h6>Liczba cykli:</h6></td> \
                     <td><div style="margin: 3%; width: 100%">\
@@ -258,7 +258,7 @@ class RangoIrygaModule(base_module.Module):
                     </div></td></tr>\
                     <tr><td><h6>Czas trwania (sek.):</h6></td> \
                     <td><div style="margin: 3%; width: 100%">\
-                        <p class="input-field"><input id=\"relay4_time_' + my_id + '\" type=\"number\" style="width: 90%" value="60"/></p>\
+                        <p class="input-field"><input id=\"relay4_time_' + my_id + '\" type=\"number\" style="width: 90%" value="300"/></p>\
                     </div></td></tr>\
                     <tr><td><h6>Liczba cykli:</h6></td> \
                     <td><div style="margin: 3%; width: 100%">\
