@@ -60,6 +60,12 @@ class Uptime(BaseHandler):
         self.finish(getsystemstats())
 
 
+class Restart(BaseHandler):
+    def get(self):
+        if not isuservalid(self): return
+        self.finish(resources.restart())
+
+
 class Request(BaseHandler):
     def get(self):
         if not isuservalid(self): return
@@ -81,6 +87,7 @@ application = tornado.web.Application([
     (r"/login", LoginHandler),
     (r"/logout", LogoutHandler),
     (r"/uptime", Uptime),
+    (r"/restart", Restart),
     (r"/request", Request)
 ],
     debug=True,

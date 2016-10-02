@@ -4,6 +4,7 @@ from WRH_Engine.Utils import dynamic_loader as d
 from contextlib import closing
 import socket
 import datetime
+import subprocess as s
 
 
 def get_available_module_types(configuration_file):
@@ -31,6 +32,11 @@ def getsystemstats():
     stat_string += "CPU temp: " + str(round(_get_cpu_temp(), 1)) + "*C <br />"
 
     return stat_string
+
+
+def restart():
+    s.call("reboot")
+    return
 
 
 def get_request(host, port, message=None):

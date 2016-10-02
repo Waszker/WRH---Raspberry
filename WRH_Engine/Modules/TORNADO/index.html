@@ -91,7 +91,7 @@
                  </h3>
             </div>
 
-            <div style="width: 60%; margin-left: auto; margin-right: auto; text-align: center">
+            <div style="width: 80%; margin-left: auto; margin-right: auto; text-align: center">
             <!-- ... Your content goes here ... -->
             {% if target == -1 %}
                  <script> getUptime(); setInterval(function() { getUptime(); }, 60*1000);</script>
@@ -99,6 +99,8 @@
                      <div id="systemDiv"></div>
                      <br />
                      <button class="waves-effect waves-light btn grey darken-3" type="button" onclick="getUptime()">Refresh</button>
+                     <br />
+                     <button class="waves-effect waves-light btn grey darken-3" type="button" onclick="getRestart()">Restart Raspberry</button>
                  </div>
             {% else %}
                 {%for m in modules%}

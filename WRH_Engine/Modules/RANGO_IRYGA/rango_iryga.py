@@ -188,7 +188,7 @@ class RangoIrygaModule(base_module.Module):
         """
         my_id = str(self.id)
         port = str(self.port)
-        return '<div class="card-panel" style="width: 80%"> \
+        return '<div class="card-panel"> \
                     <h5>' + self.name + '</h5>\
                     \
                     <table style="margin: 0px auto; max-width: 95%; width: auto"><tr><td> \

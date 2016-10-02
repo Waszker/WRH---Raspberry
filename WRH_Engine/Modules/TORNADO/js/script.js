@@ -16,6 +16,12 @@ function getUptime() {
      xmlHttp.send();
 }
 
+function getRestart() {
+     var xmlHttp = new XMLHttpRequest();
+     xmlHttp.open("GET", "restart", true);
+     xmlHttp.send();
+}
+
 /**
 * Sends request to specified host on specified port and returns its response.
 * Can be used when controlling some devices.
