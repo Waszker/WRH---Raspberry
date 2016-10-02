@@ -188,7 +188,7 @@ class RangoIrygaModule(base_module.Module):
         """
         my_id = str(self.id)
         port = str(self.port)
-        return '<div class="card-panel"> \
+        return '<div class="card-panel" style="width: 80%"> \
                     <h5>' + self.name + '</h5>\
                     \
                     <table style="margin: 0px auto; max-width: 95%; width: auto"><tr><td> \
@@ -298,7 +298,7 @@ class RangoIrygaModule(base_module.Module):
     def _parse_duration_value(self, should_turn_on, duration):
         try:
             duration = int(duration)
-            if duration < -1 or duration > 60:
+            if duration < -1 or duration > 600:
                 raise ValueError
         except ValueError:
             if should_turn_on:
