@@ -11,7 +11,7 @@ from wrh_engine.engine import ConfigurationParser
 def get_available_module_types(configuration_file):
     loader = ModuleDynamicLoader('modules/')
     modules_classes = loader.get_module_classes()
-    parser = ConfigurationParser(configuration_file, modules_classes)
+    parser = ConfigurationParser('.', modules_classes)
     modules = parser.get_installed_modules()
     return modules_classes, modules
 
