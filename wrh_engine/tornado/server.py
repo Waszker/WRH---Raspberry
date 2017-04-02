@@ -94,7 +94,7 @@ application = tornado.web.Application([
 ],
     debug=True,
     cookie_secret="59711y60254197251521521",
-    static_path=os.path.join(os.path.dirname("engine/modules/tornado"), "tornado"))
+    static_path=os.path.join(os.path.dirname("wrh_engine/tornado"), "tornado"))
 
 
 def isuservalid(handler):
