@@ -50,7 +50,7 @@ class DHT22Module(base_module.Module):
         Returns command used to start module as a new process.
         :return: Command to be executed when starting new process
         """
-        return ["/usr/bin/python2.7", "-m", "engine.modules.dht22.dht22"]
+        return ["/usr/bin/python2.7", "-m", "modules.dht22.dht22"]
 
     def get_configuration_line(self):
         """

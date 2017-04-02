@@ -34,9 +34,9 @@ class Overlord:
             signal.pause()
 
     def _sigint_handler(self, *_):
+        signal.signal(signal.SIGCHLD, signal.SIG_IGN)
         self.is_ending = True
         log('OVERLORD: SIGINT signal caught')
-        signal.signal(signal.SIGCHLD, signal.SIG_IGN)
         [Overlord._end_process(process) for process in self.processes]
 
     def _sigchld_handler(self, *_):
