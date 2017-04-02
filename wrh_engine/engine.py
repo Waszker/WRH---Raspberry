@@ -39,8 +39,7 @@ class WRHEngine:
         self._check_configuration()
         # TODO: Add better start options checking
         if len(self.args) > 1 and self.args[1] == "--start-work":
-            overlord = Overlord(self.configuration_parser)
-            overlord.start_and_maintain()
+            self._run_system()
         else:
             self._show_installed_modules()
             self._show_options()
@@ -49,7 +48,7 @@ class WRHEngine:
         actions = {'1': self._edit_module,
                    '2': self._add_new_module,
                    '3': self._remove_module,
-                   '4': self._run_modules_overlord}
+                   '4': self._run_system}
         while True:
             log('\n[1] Edit module\n[2] Add new module\n[3] Delete module\n[4] Start modules\n[5] Exit')
             choice = ninput('> ')
@@ -105,3 +104,7 @@ class WRHEngine:
         except (UnknownModuleException, BadConfigurationException) as e:
             log(str(e), Color.FAIL)
             sys.exit(1)
+
+    def _run_system(self):
+        overlord = Overlord(self.configuration_parser)
+        overlord.start_and_maintain()
