@@ -229,8 +229,7 @@ def _signal_handler(*_):
 if __name__ == "__main__":
     print 'Camera: started.'
     signal.signal(signal.SIGINT, _signal_handler)
-    device_line = sys.argv[1]
-    conf_line = sys.argv[2]
+    conf_line = sys.argv[1]
 
     camera = CameraModule(conf_line)
     process = camera.start_work()

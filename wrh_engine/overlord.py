@@ -47,12 +47,15 @@ class Overlord:
 
     @staticmethod
     def _end_process(process):
-        log('Sending SIGINT to process: ' + str(process.pid))
-        process.send_signal(signal.SIGINT)
-        timeout, retries = 1, 5
-        while process.poll() is None and retries > 0:
-            time.sleep(timeout)
-            retries -= 1
-        if process.poll() is None:
-            log('Process ' + str(process.pid) + " not responding. Sending SIGTERM.", Color.WARNING)
-            process.terminate()
+        try:
+            log('Sending SIGINT to process: ' + str(process.pid))
+            process.send_signal(signal.SIGINT)
+            timeout, retries = 1, 5
+            while process.poll() is None and retries > 0:
+                time.sleep(timeout)
+                retries -= 1
+            if process.poll() is None:
+                log('Process ' + str(process.pid) + " not responding. Sending SIGTERM.", Color.WARNING)
+                process.terminate()
+        except OSError:
+            pass

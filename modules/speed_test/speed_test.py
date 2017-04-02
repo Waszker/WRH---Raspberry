@@ -195,8 +195,7 @@ def _siginit_handler(*_):
 
 if __name__ == "__main__":
     print 'SpeedTest module: started.'
-    device_line = sys.argv[1]
-    conf_line = sys.argv[2]
+    conf_line = sys.argv[1]
     signal.signal(signal.SIGINT, _siginit_handler)
 
     speedtest = SpeedTestModule(conf_line)

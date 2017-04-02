@@ -217,8 +217,7 @@ def _siginit_handler(*_):
 
 if __name__ == "__main__":
     print 'ESP8266 WiFi socket: started.'
-    device_line = sys.argv[1]
-    conf_line = sys.argv[2]
+    conf_line = sys.argv[1]
     signal.signal(signal.SIGINT, _siginit_handler)
 
     esp8266 = ESP8266SocketModule(conf_line)

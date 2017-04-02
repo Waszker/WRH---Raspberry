@@ -190,8 +190,7 @@ def _siginit_handler(_, __):
 
 if __name__ == "__main__":
     print 'DHT22 module: started.'
-    device_line = sys.argv[1]
-    conf_line = sys.argv[2]
+    conf_line = sys.argv[1]
     signal.signal(signal.SIGINT, _siginit_handler)
 
     dht22 = DHT22Module(conf_line)

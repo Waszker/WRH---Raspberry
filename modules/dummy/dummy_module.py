@@ -107,8 +107,7 @@ def _siginit_handler(*_):
 
 if __name__ == "__main__":
     print 'Dummy module: started.'
-    device_line = sys.argv[1]
-    conf_line = sys.argv[2]
+    conf_line = sys.argv[1]
     signal.signal(signal.SIGINT, _siginit_handler)
 
     dummy = DummyModule(conf_line)
