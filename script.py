@@ -1,14 +1,14 @@
 #!/usr/bin/python2.7
-import os.path as path
-import os
-import sys
 import json
+import os
+import os.path as path
 import signal
 import subprocess
-from WRH_Engine.RegisterDevice import RegisterDevice as register
-from WRH_Engine.Configuration import configuration as config
-from WRH_Engine.Utils import dynamic_loader as d
-from WRH_Engine.WebApiLibrary import WebApiClient as W
+import sys
+
+from engine.Configuration import configuration as config
+
+from wrh_engine import module_loader as d
 
 CONFIGURATION_FILE = '.wrh.config'
 
@@ -111,7 +111,7 @@ def _remove_module(system_info, modules):
 
 def _run_overlord():
     signal.signal(signal.SIGINT, _siginit_handler)
-    command = ["/usr/bin/python2.7", "-m", "WRH_Engine.Modules.OVERLORD.overlord"]
+    command = ["/usr/bin/python2.7", "-m", "engine.modules.OVERLORD.overlord"]
     process = subprocess.Popen(command)
     process.wait()
     signal.signal(signal.SIGINT, signal.SIG_DFL)
@@ -158,7 +158,7 @@ def _is_configuration_file_present():
 def _scan_and_list_modules():
     module_classes = {}
     print "Scanning for available modules..."
-    modules = d.scan_and_returns_modules("WRH_Engine/Modules/")
+    modules = d.scan_and_returns_modules("engine/modules/")
     for module_name, (module_path, class_name) in modules.iteritems():
         print "Found \"" + module_name + "\" module"
         module = str(module_path + module_name).replace('/', '.')

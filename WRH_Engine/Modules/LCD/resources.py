@@ -1,1 +1,0 @@
-../../Tornado/resources.py
