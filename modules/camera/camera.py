@@ -7,7 +7,6 @@
 import base64
 import os
 import re
-import signal
 import subprocess
 import sys
 import threading
@@ -16,15 +15,11 @@ from urllib2 import urlopen
 
 import requests
 from wrh_engine import module_base as base_module
+from utils.processes import *
 from utils.io import *
 
 ninput = non_empty_input
-iinput = non_empty_numeric_input
-
-# Those two variables will be used by sigint handler
-# CAUTION: Those are global variables - don't use them unless you're sure what you're doing!
-stunnel_pid = None
-mjpg_streamer_pid = None
+iinput = non_empty_positive_numeric_input
 
 
 class CameraModule(base_module.Module):
@@ -41,6 +36,8 @@ class CameraModule(base_module.Module):
         base_module.Module.__init__(self, configuration_file_line)
         self.type_number = CameraModule.type_number
         self.type_name = CameraModule.type_name
+        self.mjpeg_streamer, self.stunnel = None, None
+        self.should_end = False
 
     @staticmethod
     def is_configuration_line_sane(configuration_line):
@@ -68,8 +65,8 @@ class CameraModule(base_module.Module):
         Creates module configuration line
         :return: Properly formatted configuration file line
         """
-        return str(self.type_number) + ";" + str(
-            self.id) + ";" + self.name + ";" + self.gpio + ";" + self.address + ";" + self.login + ";" + self.password
+        return '%s;%s;%s;%s;%s;%s;%s' % tuple(map(str, (self.type_number, self.id, self.name,
+                                                        self.gpio, self.address, self.login, self.password)))
 
     def _parse_configuration_line(self, configuration_file_line):
         """
@@ -113,10 +110,7 @@ class CameraModule(base_module.Module):
         self.gpio = ninput("Please input name of the webcam device (usually /dev/video#, # is the specific number): ")
         self.address = iinput("Please input port on which streamed images can be accessed: ")
         self.login = raw_input("Please input login used to access the video stream (press ENTER if none): ")
-        if self.login:
-            self.password = ninput("Please input password used to access the video stream: ")
-        else:
-            self.password = ""
+        self.password = "" if self.login else ninput("Please input password used to access the video stream: ")
 
     def edit(self, device_id, device_token):
         """
@@ -143,7 +137,13 @@ class CameraModule(base_module.Module):
         """
         Starts working procedure.
         """
-        return self._start_camera_thread()
+        signal.signal(signal.SIGINT, self._sigint_handler)
+        self._start_mjpeg_streamer()
+        self._start_stunnel()
+        self._start_snapshot_thread()
+
+        while self.should_end is False:
+            signal.pause()
 
     def get_html_representation(self, website_host_address):
         """
@@ -154,23 +154,6 @@ class CameraModule(base_module.Module):
         """
         return "<div class=\"card-panel\"><h5>" + self.name + "</h5> \
             <img style=\"width: 50%\" src = \"http://" + website_host_address + ":" + self.address + "/?action=stream\" /></div>"
-
-    def _start_stunnel(self):
-        global stunnel_pid
-        filename = "/tmp/stunnel" + str(self.id) + ".conf"
-        with open(filename, "w") as f:
-            f.write("cert=.stunnel_config/cert.pem\n")
-            f.write("key=.stunnel_config/key.pem\n")
-            f.write("sslVersion = all\n")
-            f.write("debug = 7\n\n")
-            f.write("[https]\n")
-            f.write("client = no\n")
-            f.write("accept = 1" + str(self.address) + "\n")
-            f.write("connect = 127.0.0.1:" + str(self.address))
-        command = ["/usr/bin/stunnel", filename]
-        p = subprocess.Popen(command)
-        stunnel_pid = p.pid
-        p.wait()
 
     def _get_streaming_address(self):
         address = "https://"
@@ -186,55 +169,44 @@ class CameraModule(base_module.Module):
             t.sleep(60 * 60)
             image = self.get_measurement()
             # TODO: Image could be saved somewhere?
-            # u.manage_measurement(device_id, device_token, self.id,
-            #                     self.type_number, image, self._get_streaming_address())
 
-    def _start_camera_thread(self):
-        global mjpg_streamer_pid
-        password_subcommand = ""
-        if self.password != "":
-            password_subcommand = " -c " + self.login + ":" + self.password
+    def _start_stunnel(self):
+        filename = "/tmp/stunnel" + str(self.id) + ".conf"
+        with open(filename, "w") as f:
+            f.write("cert=.stunnel_config/cert.pem\n")
+            f.write("key=.stunnel_config/key.pem\n")
+            f.write("sslVersion = all\n")
+            f.write("debug = 7\n\n")
+            f.write("[https]\n")
+            f.write("client = no\n")
+            f.write("accept = 1" + str(self.address) + "\n")
+            f.write("connect = 127.0.0.1:" + str(self.address))
+        command = ["/usr/bin/stunnel", filename]
+        self.stunnel = subprocess.Popen(command)
 
+    def _start_mjpeg_streamer(self):
+        password_subcommand = "" if not self.password else " -c " + self.login + ":" + self.password
         os.environ['LD_LIBRARY_PATH'] = '/usr/local/lib/'
-        # os.environ['LD_PRELOAD'] = '/usr/lib/uv4l/uv4lext/armv6l/libuv4lext.so'
         command = ["/usr/local/bin/mjpg_streamer", "-i", "input_uvc.so -n -q 50 -f 30 -d " + str(self.gpio),
                    "-o", "output_http.so -p " + self.address + password_subcommand]
+        self.mjpeg_streamer = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ)
 
-        # Preparing thread and subprocess
+    def _start_snapshot_thread(self):
         thread1 = threading.Thread(target=self._snapshot_thread, args=())
-        thread2 = threading.Thread(target=self._start_stunnel, args=())
-        p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ)
-        mjpg_streamer_pid = p.pid
-        thread1.daemon = thread2.daemon = True
+        thread1.daemon = True
         thread1.start()
-        thread2.start()
 
-        return p
-
-
-def _try_to_kill_process(pid):
-    try:
-        os.kill(pid, signal.SIGINT)
-    except OSError:
-        pass
-
-
-def _signal_handler(*_):
-    global stunnel_pid, mjpg_streamer_pid
-    if stunnel_pid is not None: _try_to_kill_process(stunnel_pid)
-    if mjpg_streamer_pid is not None: _try_to_kill_process(mjpg_streamer_pid)
-    sys.exit(0)
+    def _sigint_handler(self, *_):
+        self.should_end = True
+        if self.mjpeg_streamer is not None:
+            end_process(self.mjpeg_streamer, 5, True)
+        if self.stunnel is not None:
+            end_process(self.stunnel, 5, True)
 
 
 if __name__ == "__main__":
     print 'Camera: started.'
-    signal.signal(signal.SIGINT, _signal_handler)
     conf_line = sys.argv[1]
 
     camera = CameraModule(conf_line)
-    process = camera.start_work()
-
-    # Await some response from subprocess
-    for line in process.stderr.readlines():
-        print(line),
-    process.wait()
+    camera.start_work()

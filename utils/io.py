@@ -46,7 +46,23 @@ def non_empty_numeric_input(message=''):
     """
     while True:
         try:
-            answer = int(IO.non_empty_input(message))
+            answer = int(non_empty_input(message))
+            break
+        except ValueError:
+            continue
+    return answer
+
+
+def non_empty_positive_numeric_input(message=''):
+    """
+    Reads user input discarding all empty and non-integer messages
+    :param message: message to display
+    :return: user's input number
+    """
+    while True:
+        try:
+            answer = int(non_empty_input(message))
+            if answer < 0: continue
             break
         except ValueError:
             continue
