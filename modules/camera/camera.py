@@ -189,7 +189,7 @@ class CameraModule(base_module.Module):
         os.environ['LD_LIBRARY_PATH'] = '/usr/local/lib/'
         command = ["/usr/local/bin/mjpg_streamer", "-i", "input_uvc.so -n -q 50 -f 30 -d " + str(self.gpio),
                    "-o", "output_http.so -p " + self.address + password_subcommand]
-        self.mjpeg_streamer = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ)
+        self.mjpeg_streamer = subprocess.Popen(command, env=os.environ)
 
     def _start_snapshot_thread(self):
         thread1 = threading.Thread(target=self._snapshot_thread, args=())
