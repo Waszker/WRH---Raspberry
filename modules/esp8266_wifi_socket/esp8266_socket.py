@@ -29,6 +29,8 @@ class ESP8266SocketModule(base_module.Module):
         base_module.Module.__init__(self, configuration_file_line)
         self.type_number = ESP8266SocketModule.type_number
         self.type_name = ESP8266SocketModule.type_name
+        self.socket = None
+        self.should_end = False
 
     @staticmethod
     def is_configuration_line_sane(configuration_line):
@@ -131,31 +133,12 @@ class ESP8266SocketModule(base_module.Module):
         send "ON" or "OFF" message followed by ; and time for which socket should be in mentioned state.
         Optionally "STATE" message can be sent which results in state of the socket being returned.
         """
-        host = ''
-        port = self.address
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        while True:
-            try:
-                s.bind((host, int(port)))
-                break
-            except socket.error as msg:
-                print 'ESP8266 Wifi socket' + self.gpio + ' port bind failed. Error Code : ' + str(
-                    msg[0]) + ' Message ' + msg[1]
-                time.sleep(10)  # Sleep 10 seconds before retrying
-        print "ESP8266 WiFi socket: " + self.gpio + " started listening"
-        while True:
-            s.listen(10)
-            connection, address = s.accept()
-            data = str(connection.recv(1024) + ",").split(',')
-            state, time_wait = data[0], data[1]
-            if str(state) == "ON" or str(state) == "on":
-                self._set_socket_state(True, time_wait)
-            elif str(state) == "OFF" or str(state) == "off":
-                self._set_socket_state(False, time_wait)
-            elif str(state) == "STATE" or str(state) == "state":
-                connection.send(self.get_measurement())
-            connection.close()
-        s.close()
+        signal.signal(signal.SIGINT, self._sigint_handler)
+        self._bind_to_socket()
+        try:
+            if self.should_end is False: self._await_connection()
+        except socket.error:
+            pass
 
     def get_html_representation(self, website_host_address):
         """
@@ -209,16 +192,42 @@ class ESP8266SocketModule(base_module.Module):
         except urllib2.URLError, socket.timeout:
             pass
 
+    def _bind_to_socket(self):
+        host = ''
+        port = self.address
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        while self.should_end is False:
+            try:
+                self.socket.bind((host, int(port)))
+                break
+            except socket.error as msg:
+                print 'ESP8266 Wifi socket' + self.gpio + ' port bind failed. Error Code : ' + str(
+                    msg[0]) + ' Message ' + msg[1]
+                time.sleep(10)  # Sleep 10 seconds before retrying
 
-def _siginit_handler(*_):
-    print 'ESP8266: SIGINT signal caught'
-    sys.exit(0)
+    def _await_connection(self):
+        print "ESP8266 WiFi socket: " + self.gpio + " started listening"
+        while self.should_end is False:
+            self.socket.listen(10)
+            connection, address = self.socket.accept()
+            data = str(connection.recv(1024) + ",").split(',')
+            state, time_wait = data[0], data[1]
+            if str(state) == "ON" or str(state) == "on":
+                self._set_socket_state(True, time_wait)
+            elif str(state) == "OFF" or str(state) == "off":
+                self._set_socket_state(False, time_wait)
+            elif str(state) == "STATE" or str(state) == "state":
+                connection.send(self.get_measurement())
+            connection.close()
+
+    def _sigint_handler(self, *_):
+        self.should_end = True
+        if self.socket is not None:
+            self.socket.shutdown(socket.SHUT_RDWR)
 
 
 if __name__ == "__main__":
     print 'ESP8266 WiFi socket: started.'
     conf_line = sys.argv[1]
-    signal.signal(signal.SIGINT, _siginit_handler)
-
     esp8266 = ESP8266SocketModule(conf_line)
     esp8266.start_work()
