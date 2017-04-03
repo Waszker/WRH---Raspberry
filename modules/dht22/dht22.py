@@ -10,6 +10,7 @@ from wrh_engine import module_base as base_module
 from utils.io import *
 
 ninput = non_empty_input
+iinput = non_empty_positive_numeric_input
 
 
 class DHT22Module(base_module.Module):
@@ -29,7 +30,8 @@ class DHT22Module(base_module.Module):
         base_module.Module.__init__(self, configuration_file_line)
         self.type_number = DHT22Module.type_number
         self.type_name = DHT22Module.type_name
-        self.last_temperature, self.last_humidity = None, None
+        self.last_temperature, self.last_humidity, self.socket = None, None, None
+        self.should_end = False
 
     @staticmethod
     def is_configuration_line_sane(configuration_line):
@@ -57,8 +59,8 @@ class DHT22Module(base_module.Module):
         Creates module configuration line.
         :return: Properly formatted configuration file line
         """
-        return str(self.type_number) + ";" + str(
-            self.id) + ";" + self.name + ";" + str(self.gpio) + ";" + str(self.interval) + ";" + self.address
+        return "%s;%s;%s;%s;%s;%s" % tuple(map(str, (self.type_number, self.id, self.name, self.gpio,
+                                                     self.interval, self.address)))
 
     def _parse_configuration_line(self, configuration_file_line):
         """
@@ -94,15 +96,9 @@ class DHT22Module(base_module.Module):
         Runs interactive procedure to register new module.
         """
         base_module.Module.run_registration_procedure(self, new_id)
-        while True:
-            self.gpio = self._check_if_input_is_positive_integer(
-                ninput("Please input gpio pin number to which sensor is connected: "))
-            if self.gpio > 0: break
-        while True:
-            self.interval = self._check_if_input_is_positive_integer(ninput(
-                "Please input interval (in minutes) for taking consecutive measurements: "))
-            if self.interval > 0: break
-        self.address = ninput("Please input port on which this module will be listening for commands: ")
+        self.gpio = iinput("Please input gpio pin number to which sensor is connected: ")
+        self.interval = iinput("Please input interval (in minutes) for taking consecutive measurements: ")
+        self.address = iinput("Please input port on which this module will be listening for commands: ")
 
     def edit(self, device_id, device_token):
         """
@@ -117,8 +113,8 @@ class DHT22Module(base_module.Module):
         new_interval = raw_input("Please input new interval (in minutes) for taking consecutive measurements: ")
         new_address = raw_input("Please input new port on which this module will be listening for commands: ")
 
-        if new_gpio and self._check_if_input_is_positive_integer(new_gpio) > 0: self.gpio = new_gpio
-        if new_interval and self._check_if_input_is_positive_integer(new_interval) > 0: self.interval = new_interval
+        if new_gpio: self.gpio = new_gpio
+        if new_interval: self.interval = new_interval
         if new_address: self.address = new_address
         if new_name: self.name = new_name
 
@@ -126,14 +122,14 @@ class DHT22Module(base_module.Module):
         """
         Starts working procedure.
         """
+        signal.signal(signal.SIGINT, self._sigint_handler)
         web_thread = threading.Thread(target=self._web_service_thread)
-        web_thread.daemon = True
-        web_thread.start()
-
-        while True:
-            self.last_humidity, self.last_temperature = self.get_measurement()
-            # TODO: Send those values to WRH?
-            time.sleep(self.interval * 60)
+        measurement_thread = threading.Thread(target=self._measurement_thread)
+        for thread in (web_thread, measurement_thread):
+            thread.daemon = True
+            thread.start()
+        while self.should_end is False:
+            signal.pause()
 
     def get_html_representation(self, website_host_address):
         """
@@ -153,7 +149,21 @@ class DHT22Module(base_module.Module):
                <div id="dht22Div' + self.id + '" class="dht22Div"> </div>\
                </div>'
 
+    def _measurement_thread(self):
+        while self.should_end is False:
+            self.last_humidity, self.last_temperature = self.get_measurement()
+            # TODO: Send those values to WRH?
+            time.sleep(self.interval * 60)
+
     def _web_service_thread(self):
+        self.socket = self._bind_to_socket()
+        print DHT22Module.type_name + " " + self.name + " started listening"
+        try:
+            self._await_connection()
+        except socket.error:
+            pass
+
+    def _bind_to_socket(self):
         host = ''
         port = self.address
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -165,33 +175,26 @@ class DHT22Module(base_module.Module):
                 print DHT22Module.type_name + " " + self.name + 'port bind failed. Error Code : ' + str(
                     msg[0]) + ' Message ' + msg[1]
                 time.sleep(10)  # Sleep 10 seconds before retrying
-        print DHT22Module.type_name + " " + self.name + " started listening"
-        while True:
-            s.listen(10)
-            connection, address = s.accept()
+        return s
+
+    def _await_connection(self):
+        while self.should_end is False:
+            self.socket.listen(10)
+            connection, address = self.socket.accept()
             if self.last_temperature is not None and self.last_humidity is not None:
                 connection.send('{0:0.1f};{1:0.1f}'.format(self.last_humidity, self.last_temperature))
             else:
                 connection.send('?;?')
             connection.close()
-        s.close()
 
-    def _check_if_input_is_positive_integer(self, text):
-        try:
-            return int(text)
-        except ValueError:
-            return -1
-
-
-def _siginit_handler(_, __):
-    print "DHT22: SIGINT signal caught"
-    sys.exit(0)
+    def _sigint_handler(self, *_):
+        self.should_end = True
+        if self.socket: self.socket.close()
 
 
 if __name__ == "__main__":
     print 'DHT22 module: started.'
     conf_line = sys.argv[1]
-    signal.signal(signal.SIGINT, _siginit_handler)
 
     dht22 = DHT22Module(conf_line)
     dht22.start_work()

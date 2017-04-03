@@ -110,7 +110,7 @@ class CameraModule(base_module.Module):
         self.gpio = ninput("Please input name of the webcam device (usually /dev/video#, # is the specific number): ")
         self.address = iinput("Please input port on which streamed images can be accessed: ")
         self.login = raw_input("Please input login used to access the video stream (press ENTER if none): ")
-        self.password = "" if self.login else ninput("Please input password used to access the video stream: ")
+        self.password = ninput("Please input password used to access the video stream: ") if self.login else ""
 
     def edit(self, device_id, device_token):
         """
@@ -204,9 +204,9 @@ class CameraModule(base_module.Module):
 
     def _sigint_handler(self, *_):
         self.should_end = True
-        if does_process_exist(self.mjpeg_streamer):
+        if self.mjpeg_streamer is not None:
             end_process(self.mjpeg_streamer, 5, True)
-        if does_process_exist(self.stunnel):
+        if self.stunnel is not None:
             end_process(self.stunnel, 5, True)
 
 
