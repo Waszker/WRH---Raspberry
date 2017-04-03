@@ -154,7 +154,7 @@ class DHT22Module(base_module.Module):
                 self.last_humidity, self.last_temperature = self.get_measurement()
                 # TODO: Send those values to WRH?
                 time.sleep(self.interval * 60)
-            except exceptions.AttributeError:
+            except AttributeError:
                 pass
 
     def _web_service_thread(self):
