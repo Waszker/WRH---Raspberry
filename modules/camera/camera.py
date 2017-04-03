@@ -192,7 +192,7 @@ class CameraModule(base_module.Module):
             f.write("connect = 127.0.0.1:" + str(self.address))
         command = ["/usr/bin/stunnel", filename]
         self.stunnel = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        while does_process_exist(self.stunnel.poll()):
+        while does_process_exist(self.stunnel):
             _, err = self.stunnel.communicate()
             log(err, Color.FAIL)
 
