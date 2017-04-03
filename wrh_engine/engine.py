@@ -53,6 +53,7 @@ class WRHEngine:
                    '3': self._remove_module,
                    '4': self._run_system}
         while True:
+            self.should_end = False
             log('\n[1] Edit module\n[2] Add new module\n[3] Delete module\n[4] Start modules\n[5] Exit')
             choice = ninput('> ')
             if choice == '5': break
