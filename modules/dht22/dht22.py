@@ -189,7 +189,7 @@ class DHT22Module(base_module.Module):
 
     def _sigint_handler(self, *_):
         self.should_end = True
-        if self.socket: self.socket.close()
+        if self.socket is not None: self.socket.close()
 
 
 if __name__ == "__main__":
