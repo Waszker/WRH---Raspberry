@@ -120,6 +120,7 @@ class WRHEngine:
         # Run infinitely until SIGINT is caught
         while self.should_end is False:
             signal.pause()
+        self.overlord_instances = []
 
     def _signal_handler(self, sig, _):
         if sig == signal.SIGINT:
