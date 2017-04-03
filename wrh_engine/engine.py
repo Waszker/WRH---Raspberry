@@ -121,6 +121,8 @@ class WRHEngine:
         while self.should_end is False:
             signal.pause()
         self.overlord_instances = []
+        signal.signal(signal.SIGCHLD, signal.SIG_IGN)
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
 
     def _signal_handler(self, sig, _):
         if sig == signal.SIGINT:
