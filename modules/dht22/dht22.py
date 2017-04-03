@@ -125,7 +125,7 @@ class DHT22Module(base_module.Module):
         signal.signal(signal.SIGINT, self._sigint_handler)
         web_thread = threading.Thread(target=self._web_service_thread)
         measurement_thread = threading.Thread(target=self._measurement_thread)
-        web_thread.daemon = False
+        web_thread.daemon = True
         measurement_thread.daemon = True
         [thread.start() for thread in (web_thread, measurement_thread)]
         while self.should_end is False:
