@@ -164,7 +164,7 @@ class DHT22Module(base_module.Module):
             self._await_connection()
             self.socket.close()
         except socket.error as e:
-            log("Geto error %s" % e, Color.WARNING)
+            pass
 
     def _bind_to_socket(self):
         host = ''
