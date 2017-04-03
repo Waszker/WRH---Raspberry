@@ -151,9 +151,12 @@ class DHT22Module(base_module.Module):
 
     def _measurement_thread(self):
         while self.should_end is False:
-            self.last_humidity, self.last_temperature = self.get_measurement()
-            # TODO: Send those values to WRH?
-            time.sleep(self.interval * 60)
+            try:
+                self.last_humidity, self.last_temperature = self.get_measurement()
+                # TODO: Send those values to WRH?
+                time.sleep(self.interval * 60)
+            except exceptions.AttributeError:
+                pass
 
     def _web_service_thread(self):
         self.socket = self._bind_to_socket()
