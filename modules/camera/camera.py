@@ -138,8 +138,6 @@ class CameraModule(base_module.Module):
         Starts working procedure.
         """
         signal.signal(signal.SIGINT, self._sigint_handler)
-        self._mjpeg_streamer_thread()
-        self._stunnel_thread()
         self._start_camera_threads()
 
         while self.should_end is False:
