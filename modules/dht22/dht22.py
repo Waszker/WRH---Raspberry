@@ -7,9 +7,9 @@ import time
 
 import Adafruit_DHT
 from wrh_engine import module_base as base_module
-from utils.io import IO
+from utils.io import *
 
-ninput = IO.non_empty_input
+ninput = non_empty_input
 
 
 class DHT22Module(base_module.Module):

@@ -1,5 +1,8 @@
-from abc import ABCMeta, abstractmethod
 from enum import Enum
+
+"""
+Set of commands to deal with input/output operations.
+"""
 
 
 class Color(Enum):
@@ -13,49 +16,38 @@ class Color(Enum):
     UNDERLINE = '\033[4m'
 
 
-class IO:
+def log(message, color=Color.NORMAL):
     """
-    Abstract class dealing with input/output operations.
+    Prints provided message to the screen using color of choice.
+    :param message: text to display
+    :param color: color enum
     """
-    __metaclass__ = ABCMeta
+    isinstance(color, Color)
+    print ''.join((''.join(color), str(message), str(Color.NORMAL)))
 
-    @abstractmethod
-    def __init__(self):
-        pass
 
-    @staticmethod
-    def log(message, color=Color.NORMAL):
-        """
-        Prints provided message to the screen using color of choice.
-        :param message: text to display
-        :param color: color enum
-        """
-        isinstance(color, Color)
-        print ''.join((''.join(color), str(message), str(Color.NORMAL)))
+def non_empty_input(message=''):
+    """
+    Reads user input discarding all empty messages.
+    :param message: message to display
+    :return: user's input
+    """
+    answer = None
+    while answer is None or len(answer) == 0:
+        answer = raw_input(message)
+    return answer
 
-    @staticmethod
-    def non_empty_input(message=''):
-        """
-        Reads user input discarding all empty messages.
-        :param message: message to display
-        :return: user's input
-        """
-        answer = None
-        while answer is None or len(answer) == 0:
-            answer = raw_input(message)
-        return answer
 
-    @staticmethod
-    def non_empty_numeric_input(message=''):
-        """
-        Reads user input discarding all empty and non-integer messages
-        :param message: message to display
-        :return: user's input number
-        """
-        while True:
-            try:
-                answer = int(IO.non_empty_input(message))
-                break
-            except ValueError:
-                continue
-        return answer
+def non_empty_numeric_input(message=''):
+    """
+    Reads user input discarding all empty and non-integer messages
+    :param message: message to display
+    :return: user's input number
+    """
+    while True:
+        try:
+            answer = int(IO.non_empty_input(message))
+            break
+        except ValueError:
+            continue
+    return answer

@@ -1,27 +1,23 @@
 import os
 from wrh_exceptions import *
-from utils.io import IO, Color
-
-log = IO.log
+from utils.io import *
 
 
 class ConfigurationParser:
     """
     Class responsible for maintaining and parsing configuration file.
     Configuration file should store only one line for each installed module.
-    Each line should start with unique module number and its unique id that's the only defined configuration option!
+    Each line should start with unique module number and its unique id - that's the only defined configuration option!
     """
     configuration_filename = ".wrh.config"
 
     def __init__(self, configuration_file_path, module_classes):
-        # TODO: Add description
         """
-        :param configuration_file_path:
-        :param modules:
-        :param module_classes:
-        :raises FileNotFoundException:
-        :raises UnknownModuleException:
-        :raises BadConfigurationException:
+        Creates configuration parses object that parses configuration file in the provided path.
+        :param configuration_file_path: filesystem path in which configuration file is present
+        :param module_classes: list of module instances, one for each detected module in the system
+        :raises UnknownModuleException: configuration file contains unknown module info
+        :raises BadConfigurationException: configuration file is invalid
         """
         self.configuration_file = configuration_file_path + os.sep + self.configuration_filename
         if not os.path.isfile(self.configuration_file):
@@ -51,7 +47,7 @@ class ConfigurationParser:
 
     def get_new_module_id(self):
         """
-        Assigns new id for module.
+        Returns unique module id.
         """
         with open(self.configuration_file, 'r') as f:
             ids = [ConfigurationParser._get_module_id_from_line(line) for line in f]

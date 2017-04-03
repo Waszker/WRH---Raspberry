@@ -7,9 +7,9 @@ import threading
 import time
 
 from wrh_engine import module_base as base_module
-from utils.io import IO
+from utils.io import *
 
-ninput = IO.non_empty_input
+ninput = non_empty_input
 
 
 class SpeedTestModule(base_module.Module):

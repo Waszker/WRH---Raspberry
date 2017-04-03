@@ -8,9 +8,9 @@ import urllib2
 
 import requests
 from wrh_engine import module_base as base_module
-from utils.io import IO
+from utils.io import *
 
-ninput = IO.non_empty_input
+ninput = non_empty_input
 
 
 class RangoIrygaModule(base_module.Module):

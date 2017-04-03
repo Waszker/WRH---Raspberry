@@ -16,10 +16,10 @@ from urllib2 import urlopen
 
 import requests
 from wrh_engine import module_base as base_module
-from utils.io import IO
+from utils.io import *
 
-ninput = IO.non_empty_input
-iinput = IO.non_empty_numeric_input
+ninput = non_empty_input
+iinput = non_empty_numeric_input
 
 # Those two variables will be used by sigint handler
 # CAUTION: Those are global variables - don't use them unless you're sure what you're doing!

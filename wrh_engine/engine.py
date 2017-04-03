@@ -1,17 +1,18 @@
 import sys
-
-from utils.io import IO, Color
-from wrh_engine.configuration import *
+import os
+import signal
+from utils.io import *
+from wrh_engine.configuration import ConfigurationParser, BadConfigurationException, UnknownModuleException
 from wrh_engine.module_loader import ModuleDynamicLoader
 from wrh_engine.overlord import Overlord
 
-log = IO.log
-ninput = IO.non_empty_input
+ninput = non_empty_input
 
 
 class WRHEngine:
     """
     Main core of WRH system.
+    There should be only one instance of WRHEngine running in the system at a time (this is not checked!).
     """
     _modules_folder = 'modules/'
 
@@ -23,6 +24,7 @@ class WRHEngine:
         :raises UnknownModuleException:
         :raises BadConfigurationException:
         """
+        self.should_end = False
         self.args = argv
         log("WRH System main engine starting", (Color.BOLD, Color.UNDERLINE))
         log("Scanning for available modules")
@@ -31,6 +33,7 @@ class WRHEngine:
         self.module_classes = loader.get_module_classes()
         log("Found modules: ")
         [log('*' + str(module_name), Color.BLUE) for module_name in self.modules_info.keys()]
+        self.overlord_instances = []
 
     def start(self):
         """
@@ -106,5 +109,20 @@ class WRHEngine:
             sys.exit(1)
 
     def _run_system(self):
+        signal.signal(signal.SIGINT, self._signal_handler)
+        signal.signal(signal.SIGCHLD, self._signal_handler)
+
+        # If there should be more overlord instances - put them here
         overlord = Overlord(self.configuration_parser)
-        overlord.start_and_maintain()
+        overlord.start_modules()
+        self.overlord_instances.append(overlord)
+
+        # Run infinitely until SIGINT is caught
+        while self.should_end is False:
+            signal.pause()
+
+    def _signal_handler(self, sig, _):
+        if sig == signal.SIGINT:
+            self.should_end = True
+            signal.signal(signal.SIGCHLD, signal.SIG_IGN)
+        [overlord.handle_signal(sig) for overlord in self.overlord_instances]
