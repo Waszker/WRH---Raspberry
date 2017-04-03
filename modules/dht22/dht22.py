@@ -125,8 +125,7 @@ class DHT22Module(base_module.Module):
         signal.signal(signal.SIGINT, self._sigint_handler)
         web_thread = threading.Thread(target=self._web_service_thread)
         measurement_thread = threading.Thread(target=self._measurement_thread)
-        web_thread.daemon = True
-        measurement_thread.daemon = True
+        measurement_thread.daemon, web_thread.daemon = True, False
         [thread.start() for thread in (web_thread, measurement_thread)]
         while self.should_end is False:
             signal.pause()
@@ -194,7 +193,7 @@ class DHT22Module(base_module.Module):
     def _sigint_handler(self, *_):
         self.should_end = True
         if self.socket is not None:
-            self.socket.shutdown(socket.SHUT_WR)
+            self.socket.shutdown(socket.SHUT_RDWR)
 
 
 if __name__ == "__main__":
