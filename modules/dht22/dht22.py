@@ -184,7 +184,7 @@ class DHT22Module(base_module.Module):
     def _await_connection(self):
         self.socket.listen(10)
         while self.should_end is False:
-            log("Awaiting on " + str(socket), Color.BLUE)
+            log("Awaiting on " + str(self.socket), Color.BLUE)
             connection, address = self.socket.accept()
             if self.last_temperature is not None and self.last_humidity is not None:
                 connection.send('{0:0.1f};{1:0.1f}'.format(self.last_humidity, self.last_temperature))
