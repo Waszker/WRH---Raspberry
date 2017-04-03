@@ -138,12 +138,21 @@ class CameraModule(base_module.Module):
         Starts working procedure.
         """
         signal.signal(signal.SIGINT, self._sigint_handler)
-        self._start_mjpeg_streamer()
-        self._start_stunnel()
-        self._start_snapshot_thread()
+        self._mjpeg_streamer_thread()
+        self._stunnel_thread()
+        self._start_camera_threads()
 
         while self.should_end is False:
             signal.pause()
+
+    def _start_camera_threads(self):
+        snapshot_thread = threading.Thread(target=self._snapshot_thread, args=())
+        mjpeg_thread = threading.Thread(target=self._mjpeg_streamer_thread, args=())
+        stunnel_thread = threading.Thread(target=self._stunnel_thread(), args=())
+        threads = [snapshot_thread, mjpeg_thread, stunnel_thread]
+        for thread in threads:
+            thread.daemon = True
+            thread.start()
 
     def get_html_representation(self, website_host_address):
         """
@@ -170,7 +179,7 @@ class CameraModule(base_module.Module):
             image = self.get_measurement()
             # TODO: Image could be saved somewhere?
 
-    def _start_stunnel(self):
+    def _stunnel_thread(self):
         filename = "/tmp/stunnel" + str(self.id) + ".conf"
         with open(filename, "w") as f:
             f.write("cert=.stunnel_config/cert.pem\n")
@@ -182,19 +191,20 @@ class CameraModule(base_module.Module):
             f.write("accept = 1" + str(self.address) + "\n")
             f.write("connect = 127.0.0.1:" + str(self.address))
         command = ["/usr/bin/stunnel", filename]
-        self.stunnel = subprocess.Popen(command)
+        self.stunnel = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        while True:
+            _, err = self.stunnel.communicate()
+            log(err, Color.FAIL)
 
-    def _start_mjpeg_streamer(self):
+    def _mjpeg_streamer_thread(self):
         password_subcommand = "" if not self.password else " -c " + self.login + ":" + self.password
         os.environ['LD_LIBRARY_PATH'] = '/usr/local/lib/'
         command = ["/usr/local/bin/mjpg_streamer", "-i", "input_uvc.so -n -q 50 -f 30 -d " + str(self.gpio),
                    "-o", "output_http.so -p " + self.address + password_subcommand]
-        self.mjpeg_streamer = subprocess.Popen(command, env=os.environ)
-
-    def _start_snapshot_thread(self):
-        thread1 = threading.Thread(target=self._snapshot_thread, args=())
-        thread1.daemon = True
-        thread1.start()
+        self.mjpeg_streamer = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ)
+        while True:
+            _, err = self.mjpeg_streamer.communicate()
+            log(err, Color.FAIL)
 
     def _sigint_handler(self, *_):
         self.should_end = True
