@@ -164,8 +164,8 @@ class DHT22Module(base_module.Module):
         try:
             self._await_connection()
             self.socket.close()
-        except socket.error:
-            pass
+        except socket.error as e:
+            log("Geto error %s" % e, Color.WARNING)
 
     def _bind_to_socket(self):
         host = ''
@@ -176,7 +176,7 @@ class DHT22Module(base_module.Module):
                 s.bind((host, int(port)))
                 break
             except socket.error as msg:
-                print DHT22Module.type_name + " " + self.name + 'port bind failed. Error Code : ' + str(
+                print DHT22Module.type_name + " " + self.name + ' port bind failed. Error Code : ' + str(
                     msg[0]) + ' Message ' + msg[1]
                 time.sleep(10)  # Sleep 10 seconds before retrying
         return s
