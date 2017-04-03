@@ -125,9 +125,9 @@ class DHT22Module(base_module.Module):
         signal.signal(signal.SIGINT, self._sigint_handler)
         web_thread = threading.Thread(target=self._web_service_thread)
         measurement_thread = threading.Thread(target=self._measurement_thread)
-        for thread in (web_thread, measurement_thread):
-            thread.daemon = True
-            thread.start()
+        web_thread.daemon = False
+        measurement_thread.daemon = True
+        [thread.start() for thread in (web_thread, measurement_thread)]
         while self.should_end is False:
             signal.pause()
 
@@ -163,6 +163,7 @@ class DHT22Module(base_module.Module):
         print DHT22Module.type_name + " " + self.name + " started listening"
         try:
             self._await_connection()
+            self.socket.close()
         except socket.error:
             pass
 
