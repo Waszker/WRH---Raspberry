@@ -192,9 +192,7 @@ class CameraModule(base_module.Module):
             f.write("connect = 127.0.0.1:" + str(self.address))
         command = ["/usr/bin/stunnel", filename]
         self.stunnel = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        while does_process_exist(self.stunnel):
-            _, err = self.stunnel.communicate()
-            log(err, Color.FAIL)
+        print_process_errors(self.stunnel)
 
     def _mjpeg_streamer_thread(self):
         password_subcommand = "" if not self.password else " -c " + self.login + ":" + self.password
@@ -202,9 +200,7 @@ class CameraModule(base_module.Module):
         command = ["/usr/local/bin/mjpg_streamer", "-i", "input_uvc.so -n -q 50 -f 30 -d " + str(self.gpio),
                    "-o", "output_http.so -p " + self.address + password_subcommand]
         self.mjpeg_streamer = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ)
-        while does_process_exist(self.mjpeg_streamer):
-            _, err = self.mjpeg_streamer.communicate()
-            log(err, Color.FAIL)
+        print_process_errors(self.mjpeg_streamer)
 
     def _sigint_handler(self, *_):
         self.should_end = True

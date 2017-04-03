@@ -16,6 +16,18 @@ def does_process_exist(process):
     return process.poll() is None
 
 
+def print_process_errors(process):
+    """
+    Awaits process error information on the STDERR stream.
+    Process should be piped!
+    This method does not return until process finishes!
+    :param process: process to be polled
+    """
+    while does_process_exist(process):
+        _, err = process.communicate()
+        log(err, Color.FAIL)
+
+
 def end_process(process, timeout, suppress_messages=False):
     """
     Tries to end process by sending SIGINT signal. The request is repeated until process ends or timeout is reached.
