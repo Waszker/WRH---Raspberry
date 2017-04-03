@@ -7,6 +7,15 @@ Set of functions to deal with processes in the operating system.
 """
 
 
+def does_process_exist(process):
+    """
+    Checks if certain process exists in the system.
+    :param process: process to be checked
+    :return: boolean
+    """
+    return process.poll() is None
+
+
 def end_process(process, timeout, suppress_messages=False):
     """
     Tries to end process by sending SIGINT signal. The request is repeated until process ends or timeout is reached.
@@ -18,10 +27,10 @@ def end_process(process, timeout, suppress_messages=False):
     try:
         if not suppress_messages: log('Sending SIGINT to process: ' + str(process.pid))
         process.send_signal(signal.SIGINT)
-        while process.poll() is None and timeout > 0:
+        while does_process_exist(process) and timeout > 0:
             time.sleep(1)
             timeout -= 1
-        if process.poll() is None:
+        if does_process_exist(process):
             if not suppress_messages:
                 log('Process ' + str(process.pid) + " not responding. Sending SIGTERM.", Color.WARNING)
             process.terminate()
