@@ -130,7 +130,7 @@ class ESP8266SocketModule(base_module.Module):
         Optionally "STATE" message can be sent which results in state of the socket being returned.
         """
         base_module.Module.start_work(self)
-        while self.should_end is False:
+        while self._should_end is False:
             signal.pause()
 
     def get_html_representation(self, website_host_address):

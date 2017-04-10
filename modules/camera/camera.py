@@ -37,7 +37,6 @@ class CameraModule(base_module.Module):
         self.type_number = CameraModule.type_number
         self.type_name = CameraModule.type_name
         self.mjpeg_streamer, self.stunnel = None, None
-        self.should_end = False
 
     @staticmethod
     def is_configuration_line_sane(configuration_line):
@@ -139,7 +138,7 @@ class CameraModule(base_module.Module):
         signal.signal(signal.SIGINT, self._sigint_handler)
         self._start_camera_threads()
 
-        while self.should_end is False:
+        while self._should_end is False:
             signal.pause()
 
     def _start_camera_threads(self):
@@ -200,7 +199,7 @@ class CameraModule(base_module.Module):
         print_process_errors(self.mjpeg_streamer)
 
     def _sigint_handler(self, *_):
-        self.should_end = True
+        self._should_end = True
         if self.mjpeg_streamer is not None:
             end_process(self.mjpeg_streamer, 5, True)
         if self.stunnel is not None:

@@ -123,7 +123,7 @@ class DHT22Module(base_module.Module):
         measurement_thread = threading.Thread(target=self._measurement_thread)
         measurement_thread.daemon = True
         measurement_thread.start()
-        while self.should_end is False:
+        while self._should_end is False:
             signal.pause()
 
     def get_html_representation(self, website_host_address):
@@ -145,7 +145,7 @@ class DHT22Module(base_module.Module):
                </div>'
 
     def _measurement_thread(self):
-        while self.should_end is False:
+        while self._should_end is False:
             try:
                 self.last_humidity, self.last_temperature = self.get_measurement()
                 # TODO: Send those values to WRH?

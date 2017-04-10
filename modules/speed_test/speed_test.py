@@ -137,7 +137,7 @@ class SpeedTestModule(base_module.Module):
         measurement_thread.daemon = True
         measurement_thread.start()
 
-        while self.should_end is False:
+        while self._should_end is False:
             signal.pause()
 
     def get_html_representation(self, website_host_address):
@@ -162,7 +162,7 @@ class SpeedTestModule(base_module.Module):
         connection.send(str(self.last_download) + " " + str(self.last_upload))
 
     def _measurement_thread(self):
-        while self.should_end is False:
+        while self._should_end is False:
             self.last_download, self.last_upload = self.get_measurement()
             time.sleep(self.interval * 60)
 
