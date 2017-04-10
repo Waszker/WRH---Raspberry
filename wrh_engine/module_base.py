@@ -25,7 +25,7 @@ class Module:
 
         self._should_end, self._socket = False, None
 
-    def _set_basic_information(self, module_id, module_name, type_number, type_name, gpio, address):
+    def _set_basic_information(self, module_id, module_name, type_number, type_name, gpio, port):
         """
         Sets basic information needed for every module in WRH.
         """
@@ -34,7 +34,7 @@ class Module:
         self.type_number = type_number
         self.type_name = type_name
         self.gpio = gpio
-        self.address = address
+        self.port = port
 
     @staticmethod
     @abstractmethod
@@ -126,7 +126,7 @@ class Module:
         predicate = (lambda: self._should_end is False)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        bind_result = wait_bind_socket(self.socket, '', self.address, 10, predicate=predicate,
+        bind_result = wait_bind_socket(self.socket, '', self.port, 10, predicate=predicate,
                                        error_message="%s %s port bind failed. \
                                        (ERROR_CODE, ERROR_MESSAGE) = " % (Module.type_name, self.name))
         if bind_result is True:

@@ -57,7 +57,7 @@ class DHT22Module(base_module.Module):
         :return: Properly formatted configuration file line
         """
         return "%s;%s;%s;%s;%s;%s" % tuple(map(str, (self.type_number, self.id, self.name, self.gpio,
-                                                     self.interval, self.address)))
+                                                     self.interval, self.port)))
 
     def _parse_configuration_line(self, configuration_file_line):
         """
@@ -68,7 +68,7 @@ class DHT22Module(base_module.Module):
         self.name = matches.group(2)
         self.gpio = int(matches.group(3))
         self.interval = int(matches.group(4))
-        self.address = matches.group(5)
+        self.port = matches.group(5)
 
     def get_measurement(self):
         """
@@ -95,7 +95,7 @@ class DHT22Module(base_module.Module):
         base_module.Module.run_registration_procedure(self, new_id)
         self.gpio = iinput("Please input gpio pin number to which sensor is connected: ")
         self.interval = iinput("Please input interval (in minutes) for taking consecutive measurements: ")
-        self.address = iinput("Please input port on which this module will be listening for commands: ")
+        self.port = iinput("Please input port on which this module will be listening for commands: ")
 
     def edit(self, device_id, device_token):
         """
@@ -108,11 +108,11 @@ class DHT22Module(base_module.Module):
         new_name = raw_input('New module\'s name: ')
         new_gpio = raw_input("Please input new gpio pin number to which sensor is connected: ")
         new_interval = raw_input("Please input new interval (in minutes) for taking consecutive measurements: ")
-        new_address = raw_input("Please input new port on which this module will be listening for commands: ")
+        new_port = raw_input("Please input new port on which this module will be listening for commands: ")
 
         if new_gpio: self.gpio = new_gpio
         if new_interval: self.interval = new_interval
-        if new_address: self.address = new_address
+        if new_port: self.port = new_port
         if new_name: self.name = new_name
 
     def start_work(self):
@@ -134,7 +134,7 @@ class DHT22Module(base_module.Module):
                <script> function update_measurements_dht22_' + self.id + '(text) \n\
                { var res = text.split(";"); var h = res[0]; var t = res[1]; \
                document.getElementById("dht22Div' + self.id + '").innerHTML = "Humidity: " + h + "% Temperature: " + t + "*C"; } \n\
-               function getMeasurements' + self.id + '() { getRequest("localhost", ' + self.address + ', "", update_measurements_dht22_' + self.id + '); } \
+               function getMeasurements' + self.id + '() { getRequest("localhost", ' + self.port + ', "", update_measurements_dht22_' + self.id + '); } \
                getMeasurements' + self.id + '(); \
                setInterval(function() { \n\
                getMeasurements' + self.id + '(); \n\

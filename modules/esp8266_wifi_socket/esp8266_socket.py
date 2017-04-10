@@ -55,7 +55,7 @@ class ESP8266SocketModule(base_module.Module):
         Creates module configuration line
         :return: Properly formatted configuration file line
         """
-        return str(self.type_number) + ";" + str(self.id) + ";" + self.name + ";" + self.gpio + ";" + self.address
+        return str(self.type_number) + ";" + str(self.id) + ";" + self.name + ";" + self.gpio + ";" + self.port
 
     def _parse_configuration_line(self, configuration_file_line):
         """
@@ -65,7 +65,7 @@ class ESP8266SocketModule(base_module.Module):
         self.id = matches.group(1)
         self.name = matches.group(2)
         self.gpio = matches.group(3)
-        self.address = matches.group(4)
+        self.port = matches.group(4)
 
     def get_measurement(self):
         """
@@ -105,7 +105,7 @@ class ESP8266SocketModule(base_module.Module):
         """
         base_module.Module.run_registration_procedure(self, new_id)
         self.gpio = ninput("Please input ESP8266 WiFi socket IP address: ")
-        self.address = ninput("Please input port on which module will be listening for commands: ")
+        self.port = ninput("Please input port on which module will be listening for commands: ")
 
     def edit(self, device_id, device_token):
         """
@@ -117,10 +117,10 @@ class ESP8266SocketModule(base_module.Module):
         print 'Name changing requires active Internet connection'
         new_name = raw_input('New module\'s name: ')
         new_gpio = raw_input("Please input new IP address of ESP8266 device: ")
-        new_address = raw_input("Please input new port on which module will be listening for commands: ")
+        new_port = raw_input("Please input new port on which module will be listening for commands: ")
 
         if new_gpio: self.gpio = new_gpio
-        if new_address: self.address = new_address
+        if new_port: self.port = new_port
         if new_name: self.name = new_name
 
     def start_work(self):
@@ -162,11 +162,11 @@ class ESP8266SocketModule(base_module.Module):
                 } \n\
                 function getState' + self.id + '() { \
                 document.getElementById("esp8266SocketDiv' + self.id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />"; \
-                    getRequest("localhost", ' + self.address + ', "STATE", update_state_message' + self.id + '); \
+                    getRequest("localhost", ' + self.port + ', "STATE", update_state_message' + self.id + '); \
                 } \
                 function setState' + self.id + '(state, input_id) { \
                     time_wait = input_id == null ? -1 : document.getElementById(input_id).value; \
-                    sendRequest(\'localhost\', ' + self.address + ', state + "," + time_wait); getState' + self.id + '(); \
+                    sendRequest(\'localhost\', ' + self.port + ', state + "," + time_wait); getState' + self.id + '(); \
                 } \
                 getState' + self.id + '(); \
                 setInterval(function() { \n\

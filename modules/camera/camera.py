@@ -64,7 +64,7 @@ class CameraModule(base_module.Module):
         :return: Properly formatted configuration file line
         """
         return '%s;%s;%s;%s;%s;%s;%s' % tuple(map(str, (self.type_number, self.id, self.name,
-                                                        self.gpio, self.address, self.login, self.password)))
+                                                        self.gpio, self.port, self.login, self.password)))
 
     def _parse_configuration_line(self, configuration_file_line):
         """
@@ -74,7 +74,7 @@ class CameraModule(base_module.Module):
         self.id = matches.group(1)
         self.name = matches.group(2)
         self.gpio = matches.group(3)
-        self.address = matches.group(4)
+        self.port = matches.group(4)
         self.login = matches.group(5)
         self.password = matches.group(6)
 
@@ -82,7 +82,7 @@ class CameraModule(base_module.Module):
         """
         Returns base64 encoded string containing image taken from connected USB camera.
         """
-        r = requests.get("http://localhost:" + str(self.address) + "?action=snapshot",
+        r = requests.get("http://localhost:" + str(self.port) + "?action=snapshot",
                          auth=(str(self.login), str(self.password)))
         image = base64.b64encode(r.content)
         return image
@@ -106,7 +106,7 @@ class CameraModule(base_module.Module):
         """
         base_module.Module.run_registration_procedure(self, new_id)
         self.gpio = ninput("Please input name of the webcam device (usually /dev/video#, # is the specific number): ")
-        self.address = iinput("Please input port on which streamed images can be accessed: ")
+        self.port = iinput("Please input port on which streamed images can be accessed: ")
         self.login = raw_input("Please input login used to access the video stream (press ENTER if none): ")
         self.password = ninput("Please input password used to access the video stream: ") if self.login else ""
 
@@ -121,12 +121,12 @@ class CameraModule(base_module.Module):
         new_name = raw_input('New module\'s name: ')
         new_gpio = raw_input(
             "Please input new name of the webcam device (usually /dev/video# where # is the specific number): ")
-        new_address = raw_input("Please input new port on which streamed images can be accessed: ")
+        new_port = raw_input("Please input new port on which streamed images can be accessed: ")
         new_login = raw_input("Please input new login used to access the video stream: ")
         new_password = raw_input("Please input new password used to access the video stream: ")
 
         if new_gpio: self.gpio = new_gpio
-        if new_address: self.address = new_address
+        if new_port: self.port = new_port
         if new_login: self.login = new_login
         if new_password: self.password = new_password
         if new_name: self.name = new_name
@@ -158,12 +158,12 @@ class CameraModule(base_module.Module):
         :return:
         """
         return "<div class=\"card-panel\"><h5>" + self.name + "</h5> \
-            <img style=\"width: 50%\" src = \"http://" + website_host_address + ":" + self.address + "/?action=stream\" /></div>"
+            <img style=\"width: 50%\" src = \"http://" + website_host_address + ":" + self.port + "/?action=stream\" /></div>"
 
     def _get_streaming_address(self):
         address = "https://"
         address += str(urlopen('http://ip.42.pl/raw').read())
-        address += ":1" + str(self.address)
+        address += ":1" + str(self.port)
         return address
 
     def _snapshot_thread(self):
@@ -184,8 +184,8 @@ class CameraModule(base_module.Module):
             f.write("debug = 7\n\n")
             f.write("[https]\n")
             f.write("client = no\n")
-            f.write("accept = 1" + str(self.address) + "\n")
-            f.write("connect = 127.0.0.1:" + str(self.address))
+            f.write("accept = 1" + str(self.port) + "\n")
+            f.write("connect = 127.0.0.1:" + str(self.port))
         command = ["/usr/bin/stunnel", filename]
         self.stunnel = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         print_process_errors(self.stunnel)
@@ -194,7 +194,7 @@ class CameraModule(base_module.Module):
         password_subcommand = "" if not self.password else " -c " + self.login + ":" + self.password
         os.environ['LD_LIBRARY_PATH'] = '/usr/local/lib/'
         command = ["/usr/local/bin/mjpg_streamer", "-i", "input_uvc.so -n -q 50 -f 30 -d " + str(self.gpio),
-                   "-o", "output_http.so -p " + self.address + password_subcommand]
+                   "-o", "output_http.so -p " + self.port + password_subcommand]
         self.mjpeg_streamer = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ)
         print_process_errors(self.mjpeg_streamer)
 

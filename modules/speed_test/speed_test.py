@@ -9,6 +9,7 @@ from wrh_engine import module_base as base_module
 from utils.io import *
 
 ninput = non_empty_input
+iinput = non_empty_positive_numeric_input
 
 
 class SpeedTestModule(base_module.Module):
@@ -52,7 +53,7 @@ class SpeedTestModule(base_module.Module):
         :return: Properly formatted configuration file line
         """
         return str(self.type_number) + ";" + str(self.id) + ";" + self.name + ";" + str(self.interval) + ";" + str(
-            self.address)
+            self.port)
 
     def _parse_configuration_line(self, configuration_file_line):
         """
@@ -62,7 +63,7 @@ class SpeedTestModule(base_module.Module):
         self.id = matches.group(1)
         self.name = matches.group(2)
         self.interval = int(matches.group(3))
-        self.address = int(matches.group(4))
+        self.port = int(matches.group(4))
 
     def get_measurement(self):
         """
@@ -103,14 +104,8 @@ class SpeedTestModule(base_module.Module):
         Runs interactive procedure to register new module.
         """
         base_module.Module.run_registration_procedure(self, new_id)
-        while True:
-            self.interval = SpeedTestModule._parse_input_as_integer(ninput(
-                "Please input interval (in minutes) for taking consecutive measurements: "))
-            if self.interval > 0: break
-        while True:
-            self.address = SpeedTestModule._parse_input_as_integer(ninput(
-                "Please input port on which this module will be listening for commands: "))
-            if self.address > 0: break
+        self.interval = iinput("Please input interval (in minutes) for taking consecutive measurements: ")
+        self.port = iinput("Please input port on which this module will be listening for commands: ")
 
     def edit(self, device_id, device_token):
         """
@@ -122,10 +117,10 @@ class SpeedTestModule(base_module.Module):
         print 'Name changing requires active Internet connection'
         new_name = raw_input('New module\'s name: ')
         new_interval = raw_input("Please input new interval (in minutes) for taking consecutive measurements: ")
-        new_address = raw_input("Please input new port on which this module will be listening for commands: ")
+        new_port = raw_input("Please input new port on which this module will be listening for commands: ")
 
-        if new_interval and self._parse_input_as_integer(new_interval) > 0: self.interval = new_interval
-        if new_address: self.address = new_address
+        if new_interval: self.interval = new_interval
+        if new_port: self.port = new_port
         if new_name: self.name = new_name
 
     def start_work(self):
@@ -147,7 +142,7 @@ class SpeedTestModule(base_module.Module):
         return '<div class="card-panel"> \
                <script> function update_measurements_speedtest_' + str(self.id) + '(text) \n\
                { document.getElementById("speedTestDiv' + str(self.id) + '").innerHTML = text; } \n\
-               function getMeasurements' + str(self.id) + '() { getRequest("localhost", ' + str(self.address) + ', "", \
+               function getMeasurements' + str(self.id) + '() { getRequest("localhost", ' + str(self.port) + ', "", \
                update_measurements_speedtest_' + str(self.id) + '); } \
                getMeasurements' + str(self.id) + '(); \
                setInterval(function() { \n\
@@ -165,13 +160,6 @@ class SpeedTestModule(base_module.Module):
         while self._should_end is False:
             self.last_download, self.last_upload = self.get_measurement()
             time.sleep(self.interval * 60)
-
-    @staticmethod
-    def _parse_input_as_integer(text):
-        try:
-            return int(text)
-        except ValueError:
-            return -1
 
 
 if __name__ == "__main__":
