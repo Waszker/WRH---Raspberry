@@ -35,7 +35,6 @@ class DHT22Module(base_module.Module):
     def is_configuration_line_sane(configuration_line):
         """
         Checks if configuration line for this module is well formed.
-        :param self:
         :param configuration_line:
         :return:
         """
@@ -122,7 +121,7 @@ class DHT22Module(base_module.Module):
         """
         base_module.Module.start_work(self)
         measurement_thread = threading.Thread(target=self._measurement_thread)
-        measurement_thread.daemon  = True
+        measurement_thread.daemon = True
         measurement_thread.start()
         while self.should_end is False:
             signal.pause()
@@ -153,7 +152,6 @@ class DHT22Module(base_module.Module):
                 time.sleep(self.interval * 60)
             except AttributeError:
                 pass
-
 
     def _react_to_connection(self, connection, _):
         if self.last_temperature is not None and self.last_humidity is not None:

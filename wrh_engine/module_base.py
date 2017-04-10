@@ -1,5 +1,5 @@
 import signal
-import socket as s
+import socket
 from abc import abstractmethod
 import threading
 from utils.sockets import *
@@ -101,6 +101,7 @@ class Module:
         """
         pass
 
+    @abstractmethod
     def start_work(self):
         """
         Starts working procedure.
@@ -121,18 +122,17 @@ class Module:
         pass
 
     def _web_service_thread(self):
-        predicate=(lambda: self.should_end is False)
+        predicate = (lambda: self.should_end is False)
         self.socket = s.socket(s.AF_INET, s.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        bind_result =  wait_bind_socket('', self.address, 10, predicate=predicate,
-                                        error_message="%s %s port bind failed. \
-                                        (ERROR_CODE, ERROR_MESSAGE) = " % (Module.type_name, self.name))
+        bind_result = wait_bind_socket(self.socket, '', self.address, 10, predicate=predicate,
+                                       error_message="%s %s port bind failed. \
+                                       (ERROR_CODE, ERROR_MESSAGE) = " % (Module.type_name, self.name))
         if bind_result is True:
             print "%s %s started listening" % (Module.type_name, self.name)
             self.socket.listen(10)
             await_connection(self.socket, self._react_to_connection, predicate=predicate)
 
-    @abstractmethod
     def _react_to_connection(self, connection, client_address):
         """
         Send some information about current module state.

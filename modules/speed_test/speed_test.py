@@ -30,7 +30,6 @@ class SpeedTestModule(base_module.Module):
     def is_configuration_line_sane(configuration_line):
         """
         Checks if configuration line for this module is well formed.
-        :param self:
         :param configuration_line:
         :return:
         """
@@ -159,7 +158,7 @@ class SpeedTestModule(base_module.Module):
                <div id="speedTestDiv' + str(self.id) + '" class="speedTestDiv"> </div>\
                </div>'
 
-    def react_to_connection(self, connection, _):
+    def _react_to_connection(self, connection, _):
         connection.send(str(self.last_download) + " " + str(self.last_upload))
 
     def _measurement_thread(self):

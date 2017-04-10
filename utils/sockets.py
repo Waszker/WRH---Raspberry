@@ -6,7 +6,8 @@ from io import log, Color
 Set of functions to make socket handling a lot easier.
 """
 
-def wait_bind_socket(socket, host, port, sleep, retries=-1, predicate=lambda: True,  error_message=None):
+
+def wait_bind_socket(socket, host, port, sleep, retries=-1, predicate=lambda: True, error_message=None):
     """
     Tries to bind socket for specified host and port.
     In case of failure the procedure is retried until predicate value is False or provided
@@ -21,8 +22,9 @@ def wait_bind_socket(socket, host, port, sleep, retries=-1, predicate=lambda: Tr
             if error_message is not None:
                 log(str(error_message) + str(message), Color.FAIL)
             time.sleep(sleep)
-            retries = max(-1, retries-1)
+            retries = max(-1, retries - 1)
     return predicate() and retries != 0
+
 
 def await_connection(socket, callback, predicate=lambda: True):
     """

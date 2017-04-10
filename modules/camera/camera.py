@@ -43,7 +43,6 @@ class CameraModule(base_module.Module):
     def is_configuration_line_sane(configuration_line):
         """
         Checks if configuration line for this module is well formed
-        :param self:
         :param configuration_line:
         :return:
         """
