@@ -135,10 +135,11 @@ class ESP8266SocketModule(base_module.Module):
         """
         signal.signal(signal.SIGINT, self._sigint_handler)
         self._bind_to_socket()
-        try:
-            if self.should_end is False: self._await_connection()
-        except socket.error:
-            pass
+        while self.should_end is False:
+            try:
+                self._await_connection()
+            except socket.error:
+                pass
 
     def get_html_representation(self, website_host_address):
         """
@@ -223,6 +224,7 @@ class ESP8266SocketModule(base_module.Module):
         self.should_end = True
         if self.socket is not None:
             self.socket.shutdown(socket.SHUT_RDWR)
+            self.socket.close()
 
 
 if __name__ == "__main__":

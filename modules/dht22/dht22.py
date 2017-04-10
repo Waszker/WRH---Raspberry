@@ -162,15 +162,14 @@ class DHT22Module(base_module.Module):
         print DHT22Module.type_name + " " + self.name + " started listening"
         try:
             self._await_connection()
-            self.socket.close()
-        except socket.error as e:
+        except socket.error:
             pass
 
     def _bind_to_socket(self):
         host = ''
         port = self.address
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        while True:
+        while self.should_end is False:
             try:
                 s.bind((host, int(port)))
                 break
@@ -194,6 +193,7 @@ class DHT22Module(base_module.Module):
         self.should_end = True
         if self.socket is not None:
             self.socket.shutdown(socket.SHUT_RDWR)
+            self.socket.close()
 
 
 if __name__ == "__main__":
