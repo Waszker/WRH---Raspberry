@@ -1,10 +1,15 @@
+import signal
 from abc import abstractmethod
+import threading
+from utils.sockets import *
 
 
 class Module:
     """
     Abstract base class for modules used in WRH.
     """
+    type_number = -1
+    type_name = "AbstractModule"
 
     def __init__(self, configuration_file_line=None):
         """
@@ -15,6 +20,8 @@ class Module:
             self._parse_configuration_line(configuration_file_line)
         else:
             self._set_basic_information(None, None, None, None, None, None)
+
+        self._should_end, self._socket = False, None
 
     def _set_basic_information(self, module_id, module_name, type_number, type_name, gpio, address):
         """
@@ -91,12 +98,16 @@ class Module:
         """
         Runs interactive procedure to edit module.
         """
+        pass
 
-    @abstractmethod
     def start_work(self):
         """
         Starts working procedure.
         """
+        signal.signal(signal.SIGINT, self._sigint_handler)
+        web_service_thread = threading.Thread(target=self._web_service_thread)
+        web_service_thread.daemon = False
+        web_service_thread.start()
 
     @abstractmethod
     def get_html_representation(self, website_host_address):
@@ -106,3 +117,26 @@ class Module:
         :param website_host_address: ip address of server
         :return:
         """
+        pass
+
+    def _web_service_thread(self):
+        predicate=(lambda: self.should_end is False)
+        self.socket = wait_bind_socket('', self.address, 10, predicate=predicate,
+                                       error_message="%s %s port bind failed. \
+                                       (ERROR_CODE, ERROR_MESSAGE) = " % (Module.type_name, self.name))
+        print "%s %s started listening" % (Module.type_name, self.name)
+        self.socket.listen(10)
+        await_connection(self.socket, self._react_to_connection, predicate=predicate)
+
+    @abstractmethod
+    def _react_to_connection(self, connection, client_address):
+        """
+        Send some information about current module state.
+        """
+        pass
+
+    def _sigint_handler(self, *_):
+        self.should_end = True
+        if self.socket is not None:
+            self.socket.shutdown(socket.SHUT_RDWR)
+            self.socket.close()

@@ -1,6 +1,5 @@
 import re
 import signal
-import socket
 import sys
 import threading
 import time
@@ -31,7 +30,6 @@ class DHT22Module(base_module.Module):
         self.type_number = DHT22Module.type_number
         self.type_name = DHT22Module.type_name
         self.last_temperature, self.last_humidity, self.socket = None, None, None
-        self.should_end = False
 
     @staticmethod
     def is_configuration_line_sane(configuration_line):
@@ -122,11 +120,10 @@ class DHT22Module(base_module.Module):
         """
         Starts working procedure.
         """
-        signal.signal(signal.SIGINT, self._sigint_handler)
-        web_thread = threading.Thread(target=self._web_service_thread)
+        base_module.Module.start_work(self)
         measurement_thread = threading.Thread(target=self._measurement_thread)
-        measurement_thread.daemon, web_thread.daemon = True, False
-        [thread.start() for thread in (web_thread, measurement_thread)]
+        measurement_thread.daemon  = True
+        measurement_thread.start()
         while self.should_end is False:
             signal.pause()
 
@@ -157,43 +154,12 @@ class DHT22Module(base_module.Module):
             except AttributeError:
                 pass
 
-    def _web_service_thread(self):
-        self.socket = self._bind_to_socket()
-        print DHT22Module.type_name + " " + self.name + " started listening"
-        try:
-            self._await_connection()
-        except socket.error:
-            pass
 
-    def _bind_to_socket(self):
-        host = ''
-        port = self.address
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        while self.should_end is False:
-            try:
-                s.bind((host, int(port)))
-                break
-            except socket.error as msg:
-                print DHT22Module.type_name + " " + self.name + ' port bind failed. Error Code : ' + str(
-                    msg[0]) + ' Message ' + msg[1]
-                time.sleep(10)  # Sleep 10 seconds before retrying
-        return s
-
-    def _await_connection(self):
-        self.socket.listen(10)
-        while self.should_end is False:
-            connection, address = self.socket.accept()
-            if self.last_temperature is not None and self.last_humidity is not None:
-                connection.send('{0:0.1f};{1:0.1f}'.format(self.last_humidity, self.last_temperature))
-            else:
-                connection.send('?;?')
-            connection.close()
-
-    def _sigint_handler(self, *_):
-        self.should_end = True
-        if self.socket is not None:
-            self.socket.shutdown(socket.SHUT_RDWR)
-            self.socket.close()
+    def _react_to_connection(self, connection, _):
+        if self.last_temperature is not None and self.last_humidity is not None:
+            connection.send('{0:0.1f};{1:0.1f}'.format(self.last_humidity, self.last_temperature))
+        else:
+            connection.send('?;?')
 
 
 if __name__ == "__main__":

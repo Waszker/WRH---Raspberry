@@ -1,10 +1,9 @@
 import re
-import signal
-import socket
 import subprocess
 import sys
 import threading
 import time
+import signal
 
 from wrh_engine import module_base as base_module
 from utils.io import *
@@ -25,7 +24,7 @@ class SpeedTestModule(base_module.Module):
         base_module.Module.__init__(self, configuration_file_line)
         self.type_number = SpeedTestModule.type_number
         self.type_name = SpeedTestModule.type_name
-        self.last_download, self.last_upload = "0 Mbit/s", "0 Mbit/s"
+        self.last_download, self.last_upload = "? Mbit/s", "? Mbit/s"
 
     @staticmethod
     def is_configuration_line_sane(configuration_line):
@@ -134,13 +133,13 @@ class SpeedTestModule(base_module.Module):
         """
         Starts working procedure.
         """
-        web_thread = threading.Thread(target=self._web_service_thread)
-        web_thread.daemon = True
-        web_thread.start()
+        base_module.Module.start_work(self)
+        measurement_thread = threading.Thread(target=self._measurement_thread)
+        measurement_thread.daemon = True
+        measurement_thread.start()
 
-        while True:
-            self.last_download, self.last_upload = self.get_measurement()
-            time.sleep(self.interval * 60)
+        while self.should_end is False:
+            signal.pause()
 
     def get_html_representation(self, website_host_address):
         """
@@ -160,25 +159,13 @@ class SpeedTestModule(base_module.Module):
                <div id="speedTestDiv' + str(self.id) + '" class="speedTestDiv"> </div>\
                </div>'
 
-    def _web_service_thread(self):
-        host = ''
-        port = self.address
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        while True:
-            try:
-                s.bind((host, int(port)))
-                break
-            except socket.error as msg:
-                print SpeedTestModule.type_name + " " + self.name + 'port bind failed. Error Code : ' + str(
-                    msg[0]) + ' Message ' + msg[1]
-                time.sleep(10)  # Sleep 10 seconds before retrying
-        print SpeedTestModule.type_name + " " + self.name + " started listening"
-        while True:
-            s.listen(10)
-            connection, address = s.accept()
-            connection.send(str(self.last_download) + " " + str(self.last_upload))
-            connection.close()
-        s.close()
+    def react_to_connection(self, connection, _):
+        connection.send(str(self.last_download) + " " + str(self.last_upload))
+
+    def _measurement_thread(self):
+        while self.should_end is False:
+            self.last_download, self.last_upload = self.get_measurement()
+            time.sleep(self.interval * 60)
 
     @staticmethod
     def _parse_input_as_integer(text):
@@ -188,15 +175,9 @@ class SpeedTestModule(base_module.Module):
             return -1
 
 
-def _siginit_handler(*_):
-    print "SPEEDTEST: SIGINT signal caught"
-    sys.exit(0)
-
-
 if __name__ == "__main__":
     print 'SpeedTest module: started.'
     conf_line = sys.argv[1]
-    signal.signal(signal.SIGINT, _siginit_handler)
 
     speedtest = SpeedTestModule(conf_line)
     speedtest.start_work()
