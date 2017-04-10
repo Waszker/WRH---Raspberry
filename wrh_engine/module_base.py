@@ -106,6 +106,10 @@ class Module:
     def start_work(self):
         """
         Starts working procedure.
+        Implementation already present in this class creates new web thread that takes care of listening for incoming
+        connections on the port specified during module registration. Every module instance should have self.port
+        variable defined, but probably not every module will use it the same way so call this method only if web thread
+        is needed.
         """
         signal.signal(signal.SIGINT, self._sigint_handler)
         web_service_thread = threading.Thread(target=self._web_service_thread)
@@ -136,7 +140,8 @@ class Module:
 
     def _react_to_connection(self, connection, client_address):
         """
-        Send some information about current module state.
+        Generally respond to incoming connection.
+        Maybe send some information about current module state?
         """
         pass
 
