@@ -122,7 +122,7 @@ class Module:
         pass
 
     def _web_service_thread(self):
-        predicate = (lambda: self.should_end is False)
+        predicate = (lambda: self._should_end is False)
         self.socket = s.socket(s.AF_INET, s.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         bind_result = wait_bind_socket(self.socket, '', self.address, 10, predicate=predicate,
@@ -140,7 +140,7 @@ class Module:
         pass
 
     def _sigint_handler(self, *_):
-        self.should_end = True
+        self._should_end = True
         if self.socket is not None:
             self.socket.shutdown(socket.SHUT_RDWR)
             self.socket.close()
