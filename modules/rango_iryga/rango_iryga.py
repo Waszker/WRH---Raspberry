@@ -38,7 +38,7 @@ class RangoIrygaModule(base_module.Module):
         # Configuration line for camera should look like this:
         # TYPE_NUM=7 ; ID=INT ; NAME=STRING ; ADDRESS=STRING ; PORT=INT
         checker = re.compile(RangoIrygaModule.configuration_line_pattern)
-        return checker.match(configuration_line)  is not None
+        return checker.match(configuration_line) is not None
 
     @staticmethod
     def get_starting_command():
@@ -91,9 +91,11 @@ class RangoIrygaModule(base_module.Module):
             response_content = ''
         if not checker.match(str(response_content)):
             state = "<a style=\"color: black; font-size: 25px\">? (" + str(repeats[0]) + ")</a>&" \
-                    "<a style=\"color: black; font-size: 25px\">? (" + str(repeats[1]) + ")</a>&" \
-                    "<a style=\"color: black; font-size: 25px\">? (" + str(repeats[2]) + ")</a>&" \
-                    "<a style=\"color: black; font-size: 25px\">? (" + str(repeats[3]) + ")</a>"
+                                                                                         "<a style=\"color: black; font-size: 25px\">? (" + str(
+                repeats[1]) + ")</a>&" \
+                              "<a style=\"color: black; font-size: 25px\">? (" + str(repeats[2]) + ")</a>&" \
+                                                                                                   "<a style=\"color: black; font-size: 25px\">? (" + str(
+                repeats[3]) + ")</a>"
         else:
             # Socket returns opposite state - we need to change its response
             true_state = {"ON": "<a style=\"color: green; font-size: 25px\">OFF",
@@ -101,7 +103,8 @@ class RangoIrygaModule(base_module.Module):
             search = re.search(value_finding_pattern, str(response_content))
             state = "" + true_state[search.group(1)] + " (" + str(repeats[0]) + ")</a>&" + true_state[
                 search.group(3)] + " (" + str(repeats[1]) + ")</a>&" + true_state[
-                        search.group(5)] + " (" + str(repeats[2]) + ")</a>&" + true_state[search.group(7)] + " (" + str(repeats[3]) + ")</a>"
+                        search.group(5)] + " (" + str(repeats[2]) + ")</a>&" + true_state[search.group(7)] + " (" + str(
+                repeats[3]) + ")</a>"
         return state
 
     def get_module_description(self):
@@ -150,31 +153,9 @@ class RangoIrygaModule(base_module.Module):
         """
         Starts working procedure.
         """
-        host = ''
-        port = self.port
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        while True:
-            try:
-                s.bind((host, int(port)))
-                break
-            except socket.error as msg:
-                print 'Rango Iryga ' + self.address + ' port bind failed. Error Code : ' + str(
-                    msg[0]) + ' Message ' + msg[1]
-                time.sleep(10)  # Sleep 10 seconds before retrying
-        print "Rango Iryga: " + self.address + " started listening"
-        while True:
-            s.listen(10)
-            connection, address = s.accept()
-            data = str(connection.recv(1024) + ",,,").split(',')
-            state, number, time_wait, repeats = data[0], data[1], data[2], data[3]
-            if str(state) == "ON" or str(state) == "on":
-                self._set_relay_state(number, True, time_wait, repeats)
-            elif str(state) == "OFF" or str(state) == "off":
-                self._set_relay_state(number, False, time_wait, repeats)
-            elif str(state) == "STATE" or str(state) == "state":
-                connection.send(self.get_measurement())
-            connection.close()
-        s.close()
+        base_module.Module.start_work(self)
+        while self._should_end is False:
+            signal.pause()
 
     def get_html_representation(self, website_host_address):
         """
@@ -337,7 +318,7 @@ class RangoIrygaModule(base_module.Module):
         thread_list = self._stop_already_working_relay_threads(true_relay_number)
 
         latency = 0
-        for i in range(0, repeats):
+        for i in xrange(repeats):
             thread = threading.Timer(latency, self._set_relay_state_on_esp,
                                      args=(relay_number, should_turn_on, duration,))
             thread.daemon = True
@@ -370,16 +351,20 @@ class RangoIrygaModule(base_module.Module):
         except ValueError:
             pass
 
-
-def _siginit_handler(_, __):
-    print "RANGO IRYGA: SIGINT signal caught"
-    sys.exit(0)
+    def _react_to_connection(self, connection, _):
+        data = str(connection.recv(1024) + ",,,").split(',')
+        state, number, time_wait, repeats = data[0], data[1], data[2], data[3]
+        if str(state) == "ON" or str(state) == "on":
+            self._set_relay_state(number, True, time_wait, repeats)
+        elif str(state) == "OFF" or str(state) == "off":
+            self._set_relay_state(number, False, time_wait, repeats)
+        elif str(state) == "STATE" or str(state) == "state":
+            connection.send(self.get_measurement())
 
 
 if __name__ == "__main__":
     print 'Rango Iryga module: started.'
     conf_line = sys.argv[1]
-    signal.signal(signal.SIGINT, _siginit_handler)
 
-    dummy = RangoIrygaModule(conf_line)
-    dummy.start_work()
+    rango_iryga = RangoIrygaModule(conf_line)
+    rango_iryga.start_work()
