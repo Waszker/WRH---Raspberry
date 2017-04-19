@@ -50,7 +50,7 @@ def open_connection(*args, **kwargs):
         connection = s.create_connection(*args, **kwargs)
         yield connection
         connection.close()
-    except s.error:
+    except (s.error, RuntimeError):
         pass
 
 
@@ -58,13 +58,14 @@ def receive_message(host, port, buffer_size=1024, message=None):
     """
     Receives message with the maximum size of buffer_size from host on provided port.
     If the optional parameter message is not None then this message is sent prior to receiving procedure.
-    This method does not raise exceptions if anything goes wrong.
+    This method does not raise exceptions if anything regarding socket connection goes wrong.
     :param host: host to connect to
     :param port: port to connect to
     :param buffer_size: size of the buffer for receiving the message
     :param message: message to send prior to receiving
     :return: received message, None if an error occurred or no message was received
     """
+    host, port = str(host), int(port)
     data = None
     with open_connection((host, port)) as connection:
         if message is not None:
@@ -76,10 +77,11 @@ def receive_message(host, port, buffer_size=1024, message=None):
 def send_message(host, port, message):
     """
     Sends message to provided host on certain port.
-    This method does not raise exceptions if anything goes wrong.
+    This method does not raise exceptions if anything regarding socket connection goes wrong.
     :param host: host to connect to
     :param port: port to connect to
     :param message: message to send
     """
+    host, port = str(host), int(port)
     with open_connection((host, port)) as connection:
         connection.send(message)
