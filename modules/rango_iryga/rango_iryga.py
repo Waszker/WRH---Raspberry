@@ -3,7 +3,6 @@ import signal
 import socket
 import sys
 import threading
-import time
 import urllib2
 
 import requests

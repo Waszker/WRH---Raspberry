@@ -15,7 +15,7 @@ class ConfigurationParser:
         """
         Creates configuration parses object that parses configuration file in the provided path.
         :param configuration_file_path: filesystem path in which configuration file is present
-        :param module_classes: list of module instances, one for each detected module in the system
+        :param module_classes: list of module instances, one for each detected module type in the system
         :raises UnknownModuleException: configuration file contains unknown module info
         :raises BadConfigurationException: configuration file is invalid
         """
