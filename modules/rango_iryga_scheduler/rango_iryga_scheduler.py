@@ -1,6 +1,9 @@
 import re
 import sys
 import signal
+import time
+import datetime
+import threading
 from wrh_engine import module_base as base_module
 from utils.sockets import send_message
 from utils.io import non_empty_positive_numeric_input as iinput
@@ -16,18 +19,22 @@ class RangoScenario:
         Creates scenario from the provided information.
         :param request: line containing information about scenario, sent after user creates new request
         """
+        self.request = str(request)
         self.is_active = False
-        self.start_time = None
-        self.active_on_days = []
-        self.active_lines = []
-        self.line_activation_times = {}
-        self.line_activation_repeats = {}
+        start, days, lines, times, repeats = request.split(';')
+        hour, minute = map(int, start.split(','))
+        self.start_time = datetime.datetime(2000, 1, 1, hour, minute)
+        self.active_on_days = list(map(int, days.split(',')))
+        self.active_lines = list(map(int, lines.split(',')))
+        self.line_activation_times = list(map(int, times.split(',')))
+        self.line_activation_repeats = list(map(int, repeats.split(',')))
 
     def get_html_information_string(self):
         """
         Returns HTML formatted string to display one the tornado web page.
         :return: HTML formatted string
         """
+        # TODO: Implement this
         pass
 
     def time_changed(self, date, rango_port):
@@ -59,12 +66,13 @@ class RangoIrygaSchedulerModule(base_module.Module):
     type_number = 8
     type_name = "RANGO IRYGA SCHEDULER"
     configuration_line_pattern = str(type_number) + ";([0-9]{1,9});(.+?);([1-9][0-9]{0,9});([1-9][0-9]{0,9})$"
+    _saved_scenarios_file = "modules/rango_iryga_scheduler/.scenarios"
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
         self.type_number = RangoIrygaSchedulerModule.type_number
         self.type_name = RangoIrygaSchedulerModule.type_name
-        self.scenarios = {i: [] for i in xrange(0, 7)}
+        self.scenarios = []
 
     @staticmethod
     def is_configuration_line_sane(configuration_line):
@@ -151,7 +159,11 @@ class RangoIrygaSchedulerModule(base_module.Module):
         """
         Starts working procedure.
         """
+        self._read_scenarios_from_file()
         base_module.Module.start_work(self)
+        scheduler = threading.Thread(self._scheduler_thread)
+        scheduler.daemon = True
+        scheduler.start()
         while self._should_end is False:
             signal.pause()
 
@@ -159,10 +171,34 @@ class RangoIrygaSchedulerModule(base_module.Module):
         """
         Returns html code to include in website.
         """
+        # TODO: Implement nice looking and functional html view
         return '<div class="card-panel"></div>'
 
+    def _read_scenarios_from_file(self):
+        with open(RangoIrygaSchedulerModule._saved_scenarios_file, 'r+') as f:
+            self.scenarios.extend([RangoScenario(line) for line in f])
+
+    def _scheduler_thread(self):
+        """
+        Check for possible scenario execution each minute.
+        """
+        start_time = time.time()
+        while True:
+            # TODO: Check for no connection situation!
+            current_time = datetime.datetime.utcnow()
+            [scenario.time_changed(current_time, self.rango_port) for scenario in self.scenarios]
+            time.sleep(60.0 - ((time.time() - start_time) % 60.0))
+
     def _react_to_connection(self, connection, _):
-        pass
+        data = connection.recv(1024)
+        action, request = data.split('|')
+        if action == "ADD" or action == "add":
+            self.scenarios.append(RangoScenario(request))
+        elif action == "DEL" or action == "del":
+            del self.scenarios[int(request)]
+
+        with open(RangoIrygaSchedulerModule._saved_scenarios_file, 'w+') as f:
+            f.writelines([scenario.request for scenario in self.scenarios])
 
 
 if __name__ == "__main__":
