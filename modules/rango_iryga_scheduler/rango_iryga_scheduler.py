@@ -54,7 +54,6 @@ class RangoScenario:
         """
         if self._should_activate(date):
             # Log action to file?
-            print "Scenario active!"
             self._activate(rango_port)
 
     def _should_activate(self, date):
@@ -128,17 +127,14 @@ class RangoIrygaSchedulerModule(base_module.Module):
         Returns measurements taken by this module.
         Rango Scheduler returns html table containing all scenarios data.
         """
-        html_table = '<table style="margin: 0px auto; max-width: 95%; width: auto"> \
-                      <tr><td colspan="3">Obecne scenariusze</td></tr>'
+        html_table = '<ul class="collection with-header"> \
+                      <li class="collection-header"><h4>Obecne scenariusze</h4></li>'
 
         for i, scenario in enumerate(self.scenarios):
-            html_table += '<tr>' \
-                          '<td>%s</td>' % scenario.get_html_information_string()
-            html_table += '<td><a onclick="toggleScenario' + str(self.id) + '(%i)">' \
-                          '%s</a></td>' % (i, "DEZAKTYWUJ" if scenario.is_active else "AKTYWUJ")
-            html_table += '<td><a onclick="removeScenario' + str(self.id) + '(%i)">Usuń</a></td>' % i
+            html_table += '<li class="collection-item"><div>%s' % scenario.get_html_information_string()
+            html_table += '<a href="#!" onclick="removeScenario' + str(self.id) + '(%i)" class="secondary-content">Usuń</a>' % i
+            html_table += '<a href="#!" onclick="toggleScenario' + str(self.id) + '(%i)" class="secondary-content">%s</a></div></li>' % (i, "DEZAKTYWUJ" if scenario.is_active else "AKTYWUJ")
 
-        html_table += '</table>'
         return html_table
 
     def get_module_description(self):
@@ -332,7 +328,6 @@ class RangoIrygaSchedulerModule(base_module.Module):
         start_time = time.time()
         while True:
             # TODO: Check for no connection situation!
-            print "New minute occurred, checking scenarios"
             current_time = datetime.datetime.utcnow()
             [scenario.time_changed(current_time, self.rango_port) for scenario in self.scenarios]
             time.sleep(60.0 - ((time.time() - start_time) % 60.0))
