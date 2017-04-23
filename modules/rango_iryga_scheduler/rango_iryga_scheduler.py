@@ -1,6 +1,7 @@
 #!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
 
+import os
 import re
 import sys
 import signal
@@ -316,7 +317,8 @@ class RangoIrygaSchedulerModule(base_module.Module):
         return representation
 
     def _read_scenarios_from_file(self):
-        with open(RangoIrygaSchedulerModule._saved_scenarios_file, 'r+') as f:
+        mode = "r+" if os.path.isfile(RangoIrygaSchedulerModule._saved_scenarios_file) else "w+"
+        with open(RangoIrygaSchedulerModule._saved_scenarios_file, mode) as f:
             self.scenarios.extend([RangoScenario(line) for line in f])
 
     def _scheduler_thread(self):
