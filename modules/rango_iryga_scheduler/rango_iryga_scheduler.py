@@ -54,6 +54,7 @@ class RangoScenario:
         """
         if self._should_activate(date):
             # Log action to file?
+            print "Scenario active!"
             self._activate(rango_port)
 
     def _should_activate(self, date):
@@ -331,6 +332,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
         start_time = time.time()
         while True:
             # TODO: Check for no connection situation!
+            print "New minute occurred, checking scenarios"
             current_time = datetime.datetime.utcnow()
             [scenario.time_changed(current_time, self.rango_port) for scenario in self.scenarios]
             time.sleep(60.0 - ((time.time() - start_time) % 60.0))
