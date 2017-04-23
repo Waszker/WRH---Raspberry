@@ -133,9 +133,8 @@ class RangoIrygaSchedulerModule(base_module.Module):
         for i, scenario in enumerate(self.scenarios):
             html_table += '<tr>' \
                           '<td>%s</td>' % scenario.get_html_information_string()
-            html_table += '<td><div class="switch" onclick="toggleScenario' + str(self.id) + '(%i)">' \
-                          '<label>OFF<input %s type="checkbox"><span class="level"></span>ON</label>' \
-                          '</div></td>' % (i, "checked" if scenario.is_active else "")
+            html_table += '<td><a onclick="toggleScenario' + str(self.id) + '(%i)">' \
+                          '%s</a></td>' % (i, "DEZAKTYWUJ" if scenario.is_active else "AKTYWUJ")
             html_table += '<td><a onclick="removeScenario' + str(self.id) + '(%i)">Usuń</a></td>' % i
 
         html_table += '</table>'
@@ -204,6 +203,8 @@ class RangoIrygaSchedulerModule(base_module.Module):
                            </div>\n \
                            <table style="margin: 0px auto; max-width: 95%; width: auto">'
 
+        repeats = [1, 4, 1, 1]
+        times = [300, 80, 300, 300]
         for i in xrange(4):
             representation += ' <tr>\n \
                                 <td>\n \
@@ -212,11 +213,11 @@ class RangoIrygaSchedulerModule(base_module.Module):
                                 </td>\n \
                                 <td>\n \
                                     <div style="margin: 3%; width: 100%"><p class="input-field"><input id="line' + str(
-                i + 1) + '_time' + id + '" type="number" style="width: 90%" value="-1"/></div>\n \
+                i + 1) + '_time' + id + '" type="number" style="width: 90%" value="' + str(times[i]) + '"/></div>\n \
                                 </td>\n \
                                 <td>\n \
                                     <div style="margin: 3%; width: 100%"><p class="input-field"><input id="line' + str(
-                i + 1) + '_repeats' + id + '" type="number" style="width: 90%" value="-1"/></div>\n \
+                i + 1) + '_repeats' + id + '" type="number" style="width: 90%" value="' + str(repeats[i]) + '"/></div>\n \
                                 </td>\n \
                             </tr>'
         representation += ' <tr>\n \
