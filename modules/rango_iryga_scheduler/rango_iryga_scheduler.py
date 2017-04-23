@@ -304,8 +304,8 @@ class RangoIrygaSchedulerModule(base_module.Module):
                                     isValid = true;\n \
                                     separator = (linesString === "" ? "" : ",");\n \
                                     linesString += separator + (i+1);\n \
-                                    timesString += separator + document.getElementById("line" + (i+1) + "_time"' + id + ').value;\n \
-                                    repeatsString += separator + document.getElementById("line" + (i+1) + "_repeats"' + id + ').value;\n \
+                                    timesString += separator + document.getElementById("line" + (i+1) + "_time" + ' + id + ').value;\n \
+                                    repeatsString += separator + document.getElementById("line" + (i+1) + "_repeats" + ' + id + ').value;\n \
                                  }\n \
                             }\n \
                             if (!isValid) return "-1;0;0";\n \
