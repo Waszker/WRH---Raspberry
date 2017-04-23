@@ -133,7 +133,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
         for i, scenario in enumerate(self.scenarios):
             html_table += '<tr>' \
                           '<td>%s</td>' % scenario.get_html_information_string()
-            html_table += '<td><div class="switch" onclick="toggleScenario' + str(self.id) + '(%i)"' \
+            html_table += '<td><div class="switch" onclick="toggleScenario' + str(self.id) + '(%i)">' \
                           '<label>OFF<input %s type="checkbox"><span class="level"></span>ON</label>' \
                           '</div></td>' % (i, "checked" if scenario.is_active else "")
             html_table += '<td><a onclick="removeScenario' + str(self.id) + '(%i)">Usuń</a></td>' % i
