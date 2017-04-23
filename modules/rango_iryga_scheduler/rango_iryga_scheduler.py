@@ -258,7 +258,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
         representation += '<script>\n \
                         function getScenarios' + id + '() {\n \
                             document.getElementById("rangoIrygaSchedulerSocketDiv' + id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />";\n \
-                            getRequest("localhost", ' + port + ', "MEASUREMENT", update_scenarios_view' + id + ');\n \
+                            getRequest("localhost", ' + port + ', "MEASUREMENT|null", update_scenarios_view' + id + ');\n \
                         }\n \
                         function update_scenarios_view' + id + '(text) {\n \
                                    document.getElementById("rangoIrygaSchedulerSocketDiv' + id + '").innerHTML = text;\n \
@@ -290,9 +290,9 @@ class RangoIrygaSchedulerModule(base_module.Module):
                             weekdays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];\n \
                             for (i = 0; i < 7; i++) {\n \
                                 if (!document.getElementById(weekdays[i] + ' + id + ').checked) continue;\n \
-                                weekdayString += "" + i + ",";\n \
+                                weekdaysString += "" + i + ",";\n \
                             }\n \
-                            return weekdayString;\n \
+                            return weekdaysString;\n \
                         }\n \
                         function getLineInformation' + id + '() {\n \
                             isValid = false;\n \
