@@ -1,3 +1,6 @@
+#!/usr/bin/python2.7
+# -*- coding: utf-8 -*-
+
 import re
 import sys
 import signal
@@ -20,7 +23,7 @@ class RangoScenario:
         :param request: line containing information about scenario, sent after user creates new request
         """
         self.request = str(request)
-        self.is_active = False
+        self.is_active = True
         start, days, lines, times, repeats = request.split(';')
         hour, minute = map(int, start.split(','))
         self.start_time = datetime.datetime(2000, 1, 1, hour, minute)
@@ -34,8 +37,13 @@ class RangoScenario:
         Returns HTML formatted string to display one the tornado web page.
         :return: HTML formatted string
         """
-        # TODO: Implement this
-        pass
+        html_information = "Czas rozpoczęcia %i:%i<br />" % (self.start_time.hour, self.start_time.minute)
+        html_information += "Aktywne linie: <ul>"
+        for relay, time, repeats in zip(self.active_lines, self.line_activation_times, self.line_activation_repeats):
+            html_information += "<li>linia %i na %i sekund z %i powtórzeniami</li>" % (relay, time, repeats)
+        html_information += "</ul><br />"
+        html_information += "Obowiązuje w dni: %s" % str(self.active_on_days)
+        return html_information
 
     def time_changed(self, date, rango_port):
         """
@@ -48,7 +56,8 @@ class RangoScenario:
             self._activate(rango_port)
 
     def _should_activate(self, date):
-        return (date.weekday() in self.active_on_days) and \
+        return self.is_active and \
+               (date.weekday() in self.active_on_days) and \
                (date.hour == self.start_time.hour) and \
                (date.minute == self.start_time.minute)
 
@@ -114,9 +123,22 @@ class RangoIrygaSchedulerModule(base_module.Module):
 
     def get_measurement(self):
         """
-        Returns measurements taken by this module
+        Returns measurements taken by this module.
+        Rango Scheduler returns html table containing all scenarios data.
         """
-        pass
+        html_table = '<table style="margin: 0px auto; max-width: 95%; width: auto"> \
+                      <tr><td colspan="3">Obecne scenariusze</td></tr>'
+
+        for i, scenario in enumerate(self.scenarios):
+            html_table += '<tr>' \
+                          '<td>%s</td>' % scenario.get_html_information_string()
+            html_table += '<td><div class="switch" onclick="toggleScenario(%i)' \
+                          '<label>OFF<input %s type="checkbox"><span class="level"></span>ON</label>' \
+                          '</div></td>' % (i, "checked" if scenario.is_active else "")
+            html_table += '<td><a onclick="removeScenario(%i)">Usuń</a></td>' % i
+
+        html_table += '</table>'
+        return html_table
 
     def get_module_description(self):
         """
@@ -171,8 +193,127 @@ class RangoIrygaSchedulerModule(base_module.Module):
         """
         Returns html code to include in website.
         """
-        # TODO: Implement nice looking and functional html view
-        return '<div class="card-panel"></div>'
+        id = str(self.id)
+        port = str(self.port)
+
+        representation = '<div class="card-panel">'
+        representation += '<h5>%s</h5>' % self.name
+        representation += '<div id="rangoIrygaSchedulerSocketDiv' + id + '" class="socketDiv" style="height: 50px; margin: auto"> \
+                           <img src="static/images/loading_spinner.gif" style="width: 50px;"/> \
+                           </div> \
+                           <table style="margin: 0px auto; max-width: 95%; width: auto">'
+
+        for i in xrange(4):
+            representation += ' <tr> \
+                                <td> \
+                                    <input type="checkbox" id="line' + str(i + 1) + id + '"/> \
+                                    <label for="line' + str(i + 1) + id + '">Linia ' + str(i + 1) + '</label> \
+                                </td> \
+                                <td> \
+                                    <div style="margin: 3%; width: 100%"><p class="input-field"><input id="line' + str(
+                i + 1) + '_time' + id + '" type="number" style="width: 90%" value="-1"/></div> \
+                                </td> \
+                                <td> \
+                                    <div style="margin: 3%; width: 100%"><p class="input-field"><input id="line' + str(
+                i + 1) + '_repeats' + id + '" type="number" style="width: 90%" value="-1"/></div> \
+                                </td> \
+                            </tr>'
+        representation += ' <tr> \
+                            <td colspan="3"> \
+                                <p class="range-field"> \
+                                    <input type="range" id="hour' + id + '" min="0" max="23"/> \
+                                </p> \
+                                <p class="range-field"> \
+                                    <input type="range" id="minute' + id + '" min="0" max="59"/> \
+                                </p> \
+                            </td> \
+                        </tr> \
+                        <tr> \
+                            <td colspan="3"> \
+                                <input type="checkbox" id="monday' + id + '"/> \
+                                <label for="monday' + id + '">Pon</label> \
+                                <input type="checkbox" id="tuesday' + id + '"/> \
+                                <label for="tuesday' + id + '">Wto</label> \
+                                <input type="checkbox" id="wednesday' + id + '"/> \
+                                <label for="wednesday' + id + '">Śro</label> \
+                                <input type="checkbox" id="thursday' + id + '"/> \
+                                <label for="thursday' + id + '">Czw</label> \
+                                <input type="checkbox" id="friday' + id + '"/> \
+                                <label for="friday' + id + '">Pią</label> \
+                                <input type="checkbox" id="saturday' + id + '"/> \
+                                <label for="saturday' + id + '">Sob</label> \
+                                <input type="checkbox" id="sunday' + id + '"/> \
+                                <label for="sunday' + id + '">Nie</label> \
+                            </td> \
+                        </tr> \
+                        <tr> \
+                            <td colspan="3"> \
+                                <button class="waves-effect waves-light btn grey darken-3" type="button" onclick="saveScenario' + id + '()"> \
+                                    Zapisz \
+                                </button> \
+                            </td> \
+                        </tr> \
+                    </table>'
+        representation += '<script> \
+                        function getScenarios' + id + '() { \
+                            document.getElementById("rangoIrygaSchedulerSocketDiv' + id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />"; \
+                            getRequest("localhost", ' + port + ', "MEASUREMENT", update_scenarios_view' + id + '); \
+                        } \
+                        function update_scenarios_view' + id + '(text) { \
+                                   document.getElementById("rangoIrygaSchedulerSocketDiv' + id + '").innerHTML = text; \
+                        } \
+                        function toggleScenario' + id + '(number) { \
+                            sendRequest("localhost", ' + port + ', "ACT|" + number); \
+                            getScenarios' + id + '(); \
+                        } \
+                        function removeScenario' + id + '(number) { \
+                            sendRequest("localhost", ' + port + ', "DEL|" + number); \
+                            getScenarios' + id + '(); \
+                        } \
+                        function saveScenario' + id + '() { \
+                            sendRequest("localhost", ' + port + ', "ADD|" + scenarioString' + id + '()); \
+                            getScenarios' + id + '(); \
+                        } \
+                        function scenarioString' + id + '() { \
+                            scenarioString = getTime' + id + '() + ";"; \
+                            scenarioString += getWeekDays' + id + '() + ";"; \
+                            return scenarioString + getLineInformation' + id + '(); \
+                        } \
+                        function getTime' + id + '() { \
+                            hour = document.getElementById("hour' + id + '").value; \
+                            minute = document.getElementById("minute' + id + '").value; \
+                            return "" + hour + "," + minute; \
+                        } \
+                        function getWeekDays' + id + '() { \
+                            weekdaysString = ""; \
+                            weekdays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]; \
+                            for (i = 0; i < 7; i++) { \
+                                if (!document.getElementById(weekdays[i]' + id + ').checked) continue; \
+                                weekdayString += "" + i + ","; \
+                            } \
+                            return weekdayString; \
+                        } \
+                        function getLineInformation' + id + '() { \
+                            isValid = false; \
+                            linesString = ""; \
+                            timesString = ""; \
+                            repeatsString = ""; \
+                            for (i = 0; i < 4; i++) { \
+                                if (document.getElementById("line" + (i+1)' + id + ').checked) { \
+                                    isValid = true; \
+                                    separator = (linesString === "" ? "" : ","); \
+                                    linesString += separator + (i+1); \
+                                    timesString += separator + document.getElementById("line" + (i+1) + "_time"' + id + ').value; \
+                                    repeatsString += separator + document.getElementById("line" + (i+1) + "_repeats"' + id + ').value; \
+                                 } \
+                            } \
+                            if (!isValid) return "-1;0;0"; \
+                            return linesString + ";" + timesString + ";" + repeatsString; \
+                        } \
+                        getScenarios' + id + '(); \
+                    </script> \
+                    </div>'
+        return representation
 
     def _read_scenarios_from_file(self):
         with open(RangoIrygaSchedulerModule._saved_scenarios_file, 'r+') as f:
@@ -196,6 +337,11 @@ class RangoIrygaSchedulerModule(base_module.Module):
             self.scenarios.append(RangoScenario(request))
         elif action == "DEL" or action == "del":
             del self.scenarios[int(request)]
+        elif action == "ACT" or action == "act":
+            self.scenarios[int(request)].is_active = not self.scenarios[int(request)].is_active
+        elif action == "MEASUREMENT" or action == "measurement":
+            connection.send(self.get_measurement())
+            return
 
         with open(RangoIrygaSchedulerModule._saved_scenarios_file, 'w+') as f:
             f.writelines([scenario.request for scenario in self.scenarios])
