@@ -199,61 +199,61 @@ class RangoIrygaSchedulerModule(base_module.Module):
 
         representation = '<div class="card-panel">'
         representation += '<h5>%s</h5>' % self.name
-        representation += '<div id="rangoIrygaSchedulerSocketDiv' + id + '" class="socketDiv" style="height: 50px; margin: auto"> \
-                           <img src="static/images/loading_spinner.gif" style="width: 50px;"/> \
-                           </div> \
+        representation += '<div id="rangoIrygaSchedulerSocketDiv' + id + '" class="socketDiv" style="height: 50px; margin: auto">\n \
+                           <img src="static/images/loading_spinner.gif" style="width: 50px;"/>\n \
+                           </div>\n \
                            <table style="margin: 0px auto; max-width: 95%; width: auto">'
 
         for i in xrange(4):
-            representation += ' <tr> \
-                                <td> \
-                                    <input type="checkbox" id="line' + str(i + 1) + id + '"/> \
-                                    <label for="line' + str(i + 1) + id + '">Linia ' + str(i + 1) + '</label> \
-                                </td> \
-                                <td> \
+            representation += ' <tr>\n \
+                                <td>\n \
+                                    <input type="checkbox" id="line' + str(i + 1) + id + '"/>\n \
+                                    <label for="line' + str(i + 1) + id + '">Linia ' + str(i + 1) + '</label>\n \
+                                </td>\n \
+                                <td>\n \
                                     <div style="margin: 3%; width: 100%"><p class="input-field"><input id="line' + str(
-                i + 1) + '_time' + id + '" type="number" style="width: 90%" value="-1"/></div> \
-                                </td> \
-                                <td> \
+                i + 1) + '_time' + id + '" type="number" style="width: 90%" value="-1"/></div>\n \
+                                </td>\n \
+                                <td>\n \
                                     <div style="margin: 3%; width: 100%"><p class="input-field"><input id="line' + str(
-                i + 1) + '_repeats' + id + '" type="number" style="width: 90%" value="-1"/></div> \
-                                </td> \
+                i + 1) + '_repeats' + id + '" type="number" style="width: 90%" value="-1"/></div>\n \
+                                </td>\n \
                             </tr>'
-        representation += ' <tr> \
-                            <td colspan="3"> \
-                                <p class="range-field"> \
-                                    <input type="range" id="hour' + id + '" min="0" max="23"/> \
-                                </p> \
-                                <p class="range-field"> \
-                                    <input type="range" id="minute' + id + '" min="0" max="59"/> \
-                                </p> \
-                            </td> \
-                        </tr> \
-                        <tr> \
-                            <td colspan="3"> \
-                                <input type="checkbox" id="monday' + id + '"/> \
-                                <label for="monday' + id + '">Pon</label> \
-                                <input type="checkbox" id="tuesday' + id + '"/> \
-                                <label for="tuesday' + id + '">Wto</label> \
-                                <input type="checkbox" id="wednesday' + id + '"/> \
-                                <label for="wednesday' + id + '">Śro</label> \
-                                <input type="checkbox" id="thursday' + id + '"/> \
-                                <label for="thursday' + id + '">Czw</label> \
-                                <input type="checkbox" id="friday' + id + '"/> \
-                                <label for="friday' + id + '">Pią</label> \
-                                <input type="checkbox" id="saturday' + id + '"/> \
-                                <label for="saturday' + id + '">Sob</label> \
-                                <input type="checkbox" id="sunday' + id + '"/> \
-                                <label for="sunday' + id + '">Nie</label> \
-                            </td> \
-                        </tr> \
-                        <tr> \
-                            <td colspan="3"> \
-                                <button class="waves-effect waves-light btn grey darken-3" type="button" onclick="saveScenario' + id + '()"> \
-                                    Zapisz \
-                                </button> \
-                            </td> \
-                        </tr> \
+        representation += ' <tr>\n \
+                            <td colspan="3">\n \
+                                <p class="range-field">\n \
+                                    <input type="range" id="hour' + id + '" min="0" max="23"/>\n \
+                                </p>\n \
+                                <p class="range-field">\n \
+                                    <input type="range" id="minute' + id + '" min="0" max="59"/>\n \
+                                </p>\n \
+                            </td>\n \
+                        </tr>\n \
+                        <tr>\n \
+                            <td colspan="3">\n \
+                                <input type="checkbox" id="monday' + id + '"/>\n \
+                                <label for="monday' + id + '">Pon</label>\n \
+                                <input type="checkbox" id="tuesday' + id + '"/>\n \
+                                <label for="tuesday' + id + '">Wto</label>\n \
+                                <input type="checkbox" id="wednesday' + id + '"/>\n \
+                                <label for="wednesday' + id + '">Śro</label>\n \
+                                <input type="checkbox" id="thursday' + id + '"/>\n \
+                                <label for="thursday' + id + '">Czw</label>\n \
+                                <input type="checkbox" id="friday' + id + '"/>\n \
+                                <label for="friday' + id + '">Pią</label>\n \
+                                <input type="checkbox" id="saturday' + id + '"/>\n \
+                                <label for="saturday' + id + '">Sob</label>\n \
+                                <input type="checkbox" id="sunday' + id + '"/>\n \
+                                <label for="sunday' + id + '">Nie</label>\n \
+                            </td>\n \
+                        </tr>\n \
+                        <tr>\n \
+                            <td colspan="3">\n \
+                                <button class="waves-effect waves-light btn grey darken-3" type="button" onclick="saveScenario' + id + '()">\n \
+                                    Zapisz\n \
+                                </button>\n \
+                            </td>\n \
+                        </tr>\n \
                     </table>'
         representation += '<script>\n \
                         function getScenarios' + id + '() {\n \
@@ -289,7 +289,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
                             weekdaysString = "";\n \
                             weekdays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];\n \
                             for (i = 0; i < 7; i++) {\n \
-                                if (!document.getElementById(weekdays[i]' + id + ').checked) continue;\n \
+                                if (!document.getElementById(weekdays[i] + ' + id + ').checked) continue;\n \
                                 weekdayString += "" + i + ",";\n \
                             }\n \
                             return weekdayString;\n \
