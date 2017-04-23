@@ -23,10 +23,9 @@ class RangoScenario:
         Creates scenario from the provided information.
         :param request: line containing information about scenario, sent after user creates new request
         """
-        print str(request)
         self.request = str(request)
         self.is_active = True
-        start, days, lines, times, repeats = request.split('-')
+        start, days, lines, times, repeats = request.split('*')
         hour, minute = map(int, start.split(','))
         self.start_time = datetime.datetime(2000, 1, 1, hour, minute)
         self.active_on_days = list(map(int, days.split(',')))
@@ -278,8 +277,8 @@ class RangoIrygaSchedulerModule(base_module.Module):
                             getScenarios' + id + '();\n \
                         }\n \
                         function scenarioString' + id + '() {\n \
-                            scenarioString = getTime' + id + '() + "-";\n \
-                            scenarioString += getWeekDays' + id + '() + "-";\n \
+                            scenarioString = getTime' + id + '() + "*";\n \
+                            scenarioString += getWeekDays' + id + '() + "*";\n \
                             scenarioString += getLineInformation' + id + '();\n \
                             return scenarioString;\n \
                         }\n \
@@ -312,7 +311,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
                                  }\n \
                             }\n \
                             if (!isValid) return "-1;0;0";\n \
-                            return linesString + "-" + timesString + "-" + repeatsString;\n \
+                            return linesString + "*" + timesString + "*" + repeatsString;\n \
                         }\n \
                         getScenarios' + id + '();\n \
                     </script>\n \
