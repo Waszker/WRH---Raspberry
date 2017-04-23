@@ -273,14 +273,15 @@ class RangoIrygaSchedulerModule(base_module.Module):
                             getScenarios' + id + '();\n \
                         }\n \
                         function saveScenario' + id + '() {\n \
-                            saveRequest = "ADD|" + scenarioString' + id + '(); \
+                            saveRequest = "ADD|" + scenarioString' + id + '();\n \
                             sendRequest("localhost", ' + port + ', saveRequest);\n \
                             getScenarios' + id + '();\n \
                         }\n \
                         function scenarioString' + id + '() {\n \
                             scenarioString = getTime' + id + '() + ";";\n \
                             scenarioString += getWeekDays' + id + '() + ";";\n \
-                            return scenarioString + getLineInformation' + id + '();\n \
+                            scenarioString += getLineInformation' + id + '();\n \
+                            return scenarioString;\n \
                         }\n \
                         function getTime' + id + '() {\n \
                             hour = document.getElementById("hour' + id + '").value;\n \
