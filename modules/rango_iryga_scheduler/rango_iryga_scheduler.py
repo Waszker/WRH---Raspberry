@@ -134,10 +134,10 @@ class RangoIrygaSchedulerModule(base_module.Module):
         for i, scenario in enumerate(self.scenarios):
             html_table += '<tr>' \
                           '<td>%s</td>' % scenario.get_html_information_string()
-            html_table += '<td><div class="switch" onclick="toggleScenario(%i)' \
+            html_table += '<td><div class="switch" onclick="toggleScenario' + str(self.id) + '(%i)"' \
                           '<label>OFF<input %s type="checkbox"><span class="level"></span>ON</label>' \
                           '</div></td>' % (i, "checked" if scenario.is_active else "")
-            html_table += '<td><a onclick="removeScenario(%i)">Usuń</a></td>' % i
+            html_table += '<td><a onclick="removeScenario' + str(self.id) + '(%i)">Usuń</a></td>' % i
 
         html_table += '</table>'
         return html_table
@@ -200,7 +200,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
 
         representation = '<div class="card-panel">'
         representation += '<h5>%s</h5>' % self.name
-        representation += '<div id="rangoIrygaSchedulerSocketDiv' + id + '" class="socketDiv" style="height: 50px; margin: auto">\n \
+        representation += '<div id="rangoIrygaSchedulerSocketDiv' + id + '" class="socketDiv" style="height: auto; margin: auto">\n \
                            <img src="static/images/loading_spinner.gif" style="width: 50px;"/>\n \
                            </div>\n \
                            <table style="margin: 0px auto; max-width: 95%; width: auto">'
