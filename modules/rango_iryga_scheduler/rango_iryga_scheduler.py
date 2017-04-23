@@ -255,64 +255,64 @@ class RangoIrygaSchedulerModule(base_module.Module):
                             </td> \
                         </tr> \
                     </table>'
-        representation += '<script> \
-                        function getScenarios' + id + '() { \
-                            document.getElementById("rangoIrygaSchedulerSocketDiv' + id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />"; \
-                            getRequest("localhost", ' + port + ', "MEASUREMENT", update_scenarios_view' + id + '); \
-                        } \
-                        function update_scenarios_view' + id + '(text) { \
-                                   document.getElementById("rangoIrygaSchedulerSocketDiv' + id + '").innerHTML = text; \
-                        } \
-                        function toggleScenario' + id + '(number) { \
-                            sendRequest("localhost", ' + port + ', "ACT|" + number); \
-                            getScenarios' + id + '(); \
-                        } \
-                        function removeScenario' + id + '(number) { \
-                            sendRequest("localhost", ' + port + ', "DEL|" + number); \
-                            getScenarios' + id + '(); \
-                        } \
-                        function saveScenario' + id + '() { \
-                            sendRequest("localhost", ' + port + ', "ADD|" + scenarioString' + id + '()); \
-                            getScenarios' + id + '(); \
-                        } \
-                        function scenarioString' + id + '() { \
-                            scenarioString = getTime' + id + '() + ";"; \
-                            scenarioString += getWeekDays' + id + '() + ";"; \
-                            return scenarioString + getLineInformation' + id + '(); \
-                        } \
-                        function getTime' + id + '() { \
-                            hour = document.getElementById("hour' + id + '").value; \
-                            minute = document.getElementById("minute' + id + '").value; \
-                            return "" + hour + "," + minute; \
-                        } \
-                        function getWeekDays' + id + '() { \
-                            weekdaysString = ""; \
-                            weekdays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]; \
-                            for (i = 0; i < 7; i++) { \
-                                if (!document.getElementById(weekdays[i]' + id + ').checked) continue; \
-                                weekdayString += "" + i + ","; \
-                            } \
-                            return weekdayString; \
-                        } \
-                        function getLineInformation' + id + '() { \
-                            isValid = false; \
-                            linesString = ""; \
-                            timesString = ""; \
-                            repeatsString = ""; \
-                            for (i = 0; i < 4; i++) { \
-                                if (document.getElementById("line" + (i+1)' + id + ').checked) { \
-                                    isValid = true; \
-                                    separator = (linesString === "" ? "" : ","); \
-                                    linesString += separator + (i+1); \
-                                    timesString += separator + document.getElementById("line" + (i+1) + "_time"' + id + ').value; \
-                                    repeatsString += separator + document.getElementById("line" + (i+1) + "_repeats"' + id + ').value; \
-                                 } \
-                            } \
-                            if (!isValid) return "-1;0;0"; \
-                            return linesString + ";" + timesString + ";" + repeatsString; \
-                        } \
-                        getScenarios' + id + '(); \
-                    </script> \
+        representation += '<script>\n \
+                        function getScenarios' + id + '() {\n \
+                            document.getElementById("rangoIrygaSchedulerSocketDiv' + id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />";\n \
+                            getRequest("localhost", ' + port + ', "MEASUREMENT", update_scenarios_view' + id + ');\n \
+                        }\n \
+                        function update_scenarios_view' + id + '(text) {\n \
+                                   document.getElementById("rangoIrygaSchedulerSocketDiv' + id + '").innerHTML = text;\n \
+                        }\n \
+                        function toggleScenario' + id + '(number) {\n \
+                            sendRequest("localhost", ' + port + ', "ACT|" + number);\n \
+                            getScenarios' + id + '();\n \
+                        }\n \
+                        function removeScenario' + id + '(number) {\n \
+                            sendRequest("localhost", ' + port + ', "DEL|" + number);\n \
+                            getScenarios' + id + '();\n \
+                        }\n \
+                        function saveScenario' + id + '() {\n \
+                            sendRequest("localhost", ' + port + ', "ADD|" + scenarioString' + id + '());\n \
+                            getScenarios' + id + '();\n \
+                        }\n \
+                        function scenarioString' + id + '() {\n \
+                            scenarioString = getTime' + id + '() + ";";\n \
+                            scenarioString += getWeekDays' + id + '() + ";";\n \
+                            return scenarioString + getLineInformation' + id + '();\n \
+                        }\n \
+                        function getTime' + id + '() {\n \
+                            hour = document.getElementById("hour' + id + '").value;\n \
+                            minute = document.getElementById("minute' + id + '").value;\n \
+                            return "" + hour + "," + minute;\n \
+                        }\n \
+                        function getWeekDays' + id + '() {\n \
+                            weekdaysString = "";\n \
+                            weekdays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];\n \
+                            for (i = 0; i < 7; i++) {\n \
+                                if (!document.getElementById(weekdays[i]' + id + ').checked) continue;\n \
+                                weekdayString += "" + i + ",";\n \
+                            }\n \
+                            return weekdayString;\n \
+                        }\n \
+                        function getLineInformation' + id + '() {\n \
+                            isValid = false;\n \
+                            linesString = "";\n \
+                            timesString = "";\n \
+                            repeatsString = "";\n \
+                            for (i = 0; i < 4; i++) {\n \
+                                if (document.getElementById("line" + (i+1)' + id + ').checked) {\n \
+                                    isValid = true;\n \
+                                    separator = (linesString === "" ? "" : ",");\n \
+                                    linesString += separator + (i+1);\n \
+                                    timesString += separator + document.getElementById("line" + (i+1) + "_time"' + id + ').value;\n \
+                                    repeatsString += separator + document.getElementById("line" + (i+1) + "_repeats"' + id + ').value;\n \
+                                 }\n \
+                            }\n \
+                            if (!isValid) return "-1;0;0";\n \
+                            return linesString + ";" + timesString + ";" + repeatsString;\n \
+                        }\n \
+                        getScenarios' + id + '();\n \
+                    </script>\n \
                     </div>'
         return representation
 
