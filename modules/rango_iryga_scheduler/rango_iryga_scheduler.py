@@ -300,7 +300,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
                             timesString = "";\n \
                             repeatsString = "";\n \
                             for (i = 0; i < 4; i++) {\n \
-                                if (document.getElementById("line" + (i+1)' + id + ').checked) {\n \
+                                if (document.getElementById("line" + (i+1) + ' + id + ').checked) {\n \
                                     isValid = true;\n \
                                     separator = (linesString === "" ? "" : ",");\n \
                                     linesString += separator + (i+1);\n \
