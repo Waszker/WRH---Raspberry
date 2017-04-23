@@ -184,7 +184,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
         """
         self._read_scenarios_from_file()
         base_module.Module.start_work(self)
-        scheduler = threading.Thread(self._scheduler_thread)
+        scheduler = threading.Thread(target=self._scheduler_thread)
         scheduler.daemon = True
         scheduler.start()
         while self._should_end is False:
