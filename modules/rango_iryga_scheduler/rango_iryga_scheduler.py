@@ -23,6 +23,7 @@ class RangoScenario:
         Creates scenario from the provided information.
         :param request: line containing information about scenario, sent after user creates new request
         """
+        print str(request)
         self.request = str(request)
         self.is_active = True
         start, days, lines, times, repeats = request.split(';')
@@ -272,7 +273,8 @@ class RangoIrygaSchedulerModule(base_module.Module):
                             getScenarios' + id + '();\n \
                         }\n \
                         function saveScenario' + id + '() {\n \
-                            sendRequest("localhost", ' + port + ', "ADD|" + scenarioString' + id + '());\n \
+                            saveRequest = "ADD|" + scenarioString' + id + '(); \
+                            sendRequest("localhost", ' + port + ', saveRequest);\n \
                             getScenarios' + id + '();\n \
                         }\n \
                         function scenarioString' + id + '() {\n \
@@ -290,7 +292,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
                             weekdays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];\n \
                             for (i = 0; i < 7; i++) {\n \
                                 if (!document.getElementById(weekdays[i] + ' + id + ').checked) continue;\n \
-                                weekdaysString += "" + i + ",";\n \
+                                weekdaysString += (weekdaysString === "" ? "" : ",") + i;\n \
                             }\n \
                             return weekdaysString;\n \
                         }\n \
