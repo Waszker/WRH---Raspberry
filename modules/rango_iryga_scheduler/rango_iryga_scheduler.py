@@ -23,7 +23,7 @@ class RangoScenario:
         Creates scenario from the provided information.
         :param request: line containing information about scenario, sent after user creates new request
         """
-        self.request = str(request)
+        self.request = request = str(request).replace('\n', '')
         self.is_active = True
         start, days, lines, times, repeats = request.split('*')
         hour, minute = map(int, start.split(','))
