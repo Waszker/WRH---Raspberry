@@ -50,7 +50,7 @@ function postRequest(host, port, message, callbackFunction) {
             callbackFunction(http.responseText);
         }
     }
-    http.send("host=" + host + "&port=" + port + "&message=" + message);
+    http.send("&host=" + host + "&port=" + port + "&message=" + message);
 }
 
 /**
