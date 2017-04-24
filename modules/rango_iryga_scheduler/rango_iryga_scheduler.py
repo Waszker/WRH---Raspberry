@@ -58,7 +58,10 @@ class RangoScenario:
         """
         if self._should_activate(date):
             # Log action to file?
-            self._activate(rango_port)
+            print "Activating scenario!"
+            thread = threading.Thread(target=self._activate, args=(rango_port,))
+            thread.daemon = True
+            thread.start()
 
     def _should_activate(self, date):
         print "Checking if scenario starting at %i:%i on %s should be activated" % (self.start_time.hour, self.start_time.minute, str(self.active_on_days))
@@ -73,6 +76,7 @@ class RangoScenario:
                (date.minute == self.start_time.minute)
 
     def _activate(self, rango_port):
+        print "Scenario works!"
         state = "ON"
         for relay, time, repeats in zip(self.active_lines, self.line_activation_times, self.line_activation_repeats):
             message = "%s,%s,%s,%s" % tuple(map(str, (state, relay, time, repeats)))
@@ -348,7 +352,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
         start_time = time.time()
         while True:
             # TODO: Check for no connection situation!
-            current_time = datetime.datetime.utcnow()
+            current_time = datetime.datetime.now()
             [scenario.time_changed(current_time, self.rango_port) for scenario in self.scenarios]
             time.sleep(60.0 - ((time.time() - start_time) % 60.0))
 
