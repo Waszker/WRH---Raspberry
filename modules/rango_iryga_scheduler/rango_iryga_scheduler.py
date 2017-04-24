@@ -135,8 +135,9 @@ class RangoIrygaSchedulerModule(base_module.Module):
 
         for i, scenario in enumerate(self.scenarios):
             html_table += '<li class="collection-item"><div>%s' % scenario.get_html_information_string()
-            html_table += '<a href="#!" onclick="removeScenario' + str(
-                self.id) + '(%i)" class="secondary-content">Usuń</a>' % i
+            html_table += '<button class="waves-effect waves-light btn grey darken-3" type="button" ' \
+                          'onclick="removeScenario' + str(self.id) + '(%i)">Usuń</button>' % i
+
             html_table += '<a href="#!" onclick="toggleScenario' + str(
                 self.id) + '(%i)" class="secondary-content">%s</a><br/></div></li>' % (
                 i, "Dezaktywuj" if scenario.is_active else "Aktywuj")
