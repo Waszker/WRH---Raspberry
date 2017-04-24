@@ -36,9 +36,6 @@ class ESP8266SocketModule(base_module.Module):
         :param configuration_line:
         :return:
         """
-        # Configuration line for camera should look like this:
-        # TYPE_NUM=5 ; ID=INT ; NAME=STRING ; GPIO=STRING ; ADDRESS=STRING
-
         checker = re.compile(ESP8266SocketModule.configuration_line_pattern)
         return checker.match(configuration_line) is not None
 

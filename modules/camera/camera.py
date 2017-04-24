@@ -45,8 +45,6 @@ class CameraModule(base_module.Module):
         :param configuration_line:
         :return:
         """
-        # Configuration line for camera should look like this:
-        # TYPE_NUM=2 ; ID=INT ; NAME=STRING ; GPIO=STRING ; ADDRESS=STRING ; LOGIN=STRING ; PASSWORD=STRING
         checker = re.compile(CameraModule.configuration_line_pattern)
         return checker.match(configuration_line) is not None
 

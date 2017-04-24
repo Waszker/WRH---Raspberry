@@ -38,8 +38,6 @@ class DHT22Module(base_module.Module):
         :param configuration_line:
         :return:
         """
-        # Configuration line for camera should look like this:
-        # TYPE_NUM=1 ; ID=INT ; NAME=STRING ; GPIO=INT ; INTERVAL=INT ; ADDRESS=STRING
         checker = re.compile(DHT22Module.configuration_line_pattern)
         return checker.match(configuration_line) is not None
 

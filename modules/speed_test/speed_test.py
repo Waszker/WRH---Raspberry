@@ -34,8 +34,6 @@ class SpeedTestModule(base_module.Module):
         :param configuration_line:
         :return:
         """
-        # Configuration line for camera should look like this:
-        # TYPE_NUM=6 ; ID=INT ; NAME=STRING ; INTERVAL=INT ; ADDRESS=INT
         checker = re.compile(SpeedTestModule.configuration_line_pattern)
         return checker.match(configuration_line) is not None
 

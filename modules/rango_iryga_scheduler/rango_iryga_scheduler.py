@@ -112,8 +112,6 @@ class RangoIrygaSchedulerModule(base_module.Module):
         :param configuration_line:
         :return:
         """
-        # Configuration line for camera should look like this:
-        # TYPE_NUM=7 ; ID=INT ; NAME=STRING ; ADDRESS=STRING ; PORT=INT
         checker = re.compile(RangoIrygaSchedulerModule.configuration_line_pattern)
         return checker.match(configuration_line) is not None
 
