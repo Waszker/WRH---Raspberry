@@ -45,7 +45,8 @@ class RangoScenario:
         html_information += "<p>Dni: "
         for day in self.active_on_days:
             html_information += "&nbsp;<b>%s</b>" % weekdays[day]
-        html_information += "</p>"
+        html_information += "</p><p>Status: "
+        html_information += "<a style=\"color:%s;\">%s</a></p>" % ('green', 'ON') if self.is_active else ('red', 'OFF')
         return html_information
 
     def time_changed(self, date, rango_port):
@@ -138,7 +139,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
                 self.id) + '(%i)" class="secondary-content">Usuń</a>' % i
             html_table += '<a href="#!" onclick="toggleScenario' + str(
                 self.id) + '(%i)" class="secondary-content">%s</a><br/></div></li>' % (
-            i, "Dezaktywuj" if scenario.is_active else "Aktywuj")
+                i, "Dezaktywuj" if scenario.is_active else "Aktywuj")
 
         return html_table
 
