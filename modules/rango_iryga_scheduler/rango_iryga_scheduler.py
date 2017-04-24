@@ -39,12 +39,11 @@ class RangoScenario:
         :return: HTML formatted string
         """
         html_information = "Czas rozpoczęcia %i:%i<br />" % (self.start_time.hour, self.start_time.minute)
-        html_information += "Aktywne linie: <ul>"
+        html_information += "Aktywne linie: <br />"
         for relay, time, repeats in zip(self.active_lines, self.line_activation_times, self.line_activation_repeats):
-            html_information += "<li>linia %i na %i sekund z %i powtórzeniami</li>" % (relay, time, repeats)
-        html_information += "</ul><br />"
+            html_information += "linia %i na %i sekund z %i powtórzeniami<br />" % (relay, time, repeats)
         html_information += "Obowiązuje w dni: %s" % str(self.active_on_days)
-        return "Scenario_"
+        return html_information
 
     def time_changed(self, date, rango_port):
         """
