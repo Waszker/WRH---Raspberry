@@ -44,7 +44,7 @@ class RangoScenario:
             html_information += "<li>linia %i na %i sekund z %i powtórzeniami</li>" % (relay, time, repeats)
         html_information += "</ul><br />"
         html_information += "Obowiązuje w dni: %s" % str(self.active_on_days)
-        return html_information
+        return "Scenario_"
 
     def time_changed(self, date, rango_port):
         """
@@ -128,12 +128,12 @@ class RangoIrygaSchedulerModule(base_module.Module):
         Rango Scheduler returns html table containing all scenarios data.
         """
         html_table = '<ul class="collection with-header"> \
-                      <li class="collection-header"><h4>Obecne scenariusze</h4></li>'
+                      <li class="collection-header"><h6>Obecne scenariusze</h6></li>'
 
         for i, scenario in enumerate(self.scenarios):
             html_table += '<li class="collection-item"><div>%s' % scenario.get_html_information_string()
-            html_table += '<a href="#!" onclick="removeScenario' + str(self.id) + '(%i)" class="secondary-content">Usuń</a>' % i
-            html_table += '<a href="#!" onclick="toggleScenario' + str(self.id) + '(%i)" class="secondary-content">%s</a></div></li>' % (i, "DEZAKTYWUJ" if scenario.is_active else "AKTYWUJ")
+            html_table += '<a href="#!" onclick="removeScenario' + str(self.id) + '(%i)" class="secondary-content">  Usuń</a>' % i
+            html_table += '<a href="#!" onclick="toggleScenario' + str(self.id) + '(%i)" class="secondary-content">%s</a></div></li>' % (i, "Dezaktywuj" if scenario.is_active else "Aktywuj")
 
         return html_table
 
@@ -346,7 +346,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
             return
 
         with open(RangoIrygaSchedulerModule._saved_scenarios_file, 'w+') as f:
-            f.writelines([scenario.request for scenario in self.scenarios])
+            f.writelines([(scenario.request + "\n") for scenario in self.scenarios])
 
 
 if __name__ == "__main__":
