@@ -46,7 +46,8 @@ class RangoScenario:
         for day in self.active_on_days:
             html_information += "&nbsp;<b>%s</b>" % weekdays[day]
         html_information += "</p><p>Status: "
-        html_information += "<a style=\"color:%s;\">%s</a></p>" % ('green', 'ON') if not self.is_active else ('red', 'OFF')
+        html_information += "<a style=\"color:%s;\">%s</a></p>" % (
+            ('green', 'ON') if self.is_active else ('red', 'OFF'))
         return html_information
 
     def time_changed(self, date, rango_port):
@@ -138,9 +139,9 @@ class RangoIrygaSchedulerModule(base_module.Module):
             html_table += '<button class="waves-effect waves-light btn grey darken-3" type="button" ' \
                           'onclick="removeScenario' + str(self.id) + '(%i)">Usuń</button>' % i
 
-            html_table += '<a href="#!" onclick="toggleScenario' + str(
-                self.id) + '(%i)" class="secondary-content">%s</a><br/></div></li>' % (
-                i, "Dezaktywuj" if scenario.is_active else "Aktywuj")
+            html_table += '<button class="waves-effect waves-light btn grey darken-3" type="button"' \
+                          'onclick="toggleScenario' + str(self.id) + '(%i)">%s</button> \
+                          <br/></div></li>' % (i, "Dezaktywuj" if scenario.is_active else "Aktywuj")
 
         return html_table
 
