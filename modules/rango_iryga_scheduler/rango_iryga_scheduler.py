@@ -366,7 +366,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
         data = connection.recv(1024)
         action, request = data.split('|')
         if action == "ADD" or action == "add":
-            self.scenarios.append(RangoScenario(request))
+            self.scenarios.append(RangoScenario(str(1) + RangoScenario.SEP + request))
         elif action == "DEL" or action == "del":
             del self.scenarios[int(request)]
         elif action == "ACT" or action == "act":
