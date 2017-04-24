@@ -44,13 +44,12 @@ function getRequest(host, port, message, callback_function) {
 */
 function postRequest(host, port, message, callbackFunction) {
     var http = new XMLHttpRequest();
-    http.open("POST", "request", true);
+    http.open("POST", "request?host=" + host + "&port=" + port + "&message=" + message, true);
     http.onreadystatechange = function() {
         if(http.readyState == 4 && http.status == 200 && callbackFunction != null) {
             callbackFunction(http.responseText);
         }
     }
-    http.send("&host=" + host + "&port=" + port + "&message=" + message);
 }
 
 /**
