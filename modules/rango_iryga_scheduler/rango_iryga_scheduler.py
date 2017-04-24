@@ -38,11 +38,14 @@ class RangoScenario:
         Returns HTML formatted string to display one the tornado web page.
         :return: HTML formatted string
         """
-        html_information = "Czas rozpoczęcia %i:%i<br />" % (self.start_time.hour, self.start_time.minute)
-        html_information += "Aktywne linie: <br />"
+        weekdays = ['poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota', 'niedziela']
+        html_information = "<p>Czas rozpoczęcia <b>%i:%i</b></p>" % (self.start_time.hour, self.start_time.minute)
         for relay, time, repeats in zip(self.active_lines, self.line_activation_times, self.line_activation_repeats):
-            html_information += "linia %i na %i sekund z %i powtórzeniami<br />" % (relay, time, repeats)
-        html_information += "Obowiązuje w dni: %s" % str(self.active_on_days)
+            html_information += "<p>Linia %i na %i sekund z %i powtórzeniami</p>" % (relay, time, repeats)
+        html_information += "<p>Dni: "
+        for day in self.active_on_days:
+            html_information += "&nbsp;<b>%s</b>" % weekdays[day]
+        html_information += "</p>"
         return html_information
 
     def time_changed(self, date, rango_port):
@@ -126,13 +129,16 @@ class RangoIrygaSchedulerModule(base_module.Module):
         Returns measurements taken by this module.
         Rango Scheduler returns html table containing all scenarios data.
         """
-        html_table = '<ul class="collection with-header"> \
-                      <li class="collection-header"><h6>Obecne scenariusze</h6></li>'
+        html_table = '<br/><br/><ul class="collection with-header"> \
+                      <li class="collection-header"><h5>Obecne scenariusze</h5></li>'
 
         for i, scenario in enumerate(self.scenarios):
             html_table += '<li class="collection-item"><div>%s' % scenario.get_html_information_string()
-            html_table += '<a href="#!" onclick="removeScenario' + str(self.id) + '(%i)" class="secondary-content">  Usuń</a>' % i
-            html_table += '<a href="#!" onclick="toggleScenario' + str(self.id) + '(%i)" class="secondary-content">%s</a></div></li>' % (i, "Dezaktywuj" if scenario.is_active else "Aktywuj")
+            html_table += '<a href="#!" onclick="removeScenario' + str(
+                self.id) + '(%i)" class="secondary-content">Usuń</a>' % i
+            html_table += '<a href="#!" onclick="toggleScenario' + str(
+                self.id) + '(%i)" class="secondary-content">%s</a><br/></div></li>' % (
+            i, "Dezaktywuj" if scenario.is_active else "Aktywuj")
 
         return html_table
 
