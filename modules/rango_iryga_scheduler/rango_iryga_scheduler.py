@@ -198,10 +198,10 @@ class RangoIrygaSchedulerModule(base_module.Module):
                            <img src="static/images/loading_spinner.gif" style="width: 50px;"/>\n \
                            </div>\n \
                            <table style="margin: 0px auto; max-width: 95%; width: auto"> \
-                           <tr><td colspan="3" align="center" valign="middle"><h5>Dodaj nowy scenariusz</h5></td></tr> \
-                           <tr><td align="center" valign="middle"><b>Linia</b></td> \
-                               <td align="center" valign="middle"><b>Czas</b></td> \
-                               <td align="center" valign="middle"><b>Powtórzeń</b></td></tr>'
+                           <tr><td colspan="3" style="text-align:center; vertical-align:middle"><h5>Dodaj nowy scenariusz</h5></td></tr> \
+                           <tr><td style="text-align:center; vertical-align:middle"><b>Linia</b></td> \
+                               <td style="text-align:center; vertical-align:middle"><b>Czas</b></td> \
+                               <td style="text-align:center; vertical-align:middle"><b>Powtórzeń</b></td></tr>'
 
         repeats = [1, 4, 1, 1]
         times = [300, 80, 300, 300]
