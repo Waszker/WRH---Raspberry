@@ -136,7 +136,13 @@ class Module:
         if bind_result is True:
             log("%s %s started listening" % (self.type_name, self.name))
             self.socket.listen(10)
-            await_connection(self.socket, self._react_to_connection, predicate=predicate)
+            await_connection(self.socket, self._start_new_connection_thread, predicate=predicate)
+
+    def _start_new_connection_thread(self, connection, client_address):
+        thread = threading.Thread(target=self._react_to_connection, args=(connection, client_address))
+        thread.daemon = True
+        thread.start()
+        thread.join()
 
     def _react_to_connection(self, connection, client_address):
         """
