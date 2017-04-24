@@ -61,6 +61,12 @@ class RangoScenario:
             self._activate(rango_port)
 
     def _should_activate(self, date):
+        print "Checking if scenario starting at %i:%i on %s should be activated" % (self.start_time.hour, self.start_time.minute, str(self.active_on_days))
+        print "Current date is " + str(date)
+        print "Is scenario active: " + str(self.is_active)
+        print "Is weekday ok: " + str((date.weekday() in self.active_on_days))
+        print "Is hour ok: " + str((date.hour == self.start_time.hour))
+        print "Is minute ok: " + str((date.minute == self.start_time.minute))
         return self.is_active and \
                (date.weekday() in self.active_on_days) and \
                (date.hour == self.start_time.hour) and \
@@ -139,7 +145,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
             html_table += '<button class="waves-effect waves-light btn grey darken-3" type="button" ' \
                           'onclick="removeScenario' + str(self.id) + '(%i)">Usuń</button>' % i
 
-            html_table += '<button class="waves-effect waves-light btn grey darken-3" type="button"' \
+            html_table += '&nbsp;&nbsp;&nbsp;<button class="waves-effect waves-light btn grey darken-3" type="button"' \
                           'onclick="toggleScenario' + str(self.id) + '(%i)">%s</button> \
                           <br/></div></li>' % (i, "Dezaktywuj" if scenario.is_active else "Aktywuj")
 
