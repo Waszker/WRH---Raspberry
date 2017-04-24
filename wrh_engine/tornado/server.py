@@ -50,9 +50,7 @@ class Request(BaseHandler):
         host = self.get_argument("host")
         port = self.get_argument("port")
         message = self.get_argument("message")
-        mes = receive_message(host, port, message=message)
-        print mes
-        self.finish(mes)
+        self.finish(receive_message(host, port, message=message, buffer_size=1024*1024))
 
 
 application = tornado.web.Application([
