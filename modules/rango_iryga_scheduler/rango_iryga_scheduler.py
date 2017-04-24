@@ -198,8 +198,10 @@ class RangoIrygaSchedulerModule(base_module.Module):
                            <img src="static/images/loading_spinner.gif" style="width: 50px;"/>\n \
                            </div>\n \
                            <table style="margin: 0px auto; max-width: 95%; width: auto"> \
-                           <tr><td colspan="3">Dodaj nowy scenariusz</td></tr> \
-                           <tr><td>Linia</td><td>Czas</td><td>Powtórzeń</td></tr>'
+                           <tr><td colspan="3" align="center" valign="middle"><h5>Dodaj nowy scenariusz</h5></td></tr> \
+                           <tr><td align="center" valign="middle"><b>Linia</b></td> \
+                               <td align="center" valign="middle"><b>Czas</b></td> \
+                               <td align="center" valign="middle"><b>Powtórzeń</b></td></tr>'
 
         repeats = [1, 4, 1, 1]
         times = [300, 80, 300, 300]
@@ -232,20 +234,20 @@ class RangoIrygaSchedulerModule(base_module.Module):
                         </tr>\n \
                         <tr>\n \
                             <td colspan="3">\n \
-                                <input type="checkbox" id="monday' + id + '"/><br />\n \
-                                <label for="monday' + id + '">Pon</label>\n \
-                                <input type="checkbox" id="tuesday' + id + '"/><br />\n \
-                                <label for="tuesday' + id + '">Wto</label>\n \
-                                <input type="checkbox" id="wednesday' + id + '"/><br />\n \
-                                <label for="wednesday' + id + '">Śro</label>\n \
-                                <input type="checkbox" id="thursday' + id + '"/><br />\n \
-                                <label for="thursday' + id + '">Czw</label>\n \
-                                <input type="checkbox" id="friday' + id + '"/><br />\n \
-                                <label for="friday' + id + '">Pią</label>\n \
-                                <input type="checkbox" id="saturday' + id + '"/><br />\n \
-                                <label for="saturday' + id + '">Sob</label>\n \
-                                <input type="checkbox" id="sunday' + id + '"/><br />\n \
-                                <label for="sunday' + id + '">Nie</label>\n \
+                                <input type="checkbox" id="monday' + id + '"/>\n \
+                                <label for="monday' + id + '">Pon</label><br />\n \
+                                <input type="checkbox" id="tuesday' + id + '"/>\n \
+                                <label for="tuesday' + id + '">Wto</label><br />\n \
+                                <input type="checkbox" id="wednesday' + id + '"/>\n \
+                                <label for="wednesday' + id + '">Śro</label><br />\n \
+                                <input type="checkbox" id="thursday' + id + '"/>\n \
+                                <label for="thursday' + id + '">Czw</label><br />\n \
+                                <input type="checkbox" id="friday' + id + '"/>\n \
+                                <label for="friday' + id + '">Pią</label><br />\n \
+                                <input type="checkbox" id="saturday' + id + '"/>\n \
+                                <label for="saturday' + id + '">Sob</label><br />\n \
+                                <input type="checkbox" id="sunday' + id + '"/>\n \
+                                <label for="sunday' + id + '">Nie</label><br />\n \
                             </td>\n \
                         </tr>\n \
                         <tr>\n \
