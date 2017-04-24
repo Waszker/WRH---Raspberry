@@ -38,6 +38,22 @@ function getRequest(host, port, message, callback_function) {
 }
 
 /**
+* Sends POST request to specified host on specified port and returns its response.
+* Can be used when controlling some devices.
+* Better than the getRequest function because POST requests don't have size limits.
+*/
+function postRequest(host, port, message, callbackFunction) {
+    var http = new XMLHttpRequest();
+    http.open("POST", "request?host=" + host + "&port=" + port + "&message=" + message, true);
+    http.onreadystatechange = function() {
+        if(http.readyState == 4 && http.status == 200 && callbackFunction != null) {
+            callbackFunction(http.responseText);
+        }
+    }
+    http.send(params);
+}
+
+/**
 * Sends request to specified host on specified port. Can be used when controlling some devices.
 */
 function sendRequest(host, port, message) {
