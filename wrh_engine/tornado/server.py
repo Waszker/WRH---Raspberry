@@ -65,7 +65,6 @@ application = tornado.web.Application([
 
 
 def sigint_handler(*_):
-    application.stop()
     tornado.ioloop.IOLoop.instance().stop()
 
 
