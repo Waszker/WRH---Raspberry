@@ -2,6 +2,8 @@
 Set of instructions for getting information about the system.
 """
 
+import urllib2
+
 
 def get_cpu_temp():
     """
@@ -44,3 +46,19 @@ def get_uptime():
             uptime_string += str(minutes) + " " + (minutes == 1 and "minute" or "minutes") + ", "
         uptime_string += str(seconds) + " " + (seconds == 1 and "second" or "seconds")
     return uptime_string
+
+
+def is_internet_connection():
+    """
+    Checks if Internet connection is present.
+    This method uses DNS to determine IP address of https://www.google.com web page.
+    Although it's not an optimal way, this function is given as it is.
+    :return: boolean information whether Internet connection is present
+    """
+    try:
+        urllib2.urlopen('https://www.google.com', timeout=5)
+        is_internet = True
+    except urllib2.URLError:
+        is_internet = False
+
+    return is_internet

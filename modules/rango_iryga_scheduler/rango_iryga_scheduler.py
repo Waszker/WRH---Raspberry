@@ -358,6 +358,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
         start_time = time.time()
         while True:
             # TODO: Check for no connection situation!
+            # if not is_internet_connection():
             current_time = datetime.datetime.now()
             [scenario.time_changed(current_time, self.rango_port) for scenario in self.scenarios]
             time.sleep(60.0 - ((time.time() - start_time) % 60.0))

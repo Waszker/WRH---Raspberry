@@ -1,6 +1,7 @@
 #!/bin/python2.7
 import os
 import sys
+import signal
 import tornado
 import tornado.ioloop
 import tornado.web
@@ -50,7 +51,7 @@ class Request(BaseHandler):
         host = self.get_argument("host")
         port = self.get_argument("port")
         message = self.get_argument("message")
-        self.finish(receive_message(host, port, message=message, buffer_size=1024*1024))
+        self.finish(receive_message(host, port, message=message, buffer_size=1024 * 1024))
 
 
 application = tornado.web.Application([
@@ -62,8 +63,15 @@ application = tornado.web.Application([
     debug=True,
     static_path=os.path.join(os.path.dirname("wrh_engine/tornado"), "tornado"))
 
+
+def sigint_handler(*_):
+    application.stop()
+    tornado.ioloop.IOLoop.instance().stop()
+
+
 if __name__ == "__main__":
     __CONFIG_FILE__ = sys.argv[1]
+    signal.signal(signal.SIGINT, sigint_handler)
     application.listen(8888)
     print 'Tornado: Started.'
     tornado.ioloop.IOLoop.instance().start()
