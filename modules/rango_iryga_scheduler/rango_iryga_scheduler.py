@@ -25,7 +25,7 @@ class RangoScenario:
         """
         self.request = request = str(request).replace('\n', '')
         self.is_active = True
-        start, days, lines, times, repeats = request.split('*')
+        active, start, days, lines, times, repeats = request.split('*')
         hour, minute = map(int, start.split(','))
         self.start_time = datetime.datetime(2000, 1, 1, hour, minute)
         self.active_on_days = list(map(int, days.split(',')))
@@ -58,25 +58,23 @@ class RangoScenario:
         """
         if self._should_activate(date):
             # Log action to file?
-            print "Activating scenario!"
             thread = threading.Thread(target=self._activate, args=(rango_port,))
             thread.daemon = True
             thread.start()
 
     def _should_activate(self, date):
-        print "Checking if scenario starting at %i:%i on %s should be activated" % (self.start_time.hour, self.start_time.minute, str(self.active_on_days))
-        print "Current date is " + str(date)
-        print "Is scenario active: " + str(self.is_active)
-        print "Is weekday ok: " + str((date.weekday() in self.active_on_days))
-        print "Is hour ok: " + str((date.hour == self.start_time.hour))
-        print "Is minute ok: " + str((date.minute == self.start_time.minute))
+        # print "Checking if scenario starting at %i:%i on %s should be activated" % (self.start_time.hour, self.start_time.minute, str(self.active_on_days))
+        # print "Current date is " + str(date)
+        # print "Is scenario active: " + str(self.is_active)
+        # print "Is weekday ok: " + str((date.weekday() in self.active_on_days))
+        # print "Is hour ok: " + str((date.hour == self.start_time.hour))
+        # print "Is minute ok: " + str((date.minute == self.start_time.minute))
         return self.is_active and \
                (date.weekday() in self.active_on_days) and \
                (date.hour == self.start_time.hour) and \
                (date.minute == self.start_time.minute)
 
     def _activate(self, rango_port):
-        print "Scenario works!"
         state = "ON"
         for relay, time, repeats in zip(self.active_lines, self.line_activation_times, self.line_activation_repeats):
             message = "%s,%s,%s,%s" % tuple(map(str, (state, relay, time, repeats)))
