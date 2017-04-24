@@ -46,7 +46,7 @@ class RangoScenario:
         for day in self.active_on_days:
             html_information += "&nbsp;<b>%s</b>" % weekdays[day]
         html_information += "</p><p>Status: "
-        html_information += "<a style=\"color:%s;\">%s</a></p>" % ('green', 'ON') if self.is_active else ('red', 'OFF')
+        html_information += "<a style=\"color:%s;\">%s</a></p>" % ('green', 'ON') if not self.is_active else ('red', 'OFF')
         return html_information
 
     def time_changed(self, date, rango_port):
