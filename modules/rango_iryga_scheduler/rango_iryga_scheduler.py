@@ -17,6 +17,8 @@ class RangoScenario:
     """
     Class for private use only that represents Rango Iryga scenario to run at a certain time.
     """
+    REQUEST_SEPARATOR = SEP = '*'
+    PART_SEPARATOR = PSEP = ','
 
     def __init__(self, request):
         """
@@ -24,14 +26,14 @@ class RangoScenario:
         :param request: line containing information about scenario, sent after user creates new request
         """
         self.request = request = str(request).replace('\n', '')
-        self.is_active = True
-        active, start, days, lines, times, repeats = request.split('*')
-        hour, minute = map(int, start.split(','))
+        active, start, days, lines, times, repeats = request.split(RangoScenario.SEP)
+        self.is_active = (int(active) == 1)
+        hour, minute = map(int, start.split(RangoScenario.PSEP))
         self.start_time = datetime.datetime(2000, 1, 1, hour, minute)
-        self.active_on_days = list(map(int, days.split(',')))
-        self.active_lines = list(map(int, lines.split(',')))
-        self.line_activation_times = list(map(int, times.split(',')))
-        self.line_activation_repeats = list(map(int, repeats.split(',')))
+        self.active_on_days = list(map(int, days.split(RangoScenario.PSEP)))
+        self.active_lines = list(map(int, lines.split(RangoScenario.PSEP)))
+        self.line_activation_times = list(map(int, times.split(RangoScenario.PSEP)))
+        self.line_activation_repeats = list(map(int, repeats.split(RangoScenario.PSEP)))
 
     def get_html_information_string(self):
         """
@@ -61,6 +63,12 @@ class RangoScenario:
             thread = threading.Thread(target=self._activate, args=(rango_port,))
             thread.daemon = True
             thread.start()
+
+    def toggle_activity(self):
+        self.is_active = not self.is_active
+        request_parts = self.request.split(RangoScenario.SEP)
+        request_parts[0] = str(1 if self.is_active else 0)
+        self.request = RangoScenario.SEP.join(request_parts)
 
     def _should_activate(self, date):
         # print "Checking if scenario starting at %i:%i on %s should be activated" % (self.start_time.hour, self.start_time.minute, str(self.active_on_days))
@@ -362,7 +370,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
         elif action == "DEL" or action == "del":
             del self.scenarios[int(request)]
         elif action == "ACT" or action == "act":
-            self.scenarios[int(request)].is_active = not self.scenarios[int(request)].is_active
+            self.scenarios[int(request)].toggle_activity()
         elif action == "MEASUREMENT" or action == "measurement":
             connection.send(self.get_measurement())
             return
