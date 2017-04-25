@@ -90,7 +90,7 @@ class DummyModule(base_module.Module):
         """
         Starts working procedure.
         """
-        # TODO: Start module working procedure
+        # TODO: Start module working procedure, can run base module's implementation too!
 
     def get_html_representation(self, website_host_address):
         """
@@ -98,17 +98,15 @@ class DummyModule(base_module.Module):
         """
         # TODO: Return code to be used by Tornado
 
-
-def _siginit_handler(*_):
-    # TODO: React to SIGINT
-    print "DUMMY: SIGINT signal caught"
-    sys.exit(0)
+    def _sigint_handler(self, *_):
+        print "DUMMY: SIGINT signal caught"
+        # TODO: React to received sigint signal. The base module has already implemented sigint handler that is
+        # automatically installed if running start_work() base module's procedure
 
 
 if __name__ == "__main__":
     print 'Dummy module: started.'
     conf_line = sys.argv[1]
-    signal.signal(signal.SIGINT, _siginit_handler)
 
     dummy = DummyModule(conf_line)
     dummy.start_work()

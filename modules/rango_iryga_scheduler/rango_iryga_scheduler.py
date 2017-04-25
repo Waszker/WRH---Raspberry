@@ -10,6 +10,7 @@ import datetime
 import threading
 from wrh_engine import module_base as base_module
 from utils.sockets import send_message
+from utils.system_info import is_internet_connection
 from utils.io import non_empty_positive_numeric_input as iinput
 
 
@@ -356,9 +357,9 @@ class RangoIrygaSchedulerModule(base_module.Module):
         start_time = time.time()
         while True:
             # TODO: Check for no connection situation!
-            # if not is_internet_connection():
-            current_time = datetime.datetime.now()
-            [scenario.time_changed(current_time, self.rango_port) for scenario in self.scenarios]
+            if is_internet_connection():
+                current_time = datetime.datetime.now()
+                [scenario.time_changed(current_time, self.rango_port) for scenario in self.scenarios]
             time.sleep(60.0 - ((time.time() - start_time) % 60.0))
 
     def _react_to_connection(self, connection, _):
