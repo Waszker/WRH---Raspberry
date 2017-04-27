@@ -227,6 +227,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
                                <td style="text-align:center; vertical-align:middle"><b>Czas</b></td> \
                                <td style="text-align:center; vertical-align:middle"><b>Powtórzeń</b></td></tr>'
 
+        relay_values = [5, 4, 15, 14]
         repeats = [1, 4, 1, 1]
         times = [300, 80, 300, 300]
         for i in xrange(4):
@@ -328,11 +329,12 @@ class RangoIrygaSchedulerModule(base_module.Module):
                             linesString = "";\n \
                             timesString = "";\n \
                             repeatsString = "";\n \
+                            true_lines_values = ["5", "4", "15", "14"];\n \
                             for (i = 0; i < 4; i++) {\n \
                                 if (document.getElementById("line" + (i+1) + ' + id + ').checked) {\n \
                                     isValid = true;\n \
                                     separator = (linesString === "" ? "" : ",");\n \
-                                    linesString += separator + (i+1);\n \
+                                    linesString += separator + true_lines_values[i];\n \
                                     timesString += separator + document.getElementById("line" + (i+1) + "_time" + ' + id + ').value;\n \
                                     repeatsString += separator + document.getElementById("line" + (i+1) + "_repeats" + ' + id + ').value;\n \
                                  }\n \
