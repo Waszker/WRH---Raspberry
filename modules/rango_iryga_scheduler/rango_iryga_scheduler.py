@@ -85,8 +85,16 @@ class RangoScenario:
     def _activate(self, rango_port):
         state = "ON"
         for relay, time, repeats in zip(self.active_lines, self.line_activation_times, self.line_activation_repeats):
-            message = "%s,%s,%s,%s" % tuple(map(str, (state, relay, time, repeats)))
+            message = "%s,%s,%s,%s" % tuple(map(str, (state, self._get_real_relay_number(relay), time, repeats)))
             send_message("127.0.0.1", rango_port, message)
+
+    def _get_real_relay_number(self, relay):
+        real_numbers = {1: 5, 2: 4, 3: 15, 4: 14}
+        try:
+            real_number = real_numbers[relay]
+        except (KeyError, ValueError):
+            real_number = -1
+        return real_number
 
 
 class RangoIrygaSchedulerModule(base_module.Module):
@@ -328,12 +336,11 @@ class RangoIrygaSchedulerModule(base_module.Module):
                             linesString = "";\n \
                             timesString = "";\n \
                             repeatsString = "";\n \
-                            true_lines_values = ["5", "4", "15", "14"];\n \
                             for (i = 0; i < 4; i++) {\n \
                                 if (document.getElementById("line" + (i+1) + ' + id + ').checked) {\n \
                                     isValid = true;\n \
                                     separator = (linesString === "" ? "" : ",");\n \
-                                    linesString += separator + true_lines_values[i];\n \
+                                    linesString += separator + (i+1);\n \
                                     timesString += separator + document.getElementById("line" + (i+1) + "_time" + ' + id + ').value;\n \
                                     repeatsString += separator + document.getElementById("line" + (i+1) + "_repeats" + ' + id + ').value;\n \
                                  }\n \
