@@ -146,7 +146,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
         Returns measurements taken by this module.
         Rango Scheduler returns html table containing all scenarios data.
         """
-        html_table = '<br/><br/><ul class="collection with-header"> \
+        html_table = '<br/><br/><ul class="collection with-header" style="background-color: #a7aaaf"> \
                       <li class="collection-header"><h5>Obecne scenariusze</h5></li>'
 
         for i, scenario in enumerate(self.scenarios):
@@ -156,7 +156,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
 
             html_table += '&nbsp;&nbsp;&nbsp;<button class="waves-effect waves-light btn grey darken-3" type="button"' \
                           'onclick="toggleScenario' + str(self.id) + '(%i)">%s</button> \
-                          <br/></div></li>' % (i, "Dezaktywuj" if scenario.is_active else "Aktywuj")
+                          <br/></div></li>' % (i, "Wyłącz" if scenario.is_active else "Włącz")
 
         return html_table
 
@@ -356,7 +356,6 @@ class RangoIrygaSchedulerModule(base_module.Module):
         """
         start_time = time.time()
         while True:
-            # TODO: Check for no connection situation!
             if is_internet_connection():
                 current_time = datetime.datetime.now()
                 [scenario.time_changed(current_time, self.rango_port) for scenario in self.scenarios]
