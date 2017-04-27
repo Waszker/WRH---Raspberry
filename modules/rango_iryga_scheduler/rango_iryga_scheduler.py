@@ -146,11 +146,12 @@ class RangoIrygaSchedulerModule(base_module.Module):
         Returns measurements taken by this module.
         Rango Scheduler returns html table containing all scenarios data.
         """
-        html_table = '<br/><br/><ul class="collection with-header" style="background-color: #a7aaaf"> \
-                      <li class="collection-header"><h5>Obecne scenariusze</h5></li>'
+        html_table = '<br/><br/><ul class="collection with-header"> \
+                      <li class="collection-header" style="background-color: #a7aaaf"><h5>Obecne scenariusze</h5></li>'
 
         for i, scenario in enumerate(self.scenarios):
-            html_table += '<li class="collection-item"><div>%s' % scenario.get_html_information_string()
+            html_table += '<li style="background-color: #a7aaaf" class="collection-item">' \
+                          '<div>%s' % scenario.get_html_information_string()
             html_table += '<button class="waves-effect waves-light btn grey darken-3" type="button" ' \
                           'onclick="removeScenario' + str(self.id) + '(%i)">Usuń</button>' % i
 
