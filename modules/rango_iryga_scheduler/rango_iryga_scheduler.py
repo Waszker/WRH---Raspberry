@@ -362,6 +362,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
         """
         Check for possible scenario execution each minute.
         """
+        time.sleep(60 - datetime.datetime.now().second)
         start_time = time.time()
         while True:
             current_time = datetime.datetime.now()
