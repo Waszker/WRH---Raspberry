@@ -227,7 +227,6 @@ class RangoIrygaSchedulerModule(base_module.Module):
                                <td style="text-align:center; vertical-align:middle"><b>Czas</b></td> \
                                <td style="text-align:center; vertical-align:middle"><b>Powtórzeń</b></td></tr>'
 
-        relay_values = [5, 4, 15, 14]
         repeats = [1, 4, 1, 1]
         times = [300, 80, 300, 300]
         for i in xrange(4):
