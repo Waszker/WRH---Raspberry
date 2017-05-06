@@ -19,12 +19,14 @@ class RangoIrygaModule(base_module.Module):
     type_number = 7
     type_name = "RANGO IRYGA"
     configuration_line_pattern = str(type_number) + ";([0-9]{1,9});(.+?);(.+?);([1-9][0-9]{0,9})$"
+    RELAYS = [5, 4, 15, 14]
+    DELAY = 120
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
         self.type_number = RangoIrygaModule.type_number
         self.type_name = RangoIrygaModule.type_name
-        self.relay_actions = [[], [], [], []]
+        self.relay_actions = {i: [] for i in RangoIrygaModule.RELAYS}
 
     @staticmethod
     def is_configuration_line_sane(configuration_line):
@@ -62,22 +64,11 @@ class RangoIrygaModule(base_module.Module):
         self.address = str(matches.group(3))
         self.port = str(matches.group(4))
 
-    def _get_remaining_repeats(self):
-        remaining = []
-        for threads in self.relay_actions:
-            remaining_threads = 0
-            for thread in threads:
-                if thread.isAlive():
-                    remaining_threads += 1
-            remaining.append(remaining_threads)
-
-        return remaining
-
     def get_measurement(self):
         """
         Returns measurements taken by this module
         """
-        repeats = self._get_remaining_repeats()
+        repeats = [sum([thread.isAlive() for thread in self.relay_actions[relay]]) for relay in RangoIrygaModule.RELAYS]
         value_finding_pattern = ".+?value=\"(.+?)\".+?value=\"(.+?)\".+?value=\"(.+?)\".+?value=\"(.+?)\".+?value=\"(.+?)\".+?value=\"(.+?)\".+?value=\"(.+?)\".+?value=\"(.+?)\".*$"
         checker = re.compile(value_finding_pattern)
         try:
@@ -267,7 +258,38 @@ class RangoIrygaModule(base_module.Module):
                </script> \n\
                </div>'
 
+    def _stop_already_working_relay_threads(self, relay_number):
+        thread_list = self.relay_actions[relay_number]
+        for thread in thread_list:
+            thread.cancel()
+            thread.join()
+        del thread_list[:]
+
+        return thread_list
+
+    def _set_relay_state(self, relay_number, should_turn_on, duration, repeats):
+        duration = self._parse_duration_value(should_turn_on, duration)
+        repeats = self._parse_repeats_value(should_turn_on, repeats)
+        thread_list = self._stop_already_working_relay_threads(int(relay_number))
+
+        latency = 0
+        for i in xrange(repeats):
+            self._create_watering_thread(thread_list, latency, relay_number, should_turn_on, duration)
+            latency += (duration + RangoIrygaModule.DELAY)
+
+    def _create_watering_thread(self, thread_list, latency, relay_number, should_turn_on, duration):
+        thread = threading.Timer(latency, self._set_relay_state_on_esp,
+                                 args=(relay_number, should_turn_on, duration))
+        thread.daemon = True
+        thread.start()
+        if not should_turn_on:
+            thread.join()
+        else:
+            thread_list.append(thread)
+
     def _parse_duration_value(self, should_turn_on, duration):
+        # Duration value should be from range [-1, 600]
+        # If the desired state of the Rango Iryga is OFF then duration is undefined (infinity)
         try:
             duration = int(duration)
             if duration < -1 or duration > 600:
@@ -281,6 +303,8 @@ class RangoIrygaModule(base_module.Module):
         return duration
 
     def _parse_repeats_value(self, should_turn_on, repeats):
+        # Repeats value should be positive integer, bigger than 0.
+        # If the desired state of the Rango Iryga is OFF then repeats should be equal to 1.
         try:
             repeats = int(repeats)
             if (should_turn_on and repeats < 1) or (not should_turn_on):
@@ -289,47 +313,6 @@ class RangoIrygaModule(base_module.Module):
             repeats = 1
 
         return repeats
-
-    def _get_real_relay_number(self, relay_number):
-        true_relay_numbers = {5: 0, 4: 1, 15: 2, 14: 3}
-        try:
-            true_relay_number = true_relay_numbers[int(relay_number)]
-        except (KeyError, ValueError):
-            true_relay_number = -1
-
-        return true_relay_number
-
-    def _stop_already_working_relay_threads(self, relay_number):
-        thread_list = self.relay_actions[relay_number]
-        for thread in thread_list:
-            thread.cancel()
-            thread.join()
-        del thread_list[:]
-
-        return thread_list
-
-    def _set_relay_state(self, relay_number, should_turn_on, duration, repeats):
-        duration = self._parse_duration_value(should_turn_on, duration)
-        repeats = self._parse_repeats_value(should_turn_on, repeats)
-        true_relay_number = self._get_real_relay_number(relay_number)
-        thread_list = self._stop_already_working_relay_threads(true_relay_number)
-
-        latency = 0
-        for i in xrange(repeats):
-            thread = threading.Timer(latency, self._set_relay_state_on_esp,
-                                     args=(relay_number, should_turn_on, duration,))
-            thread.daemon = True
-            thread.start()
-            thread_list.append(thread)
-            latency += (duration + 120)
-
-    def _set_relay_state_on_test(self, relay_number, should_turn_on, duration):
-        state = "OFF"
-        if should_turn_on: state = "ON"
-        url = "http://" + self.address + "/socket.lua?wait=" + str(duration) + "&state=" + str(
-            state) + "&gpio_num=" + str(
-            relay_number)
-        print "Setting state for ESP with IP: " + self.address + " and url: " + url
 
     def _set_relay_state_on_esp(self, relay_number, should_turn_on, duration):
         # Then change relay's state
