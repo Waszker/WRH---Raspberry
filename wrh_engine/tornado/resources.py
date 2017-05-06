@@ -34,5 +34,5 @@ def get_system_stats():
 
 
 def restart():
-    s.call("reboot")
+    s.call("sudo reboot")
     return
