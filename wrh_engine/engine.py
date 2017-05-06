@@ -62,7 +62,7 @@ class WRHEngine:
 
     def _edit_module(self):
         log('\nChoose which module to edit')
-        [log('%d) %s named %s' % (i, module.type_name, module.name)) for i, module in enumerate(self.installed_modules)]
+        [log('%d) %s named %s' % (i, module.TYPE_NAME, module.name)) for i, module in enumerate(self.installed_modules)]
         choice = ninput('> ')
         try:
             self.installed_modules[int(choice)].edit()
@@ -73,7 +73,7 @@ class WRHEngine:
 
     def _add_new_module(self):
         log("\nChose which module to add")
-        [log('%d) %s' % (number, m_class.type_name)) for number, m_class in self.module_classes.iteritems()]
+        [log('%d) %s' % (number, m_class.TYPE_NAME)) for number, m_class in self.module_classes.iteritems()]
 
         choice = ninput('> ')
         try:
@@ -87,7 +87,7 @@ class WRHEngine:
 
     def _remove_module(self):
         log('\nChoose which module to remove')
-        [log('%d) %s named %s' % (i, module.type_name, module.name)) for i, module in enumerate(self.installed_modules)]
+        [log('%d) %s named %s' % (i, module.TYPE_NAME, module.name)) for i, module in enumerate(self.installed_modules)]
         choice = ninput('> ')
         try:
             del self.installed_modules[int(choice)]
