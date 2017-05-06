@@ -75,6 +75,6 @@ class ModuleDynamicLoader:
         for module_name, (module_path, class_name) in self.modules_info.iteritems():
             module = import_module(str(module_path + module_name).replace('/', '.'))
             m_class = getattr(module, class_name)
-            module_classes[m_class.type_number] = m_class
+            module_classes[m_class.TYPE_NUMBER] = m_class
 
         return module_classes

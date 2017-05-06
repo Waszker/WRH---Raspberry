@@ -20,14 +20,14 @@ class ESP8266SocketModule(base_module.Module):
     """
     This class works with ESP8266 WiFi socket.
     """
-    type_number = 5
-    type_name = "ESP8266 WIFI SOCKET"
-    configuration_line_pattern = str(type_number) + ";([0-9]{1,9});(.+?);(.+?);(.+)$"
+    TYPE_NUMBER = 5
+    TYPE_NAME = "ESP8266 WIFI SOCKET"
+    CONFIGURATION_LINE_PATTERN = str(TYPE_NUMBER) + ";([0-9]{1,9});(.+?);(.+?);(.+)$"
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
-        self.type_number = ESP8266SocketModule.type_number
-        self.type_name = ESP8266SocketModule.type_name
+        self.type_number = ESP8266SocketModule.TYPE_NUMBER
+        self.type_name = ESP8266SocketModule.TYPE_NAME
 
     @staticmethod
     def is_configuration_line_sane(configuration_line):
@@ -36,7 +36,7 @@ class ESP8266SocketModule(base_module.Module):
         :param configuration_line:
         :return:
         """
-        checker = re.compile(ESP8266SocketModule.configuration_line_pattern)
+        checker = re.compile(ESP8266SocketModule.CONFIGURATION_LINE_PATTERN)
         return checker.match(configuration_line) is not None
 
     @staticmethod
@@ -58,7 +58,7 @@ class ESP8266SocketModule(base_module.Module):
         """
         Initializes class variables from provided configuration line.
         """
-        matches = re.search(ESP8266SocketModule.configuration_line_pattern, configuration_file_line)
+        matches = re.search(ESP8266SocketModule.CONFIGURATION_LINE_PATTERN, configuration_file_line)
         self.id = matches.group(1)
         self.name = matches.group(2)
         self.gpio = matches.group(3)

@@ -21,14 +21,14 @@ class DHT22Module(base_module.Module):
     $ cd Adafruit_Python_DHT
     $ sudo python setup.py install
     """
-    type_number = 1
-    type_name = "DHT22 TEMP./HUM. SENSOR"
-    configuration_line_pattern = str(type_number) + ";([0-9]{1,9});(.+?);([1-9][0-9]{0,9});([1-9][0-9]{0,9});(.+)$"
+    TYPE_NUMBER = 1
+    TYPE_NAME = "DHT22 TEMP./HUM. SENSOR"
+    CONFIGURATION_LINE_PATTERN = str(TYPE_NUMBER) + ";([0-9]{1,9});(.+?);([1-9][0-9]{0,9});([1-9][0-9]{0,9});(.+)$"
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
-        self.type_number = DHT22Module.type_number
-        self.type_name = DHT22Module.type_name
+        self.type_number = DHT22Module.TYPE_NUMBER
+        self.type_name = DHT22Module.TYPE_NAME
         self.last_temperature, self.last_humidity, self.socket = None, None, None
 
     @staticmethod
@@ -38,7 +38,7 @@ class DHT22Module(base_module.Module):
         :param configuration_line:
         :return:
         """
-        checker = re.compile(DHT22Module.configuration_line_pattern)
+        checker = re.compile(DHT22Module.CONFIGURATION_LINE_PATTERN)
         return checker.match(configuration_line) is not None
 
     @staticmethod
@@ -61,7 +61,7 @@ class DHT22Module(base_module.Module):
         """
         Initializes class variables from provided configuration line.
         """
-        matches = re.search(DHT22Module.configuration_line_pattern, configuration_file_line)
+        matches = re.search(DHT22Module.CONFIGURATION_LINE_PATTERN, configuration_file_line)
         self.id = matches.group(1)
         self.name = matches.group(2)
         self.gpio = int(matches.group(3))

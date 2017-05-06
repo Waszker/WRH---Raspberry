@@ -11,6 +11,7 @@ import threading
 from wrh_engine import module_base as base_module
 from utils.sockets import send_message
 from utils.io import non_empty_positive_numeric_input as iinput
+from modules.rango_iryga.rango_iryga import RangoIrygaModule
 
 
 class RangoScenario:
@@ -89,7 +90,7 @@ class RangoScenario:
             send_message("127.0.0.1", rango_port, message)
 
     def _get_real_relay_number(self, relay):
-        real_numbers = {1: 5, 2: 4, 3: 15, 4: 14}
+        real_numbers = {i + 1: RangoIrygaModule.RELAYS[i] for i in xrange(4)}
         try:
             real_number = real_numbers[relay]
         except (KeyError, ValueError):
@@ -101,15 +102,15 @@ class RangoIrygaSchedulerModule(base_module.Module):
     """
     Rango Iryga Scheduler is a module responsible for automatically running watering scenarios.
     """
-    type_number = 8
-    type_name = "RANGO IRYGA SCHEDULER"
-    configuration_line_pattern = str(type_number) + ";([0-9]{1,9});(.+?);([1-9][0-9]{0,9});([1-9][0-9]{0,9})$"
+    TYPE_NUMBER = 8
+    TYPE_NAME = "RANGO IRYGA SCHEDULER"
+    CONFIGURATION_LINE_PATTERN = str(TYPE_NUMBER) + ";([0-9]{1,9});(.+?);([1-9][0-9]{0,9});([1-9][0-9]{0,9})$"
     _saved_scenarios_file = "modules/rango_iryga_scheduler/.scenarios"
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
-        self.type_number = RangoIrygaSchedulerModule.type_number
-        self.type_name = RangoIrygaSchedulerModule.type_name
+        self.type_number = RangoIrygaSchedulerModule.TYPE_NUMBER
+        self.type_name = RangoIrygaSchedulerModule.TYPE_NAME
         self.scenarios = []
 
     @staticmethod
@@ -120,7 +121,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
         :param configuration_line:
         :return:
         """
-        checker = re.compile(RangoIrygaSchedulerModule.configuration_line_pattern)
+        checker = re.compile(RangoIrygaSchedulerModule.CONFIGURATION_LINE_PATTERN)
         return checker.match(configuration_line) is not None
 
     @staticmethod
@@ -142,7 +143,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
         """
         Initializes class variables from provided configuration line.
         """
-        matches = re.search(RangoIrygaSchedulerModule.configuration_line_pattern, configuration_file_line)
+        matches = re.search(RangoIrygaSchedulerModule.CONFIGURATION_LINE_PATTERN, configuration_file_line)
         self.id = int(matches.group(1))
         self.name = str(matches.group(2))
         self.port = int(matches.group(3))

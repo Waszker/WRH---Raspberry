@@ -17,14 +17,14 @@ class SpeedTestModule(base_module.Module):
     This is Internet speed test module that checks Internet connection speed regularly.
     It's not recommended to add more than one speed test to WRH system.
     """
-    type_number = 6
-    type_name = "INTERNET SPEED TEST"
-    configuration_line_pattern = str(type_number) + ";([0-9]{1,9});(.+?);([1-9][0-9]{0,9});([1-9][0-9]{0,9})$"
+    TYPE_NUMBER = 6
+    TYPE_NAME = "INTERNET SPEED TEST"
+    CONFIGURATION_LINE_PATTERN = str(TYPE_NUMBER) + ";([0-9]{1,9});(.+?);([1-9][0-9]{0,9});([1-9][0-9]{0,9})$"
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
-        self.type_number = SpeedTestModule.type_number
-        self.type_name = SpeedTestModule.type_name
+        self.type_number = SpeedTestModule.TYPE_NUMBER
+        self.type_name = SpeedTestModule.TYPE_NAME
         self.last_download, self.last_upload = "? Mbit/s", "? Mbit/s"
 
     @staticmethod
@@ -34,7 +34,7 @@ class SpeedTestModule(base_module.Module):
         :param configuration_line:
         :return:
         """
-        checker = re.compile(SpeedTestModule.configuration_line_pattern)
+        checker = re.compile(SpeedTestModule.CONFIGURATION_LINE_PATTERN)
         return checker.match(configuration_line) is not None
 
     @staticmethod
@@ -57,7 +57,7 @@ class SpeedTestModule(base_module.Module):
         """
         Initializes class variables from provided configuration line.
         """
-        matches = re.search(SpeedTestModule.configuration_line_pattern, configuration_file_line)
+        matches = re.search(SpeedTestModule.CONFIGURATION_LINE_PATTERN, configuration_file_line)
         self.id = matches.group(1)
         self.name = matches.group(2)
         self.interval = int(matches.group(3))

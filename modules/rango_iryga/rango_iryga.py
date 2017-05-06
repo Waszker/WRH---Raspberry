@@ -16,16 +16,16 @@ class RangoIrygaModule(base_module.Module):
     """
     Rango Iryga module makes it easier for the user to interact with Rango Irygation system.
     """
-    type_number = 7
-    type_name = "RANGO IRYGA"
-    configuration_line_pattern = str(type_number) + ";([0-9]{1,9});(.+?);(.+?);([1-9][0-9]{0,9})$"
+    TYPE_NUMBER = 7
+    TYPE_NAME = "RANGO IRYGA"
+    CONFIGURATION_LINE_PATTERN = str(TYPE_NUMBER) + ";([0-9]{1,9});(.+?);(.+?);([1-9][0-9]{0,9})$"
     RELAYS = [5, 4, 15, 14]
     DELAY = 120
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
-        self.type_number = RangoIrygaModule.type_number
-        self.type_name = RangoIrygaModule.type_name
+        self.type_number = RangoIrygaModule.TYPE_NUMBER
+        self.type_name = RangoIrygaModule.TYPE_NAME
         self.relay_actions = {i: [] for i in RangoIrygaModule.RELAYS}
 
     @staticmethod
@@ -36,7 +36,7 @@ class RangoIrygaModule(base_module.Module):
         :param configuration_line:
         :return:
         """
-        checker = re.compile(RangoIrygaModule.configuration_line_pattern)
+        checker = re.compile(RangoIrygaModule.CONFIGURATION_LINE_PATTERN)
         return checker.match(configuration_line) is not None
 
     @staticmethod
@@ -58,7 +58,7 @@ class RangoIrygaModule(base_module.Module):
         """
         Initializes class variables from provided configuration line.
         """
-        matches = re.search(RangoIrygaModule.configuration_line_pattern, configuration_file_line)
+        matches = re.search(RangoIrygaModule.CONFIGURATION_LINE_PATTERN, configuration_file_line)
         self.id = int(matches.group(1))
         self.name = str(matches.group(2))
         self.address = str(matches.group(3))

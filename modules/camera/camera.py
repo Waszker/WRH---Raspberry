@@ -28,14 +28,14 @@ class CameraModule(base_module.Module):
     It takes snapshots from those cameras as well as provides streaming options
     via mjpg_streamer (mjpg_streamer has to be installed to work).
     """
-    type_number = 2
-    type_name = "USB WEBCAM"
-    configuration_line_pattern = str(type_number) + ";([0-9]{1,9});(.+?);(.+?);(.+?);(.*?);(.*)$"
+    TYPE_NUMBER = 2
+    TYPE_NAME = "USB WEBCAM"
+    CONFIGURATION_LINE_PATTERN = str(TYPE_NUMBER) + ";([0-9]{1,9});(.+?);(.+?);(.+?);(.*?);(.*)$"
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
-        self.type_number = CameraModule.type_number
-        self.type_name = CameraModule.type_name
+        self.type_number = CameraModule.TYPE_NUMBER
+        self.type_name = CameraModule.TYPE_NAME
         self.mjpeg_streamer, self.stunnel = None, None
 
     @staticmethod
@@ -45,7 +45,7 @@ class CameraModule(base_module.Module):
         :param configuration_line:
         :return:
         """
-        checker = re.compile(CameraModule.configuration_line_pattern)
+        checker = re.compile(CameraModule.CONFIGURATION_LINE_PATTERN)
         return checker.match(configuration_line) is not None
 
     @staticmethod
@@ -68,7 +68,7 @@ class CameraModule(base_module.Module):
         """
         Initializes class variables from provided configuration line.
         """
-        matches = re.search(CameraModule.configuration_line_pattern, configuration_file_line)
+        matches = re.search(CameraModule.CONFIGURATION_LINE_PATTERN, configuration_file_line)
         self.id = matches.group(1)
         self.name = matches.group(2)
         self.gpio = matches.group(3)

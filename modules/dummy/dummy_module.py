@@ -8,15 +8,15 @@ class DummyModule(base_module.Module):
     This is dummy module which can be used as a starting point when writing own one.
     """
     # TODO: Module number must be unique across all modules in order to prevent failures during WRH system boot
-    type_number = None
+    TYPE_NUMBER = None
     # TODO: Module name should be written in uppercase, will be displayed on Tornado web page screen and should
     # not be too long
-    type_name = "UNDEFINED"
+    TYPE_NAME = "UNDEFINED"
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
-        self.type_number = DummyModule.type_number
-        self.type_name = DummyModule.type_name
+        self.type_number = DummyModule.TYPE_NUMBER
+        self.type_name = DummyModule.TYPE_NAME
         # WARNING: No need to initialize variables here because base module initialization
         # invokes variable initialization from configuration line
 

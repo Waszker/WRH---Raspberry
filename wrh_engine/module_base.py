@@ -10,8 +10,8 @@ class Module:
     """
     Abstract base class for modules used in WRH.
     """
-    type_number = -1
-    type_name = "AbstractModule"
+    TYPE_NUMBER = -1
+    TYPE_NAME = "AbstractModule"
 
     def __init__(self, configuration_file_line=None):
         """

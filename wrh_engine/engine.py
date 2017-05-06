@@ -99,7 +99,7 @@ class WRHEngine:
     def _show_installed_modules(self):
         self.installed_modules = self.configuration_parser.get_installed_modules()
         log("\nDetected installed modules:")
-        [log('%d) %s named %s' % (i, module.type_name, module.name), Color.HEADER)
+        [log('%d) %s named %s' % (i, module.TYPE_NAME, module.name), Color.HEADER)
          for i, module in enumerate(self.installed_modules)]
 
     def _check_configuration(self):
