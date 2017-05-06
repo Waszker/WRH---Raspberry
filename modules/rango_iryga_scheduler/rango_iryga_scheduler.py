@@ -41,7 +41,7 @@ class RangoScenario:
         :return: HTML formatted string
         """
         weekdays = ['poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota', 'niedziela']
-        html_information = "<p>Czas rozpoczęcia <b>%i:%i</b></p>" % (self.start_time.hour, self.start_time.minute)
+        html_information = "<p>Czas rozpoczęcia <b>%02i:%02i</b></p>" % (self.start_time.hour, self.start_time.minute)
         for relay, time, repeats in zip(self.active_lines, self.line_activation_times, self.line_activation_repeats):
             html_information += "<p>Linia %i na %i sekund z %i powtórzeniami</p>" % (relay, time, repeats)
         html_information += "<p>Dni: "
