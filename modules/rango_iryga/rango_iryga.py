@@ -24,15 +24,12 @@ class RangoIrygaModule(base_module.Module):
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
-        self.type_number = RangoIrygaModule.TYPE_NUMBER
-        self.type_name = RangoIrygaModule.TYPE_NAME
         self.relay_actions = {i: [] for i in RangoIrygaModule.RELAYS}
 
     @staticmethod
     def is_configuration_line_sane(configuration_line):
         """
         Checks if configuration line for this module is well formed.
-        :param self:
         :param configuration_line:
         :return:
         """
@@ -52,7 +49,8 @@ class RangoIrygaModule(base_module.Module):
         Creates module configuration line.
         :return: Properly formatted configuration file line
         """
-        return str(self.type_number) + ";" + str(self.id) + ";" + self.name + ";" + self.address + ";" + str(self.port)
+        return str(RangoIrygaModule.TYPE_NUMBER) + ";" + str(
+            self.id) + ";" + self.name + ";" + self.address + ";" + str(self.port)
 
     def _parse_configuration_line(self, configuration_file_line):
         """
@@ -100,12 +98,6 @@ class RangoIrygaModule(base_module.Module):
         Returns module description to be viewed by user.
         """
         return "Rango Iryga module used to maintain automatic irrigation system for garden."
-
-    def get_type_number_and_name(self):
-        """
-        Returns module type number and short name (as two separate variables)
-        """
-        return self.type_number, self.type_name
 
     def run_registration_procedure(self, new_id):
         """

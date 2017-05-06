@@ -46,9 +46,9 @@
                 <li><a href="/?class=-1">SYSTEM</a></li>
                 {%for mclass, m in classes.iteritems()%}
                         {%for m in modules%}
-                            {%if m.type_number == mclass%}
+                            {%if m.TYPE_NUMBER == mclass%}
                                 <li>
-                                    <a href="/?class={{m.type_number}}">{{m.type_name}}</a>
+                                    <a href="/?class={{m.TYPE_NUMBER}}">{{m.TYPE_NAME}}</a>
                                 </li>
                                 {%break%}
                             {%end%}
@@ -59,9 +59,9 @@
                 <li><a href="/?class=-1">SYSTEM</a></li>
                 {%for mclass, m in classes.iteritems()%}
                         {%for m in modules%}
-                            {%if m.type_number == mclass%}
+                            {%if m.TYPE_NUMBER == mclass%}
                                 <li>
-                                    <a href="/?class={{m.type_number}}">{{m.type_name}}</a>
+                                    <a href="/?class={{m.TYPE_NUMBER}}">{{m.TYPE_NAME}}</a>
                                 </li>
                                 {%break%}
                             {%end%}
@@ -82,8 +82,8 @@
                     System statistics
                     {% else %}
                         {%for m in modules%}
-                            {%if m.type_number == target%}
-                                {{ m.type_name }}
+                            {%if m.TYPE_NUMBER == target%}
+                                {{ m.TYPE_NAME }}
                                 {%break%}
                             {%end%}
                         {%end%}
@@ -102,7 +102,7 @@
                  </div>
             {% else %}
                 {%for m in modules%}
-                    {%if m.type_number == target%}
+                    {%if m.TYPE_NUMBER == target%}
                         {{ m.get_html_representation(ipaddress) }}
                         <br />
                     {%end%}

@@ -23,8 +23,6 @@ class SpeedTestModule(base_module.Module):
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
-        self.type_number = SpeedTestModule.TYPE_NUMBER
-        self.type_name = SpeedTestModule.TYPE_NAME
         self.last_download, self.last_upload = "? Mbit/s", "? Mbit/s"
 
     @staticmethod
@@ -50,7 +48,7 @@ class SpeedTestModule(base_module.Module):
         Creates module configuration line.
         :return: Properly formatted configuration file line
         """
-        return str(self.type_number) + ";" + str(self.id) + ";" + self.name + ";" + str(self.interval) + ";" + str(
+        return str(SpeedTestModule.TYPE_NUMBER) + ";" + str(self.id) + ";" + self.name + ";" + str(self.interval) + ";" + str(
             self.port)
 
     def _parse_configuration_line(self, configuration_file_line):
@@ -90,12 +88,6 @@ class SpeedTestModule(base_module.Module):
         Returns module description to be viewed by user.
         """
         return "Internet Speed Test module that runs tests and reports upload and download link speeds"
-
-    def get_type_number_and_name(self):
-        """
-        Returns module type number and short name (as two separate variables)
-        """
-        return self.type_number, self.type_name
 
     def run_registration_procedure(self, new_id):
         """

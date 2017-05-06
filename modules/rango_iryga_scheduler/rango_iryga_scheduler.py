@@ -109,8 +109,6 @@ class RangoIrygaSchedulerModule(base_module.Module):
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
-        self.type_number = RangoIrygaSchedulerModule.TYPE_NUMBER
-        self.type_name = RangoIrygaSchedulerModule.TYPE_NAME
         self.scenarios = []
 
     @staticmethod
@@ -137,7 +135,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
         Creates module configuration line.
         :return: Properly formatted configuration file line
         """
-        return "%i;%i;%s;%i;%i" % (self.type_number, self.id, self.name, self.port, self.rango_port)
+        return "%i;%i;%s;%i;%i" % (RangoIrygaSchedulerModule.TYPE_NUMBER, self.id, self.name, self.port, self.rango_port)
 
     def _parse_configuration_line(self, configuration_file_line):
         """
@@ -175,12 +173,6 @@ class RangoIrygaSchedulerModule(base_module.Module):
         """
         return "Rango Iryga Scheduler module used to maintain scenarios for the Rango Iryga irrigation system " \
                "for garden."
-
-    def get_type_number_and_name(self):
-        """
-        Returns module type number and short name (as two separate variables)
-        """
-        return self.type_number, self.type_name
 
     def run_registration_procedure(self, new_id):
         """

@@ -34,8 +34,6 @@ class CameraModule(base_module.Module):
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
-        self.type_number = CameraModule.TYPE_NUMBER
-        self.type_name = CameraModule.TYPE_NAME
         self.mjpeg_streamer, self.stunnel = None, None
 
     @staticmethod
@@ -61,7 +59,7 @@ class CameraModule(base_module.Module):
         Creates module configuration line
         :return: Properly formatted configuration file line
         """
-        return '%s;%s;%s;%s;%s;%s;%s' % tuple(map(str, (self.type_number, self.id, self.name,
+        return '%s;%s;%s;%s;%s;%s;%s' % tuple(map(str, (CameraModule.TYPE_NUMBER, self.id, self.name,
                                                         self.gpio, self.port, self.login, self.password)))
 
     def _parse_configuration_line(self, configuration_file_line):
@@ -91,12 +89,6 @@ class CameraModule(base_module.Module):
         """
         return "USB webcam V4L2 compatible. This module supports taking snapshots as well as " \
                "http streaming using mjpg_streamer."
-
-    def get_type_number_and_name(self):
-        """
-        Returns module type number and short name (as two separate variables)
-        """
-        return self.type_number, self.type_name
 
     def run_registration_procedure(self, new_id):
         """

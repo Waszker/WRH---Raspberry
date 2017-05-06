@@ -26,8 +26,6 @@ class ESP8266SocketModule(base_module.Module):
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
-        self.type_number = ESP8266SocketModule.TYPE_NUMBER
-        self.type_name = ESP8266SocketModule.TYPE_NAME
 
     @staticmethod
     def is_configuration_line_sane(configuration_line):
@@ -52,7 +50,8 @@ class ESP8266SocketModule(base_module.Module):
         Creates module configuration line
         :return: Properly formatted configuration file line
         """
-        return str(self.type_number) + ";" + str(self.id) + ";" + self.name + ";" + self.gpio + ";" + self.port
+        return str(ESP8266SocketModule.TYPE_NUMBER) + ";" + str(
+            self.id) + ";" + self.name + ";" + self.gpio + ";" + self.port
 
     def _parse_configuration_line(self, configuration_file_line):
         """
@@ -89,12 +88,6 @@ class ESP8266SocketModule(base_module.Module):
         Returns module description to be viewed by user.
         """
         return "ESP8266 WiFi socket - electrical socket with WiFi connection capabilities and built-in timer"
-
-    def get_type_number_and_name(self):
-        """
-        Returns module type number and short name (as two separate variables)
-        """
-        return self.type_number, self.type_name
 
     def run_registration_procedure(self, new_id):
         """

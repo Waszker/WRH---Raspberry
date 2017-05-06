@@ -15,8 +15,6 @@ class DummyModule(base_module.Module):
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
-        self.type_number = DummyModule.TYPE_NUMBER
-        self.type_name = DummyModule.TYPE_NAME
         # WARNING: No need to initialize variables here because base module initialization
         # invokes variable initialization from configuration line
 
@@ -45,7 +43,7 @@ class DummyModule(base_module.Module):
         :return: Properly formatted configuration file line
         """
         # TODO: Return configuration line to be saved in WRH configuration file
-        return str(self.type_number) + ";" + str(self.id)
+        return str(DummyModule.TYPE_NUMBER) + ";" + str(self.id)
 
     def _parse_configuration_line(self, configuration_file_line):
         """
@@ -65,12 +63,6 @@ class DummyModule(base_module.Module):
         """
         # TODO: Create informative description
         return "Dummy module created for educational purposes"
-
-    def get_type_number_and_name(self):
-        """
-        Returns module type number and short name (as two separate variables)
-        """
-        return self.type_number, self.type_name
 
     def run_registration_procedure(self, new_id):
         """

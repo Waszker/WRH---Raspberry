@@ -27,8 +27,6 @@ class DHT22Module(base_module.Module):
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
-        self.type_number = DHT22Module.TYPE_NUMBER
-        self.type_name = DHT22Module.TYPE_NAME
         self.last_temperature, self.last_humidity, self.socket = None, None, None
 
     @staticmethod
@@ -54,7 +52,7 @@ class DHT22Module(base_module.Module):
         Creates module configuration line.
         :return: Properly formatted configuration file line
         """
-        return "%s;%s;%s;%s;%s;%s" % tuple(map(str, (self.type_number, self.id, self.name, self.gpio,
+        return "%s;%s;%s;%s;%s;%s" % tuple(map(str, (DHT22Module.TYPE_NUMBER, self.id, self.name, self.gpio,
                                                      self.interval, self.port)))
 
     def _parse_configuration_line(self, configuration_file_line):
@@ -79,12 +77,6 @@ class DHT22Module(base_module.Module):
         Returns module description to be viewed by user.
         """
         return "DHT22 temperature and humidity sensor"
-
-    def get_type_number_and_name(self):
-        """
-        Returns module type number and short name (as two separate variables)
-        """
-        return self.type_number, self.type_name
 
     def run_registration_procedure(self, new_id):
         """

@@ -18,23 +18,10 @@ class Module:
         Creates instance of a specific module class from the information
         provided in configuration line.
         """
+        self.id = self.name = self.gpio = self.port = None
+        self._should_end, self._socket = False, None
         if configuration_file_line is not None:
             self._parse_configuration_line(configuration_file_line)
-        else:
-            self._set_basic_information(None, None, None, None, None, None)
-
-        self._should_end, self._socket = False, None
-
-    def _set_basic_information(self, module_id, module_name, type_number, type_name, gpio, port):
-        """
-        Sets basic information needed for every module in WRH.
-        """
-        self.id = module_id
-        self.name = module_name
-        self.type_number = type_number
-        self.type_name = type_name
-        self.gpio = gpio
-        self.port = port
 
     @staticmethod
     @abstractmethod
@@ -79,17 +66,11 @@ class Module:
         """
 
     @abstractmethod
-    def get_type_number_and_name(self):
-        """
-        Returns module type number and short name.
-        """
-
-    @abstractmethod
     def run_registration_procedure(self, new_id):
         """
         Runs interactive procedure to register new module.
         """
-        print "*** Registering new " + str(self.type_name) + " module ***"
+        print "*** Registering new " + str(Module.TYPE_NAME) + " module ***"
         self.id = new_id
         self.name = raw_input("Module name: ")
         # This method ends here because every module should have different
@@ -132,9 +113,9 @@ class Module:
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         bind_result = wait_bind_socket(self.socket, '', self.port, 10, predicate=predicate,
                                        error_message="%s %s port bind failed. \
-                                       (ERROR_CODE, ERROR_MESSAGE) = " % (Module.type_name, self.name))
+                                       (ERROR_CODE, ERROR_MESSAGE) = " % (Module.TYPE_NAME, self.name))
         if bind_result is True:
-            log("%s %s started listening" % (self.type_name, self.name))
+            log("%s %s started listening" % (Module.TYPE_NAME, self.name))
             self.socket.listen(10)
             await_connection(self.socket, self._start_new_connection_thread, predicate=predicate)
 
