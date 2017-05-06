@@ -96,7 +96,7 @@ class Module:
         # parameters descriptions
 
     @abstractmethod
-    def edit(self, device_id, device_token):
+    def edit(self):
         """
         Runs interactive procedure to edit module.
         """

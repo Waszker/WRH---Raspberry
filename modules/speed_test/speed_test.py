@@ -105,7 +105,7 @@ class SpeedTestModule(base_module.Module):
         self.interval = iinput("Please input interval (in minutes) for taking consecutive measurements: ")
         self.port = iinput("Please input port on which this module will be listening for commands: ")
 
-    def edit(self, device_id, device_token):
+    def edit(self):
         """
         Runs interactive procedure to edit module.
         Returns connection status and response.

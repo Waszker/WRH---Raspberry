@@ -190,7 +190,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
         self.port = iinput("Please input port on which this module will be listening for commands: ")
         self.rango_port = iinput("Please input port number of Rango Iryga installed in this system: ")
 
-    def edit(self, device_id, device_token):
+    def edit(self):
         """
         Runs interactive procedure to edit module.
         Returns connection status and response.

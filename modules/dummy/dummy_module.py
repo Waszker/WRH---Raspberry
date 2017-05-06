@@ -79,7 +79,7 @@ class DummyModule(base_module.Module):
         base_module.Module.run_registration_procedure(self, new_id)
         # TODO: Run interactive procedure for module registration
 
-    def edit(self, device_id, device_token):
+    def edit(self):
         """
         Runs interactive procedure to edit module.
         Returns connection status and response.

@@ -108,7 +108,7 @@ class CameraModule(base_module.Module):
         self.login = raw_input("Please input login used to access the video stream (press ENTER if none): ")
         self.password = ninput("Please input password used to access the video stream: ") if self.login else ""
 
-    def edit(self, device_id, device_token):
+    def edit(self):
         """
         Runs interactive procedure to edit module.
         Returns connection status and response.

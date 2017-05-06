@@ -121,7 +121,7 @@ class RangoIrygaModule(base_module.Module):
             except ValueError:
                 pass
 
-    def edit(self, device_id, device_token):
+    def edit(self):
         """
         Runs interactive procedure to edit module.
         Returns connection status and response.

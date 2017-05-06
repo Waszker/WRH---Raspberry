@@ -104,7 +104,7 @@ class ESP8266SocketModule(base_module.Module):
         self.gpio = ninput("Please input ESP8266 WiFi socket IP address: ")
         self.port = ninput("Please input port on which module will be listening for commands: ")
 
-    def edit(self, device_id, device_token):
+    def edit(self):
         """
         Runs interactive procedure to edit module.
         Returns connection status and response.
