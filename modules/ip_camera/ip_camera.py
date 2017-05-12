@@ -143,7 +143,7 @@ class IpCameraModule(base_module.Module):
             <img style=\"width: 50%\" src = \"http://" + website_host_address + ":" + self.port + "/?action=stream\" /></div>"
 
     def _socat_thread(self):
-        command = ["sockat", "TCP4-LISTEN:%s,fork" % self.port,
+        command = ["socat", "TCP4-LISTEN:%s,fork" % str(self.port),
                    "TCP4:%s:%s" % (str(self.camera_address), str(self.camera_port))]
         self.socat_process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ)
         print_process_errors(self.socat_process)
