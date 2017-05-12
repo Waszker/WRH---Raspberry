@@ -5,7 +5,7 @@ from wrh_engine.configuration import *
 
 if __name__ == "__main__":
     if os.getuid() == 0:
-        log("Cowardly refusing to run with root privileges!", Color.FAIL);
+        log("Cowardly refusing to run with root privileges!", Color.FAIL)
         sys.exit(0)
     else:
         engine = WRHEngine(sys.argv)
