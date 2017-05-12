@@ -14,6 +14,51 @@ from utils.io import non_empty_positive_numeric_input as iinput
 from modules.rango_iryga.rango_iryga import RangoIrygaModule
 
 
+class WateringThread(threading.Thread):
+    def __init__(self, rango_port, line_number, activation_time, repeats, delay=0):
+        """
+        Creates watering thread that activates Rango Iryga lines.
+        :param rango_port: port at which Rango Iryga module listens for connection
+        :param line_number: number of the line to activate (1, 2, 3 or 4)
+        :param activation_time: duration (in seconds) of watering procedure
+        :param repeats: number of watering procedure repeats
+        :param delay: time (in seconds) to wait before starting watering procedure
+        """
+        threading.Thread.__init__(self)
+        self.rango_port = rango_port
+        self.relay = self.get_real_relay_number(line_number)
+        self.activation_time = activation_time
+        self.repeats = repeats
+        self.delay = delay
+        self.timer = threading.Timer(delay, self._change_relay_state, args=(True,))
+
+    def run(self):
+        self.timer.daemon = True
+        self.timer.start()
+        self.timer.join()
+
+    def cancel(self):
+        message = "%s,%s,%s,%s" % tuple(map(str, ("OFF", self.relay, -1, -1)))
+        send_message("127.0.0.1", self.rango_port, message)
+        self.timer.cancel()
+
+    def _change_relay_state(self, turn_on):
+        state = "ON" if turn_on else "OFF"
+        activation_time = self.activation_time if turn_on else -1
+        repeats = self.repeats if turn_on else -1
+        message = "%s,%s,%s,%s" % tuple(map(str, (state, self.relay, activation_time, repeats)))
+        send_message("127.0.0.1", self.rango_port, message)
+
+    @staticmethod
+    def get_real_relay_number(relay_order_number):
+        real_numbers = {i + 1: RangoIrygaModule.RELAYS[i] for i in xrange(4)}
+        try:
+            real_number = real_numbers[relay_order_number]
+        except (KeyError, ValueError):
+            real_number = -1
+        return real_number
+
+
 class RangoScenario:
     """
     Class for private use only that represents Rango Iryga scenario to run at a certain time.
@@ -35,6 +80,7 @@ class RangoScenario:
         self.active_lines = list(map(int, lines.split(RangoScenario.PSEP)))
         self.line_activation_times = list(map(int, times.split(RangoScenario.PSEP)))
         self.line_activation_repeats = list(map(int, repeats.split(RangoScenario.PSEP)))
+        self.watering_threads = []
 
     def get_html_information_string(self):
         """
@@ -66,10 +112,22 @@ class RangoScenario:
             thread.start()
 
     def toggle_activity(self):
+        """
+        Turns scenario on or off.
+        Off scenarios are never activated and the turning off procedure even shuts remaining watering threads.
+        :return:
+        """
+        self._cancel_all_watering_threads()
         self.is_active = not self.is_active
         request_parts = self.request.split(RangoScenario.SEP)
         request_parts[0] = str(1 if self.is_active else 0)
         self.request = RangoScenario.SEP.join(request_parts)
+
+    def _cancel_all_watering_threads(self):
+        for thread in self.watering_threads:
+            thread.cancel()
+            thread.join()
+        del self.watering_threads[:]
 
     def _should_activate(self, date):
         # print "Checking if scenario starting at %i:%i on %s should be activated" % (self.start_time.hour, self.start_time.minute, str(self.active_on_days))
@@ -84,18 +142,13 @@ class RangoScenario:
                (date.minute == self.start_time.minute)
 
     def _activate(self, rango_port):
-        state = "ON"
-        for relay, time, repeats in zip(self.active_lines, self.line_activation_times, self.line_activation_repeats):
-            message = "%s,%s,%s,%s" % tuple(map(str, (state, self._get_real_relay_number(relay), time, repeats)))
-            send_message("127.0.0.1", rango_port, message)
-
-    def _get_real_relay_number(self, relay):
-        real_numbers = {i + 1: RangoIrygaModule.RELAYS[i] for i in xrange(4)}
-        try:
-            real_number = real_numbers[relay]
-        except (KeyError, ValueError):
-            real_number = -1
-        return real_number
+        self._cancel_all_watering_threads()
+        delay = 0
+        for line, atime, repeats in zip(self.active_lines, self.line_activation_times, self.line_activation_repeats):
+            watering_thread = WateringThread(rango_port, line, atime, repeats, delay=delay)
+            watering_thread.start()
+            self.watering_threads.append(watering_thread)
+            delay += (atime + RangoIrygaModule.DELAY) * repeats
 
 
 class RangoIrygaSchedulerModule(base_module.Module):
@@ -135,7 +188,8 @@ class RangoIrygaSchedulerModule(base_module.Module):
         Creates module configuration line.
         :return: Properly formatted configuration file line
         """
-        return "%i;%i;%s;%i;%i" % (RangoIrygaSchedulerModule.TYPE_NUMBER, self.id, self.name, self.port, self.rango_port)
+        return "%i;%i;%s;%i;%i" % (
+            RangoIrygaSchedulerModule.TYPE_NUMBER, self.id, self.name, self.port, self.rango_port)
 
     def _parse_configuration_line(self, configuration_file_line):
         """
