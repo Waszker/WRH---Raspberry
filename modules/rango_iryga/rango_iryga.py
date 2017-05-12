@@ -242,7 +242,7 @@ class RangoIrygaModule(base_module.Module):
                         time_wait = input_id == null ? -1 : document.getElementById(input_id).value; \
                         repeats = input_id == null ? -1 : document.getElementById(input_id2).value; \
                         sendRequest(\'localhost\', ' + port + ', state + "," + gpio + "," + time_wait + "," + repeats); \
-                        getState' + my_id + '(gpio); } \
+                        setTimeout(getState' + my_id + '(gpio), 500); } \
                getState' + my_id + '(0); \
                setInterval(function() { \n\
                getState' + my_id + '(0); \n\
