@@ -347,16 +347,16 @@ class RangoIrygaSchedulerModule(base_module.Module):
                         }\n \
                         function toggleScenario' + id + '(number) {\n \
                             sendRequest("localhost", ' + port + ', "ACT|" + number);\n \
-                            getScenarios' + id + '();\n \
+                            setTimeout(getScenarios' + id + ', 500);\n \
                         }\n \
                         function removeScenario' + id + '(number) {\n \
                             sendRequest("localhost", ' + port + ', "DEL|" + number);\n \
-                            getScenarios' + id + '();\n \
+                            setTimeout(getScenarios' + id + ', 500);\n \
                         }\n \
                         function saveScenario' + id + '() {\n \
                             saveRequest = "ADD|" + scenarioString' + id + '();\n \
                             sendRequest("localhost", ' + port + ', saveRequest);\n \
-                            getScenarios' + id + '();\n \
+                            setTimeout(getScenarios' + id + ', 500);\n \
                         }\n \
                         function scenarioString' + id + '() {\n \
                             scenarioString = getTime' + id + '() + "*";\n \
