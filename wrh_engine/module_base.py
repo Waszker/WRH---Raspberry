@@ -115,7 +115,7 @@ class Module:
                                        error_message="%s %s port bind failed. \
                                        (ERROR_CODE, ERROR_MESSAGE) = " % (Module.TYPE_NAME, self.name))
         if bind_result is True:
-            log("%s %s started listening" % (Module.TYPE_NAME, self.name))
+            log("%s %s started listening" % (self.TYPE_NAME, self.name))
             self.socket.listen(10)
             await_connection(self.socket, self._start_new_connection_thread, predicate=predicate)
 
