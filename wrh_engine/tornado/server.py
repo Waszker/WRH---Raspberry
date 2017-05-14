@@ -24,7 +24,6 @@ class Userform(BaseHandler):
             class_type_number = int(self.get_argument("class"))
         except (ValueError, tornado.web.MissingArgumentError):
             class_type_number = -1
-        classes, modules = resources.get_available_module_types()
         ip = str(self.request.host).split(":")[0]
 
         self.render("index.html", ipaddress=ip, target=class_type_number, classes=classes, modules=modules)
@@ -69,7 +68,9 @@ def sigint_handler(*_):
 
 
 if __name__ == "__main__":
+    global modules, ip
     __CONFIG_FILE__ = sys.argv[1]
+    classes, modules = resources.get_available_module_types()
     signal.signal(signal.SIGINT, sigint_handler)
     application.listen(8888)
     print 'Tornado: Started.'
