@@ -68,7 +68,6 @@ def sigint_handler(*_):
 
 
 if __name__ == "__main__":
-    global modules, ip
     __CONFIG_FILE__ = sys.argv[1]
     classes, modules = resources.get_available_module_types()
     signal.signal(signal.SIGINT, sigint_handler)
