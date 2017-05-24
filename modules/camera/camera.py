@@ -164,7 +164,7 @@ class CameraModule(base_module.Module):
         while True:
             t.sleep(5)
             image = self.get_measurement()
-            with open("/tmp/google_drive_upload/" + str(datetime.datetime.now()), 'wb') as img:
+            with open("/tmp/google_drive_upload/" + str(datetime.datetime.now()) + ".jpg", 'wb') as img:
                 img.write(base64.decodestring(image))
 
 

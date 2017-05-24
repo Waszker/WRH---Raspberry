@@ -62,7 +62,7 @@ class GoogleDriveUploader(base_module.Module):
         self.id = int(matches.group(1))
         self.name = str(matches.group(2))
         self.port = int(matches.group(3))
-        self.api_location = int(matches.group(4))
+        self.api_location = str(matches.group(4))
 
     def get_measurement(self):
         """
