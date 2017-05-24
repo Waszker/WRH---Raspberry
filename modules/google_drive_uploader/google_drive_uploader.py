@@ -124,7 +124,7 @@ class GoogleDriveUploader(base_module.Module):
                function updateLastUpload_' + id + '(text) { \n\
                     document.getElementById("googleDriveUploaderDiv' + id + '").innerHTML = text;\n \
                } \n\
-               function getLastUpload' + id + '() { \n\
+               function getLastUpload_' + id + '() { \n\
                     getRequest("localhost", ' + port + ', "", updateLastUpload_' + id + ');\n\
                } \
                getLastUpload_' + id + '(); \
