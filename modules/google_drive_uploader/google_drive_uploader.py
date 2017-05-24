@@ -15,7 +15,7 @@ class GoogleDriveUploader(base_module.Module):
     """
     This WRH module takes care of uploading files that appear in its "upload" folder.
     """
-    TYPE_NUMBER = 9
+    TYPE_NUMBER = 10
     TYPE_NAME = "GOOGLE DRIVE UPLOADER"
     UPLOAD_FOLDER = "/tmp/google_drive_upload"
     UPLOAD_DRIVE_FOLDER = "WRH UPLOADS"
