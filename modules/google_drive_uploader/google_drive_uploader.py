@@ -169,6 +169,7 @@ class GoogleDriveUploader(base_module.Module):
 if __name__ == "__main__":
     print 'Google Drive Uploader module: started.'
     conf_line = sys.argv[1]
+    sys.argv = []
 
     uploader = GoogleDriveUploader(conf_line)
     uploader.start_work()

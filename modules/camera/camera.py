@@ -202,7 +202,6 @@ class CameraModule(base_module.Module):
 if __name__ == "__main__":
     print 'Camera: started.'
     conf_line = sys.argv[1]
-    sys.argv = []
 
     camera = CameraModule(conf_line)
     camera.start_work()
