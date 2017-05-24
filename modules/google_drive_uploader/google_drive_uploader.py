@@ -8,9 +8,6 @@ import datetime
 from wrh_engine import module_base as base_module
 from utils.io import non_empty_positive_numeric_input as iinput
 from utils.io import non_empty_input as ninput
-from utils.io import log, Color
-from pydrive.auth import GoogleAuth
-from pydrive.drive import GoogleDrive
 from google_drive.google_drive import GoogleDriveManager
 
 
