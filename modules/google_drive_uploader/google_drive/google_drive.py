@@ -8,13 +8,6 @@ import googleapiclient
 from apiclient.http import MediaFileUpload
 from utils.io import log, Color
 
-try:
-    import argparse
-
-    flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_known_args()
-except ImportError:
-    flags = None
-
 
 class GoogleDriveManager:
     """
@@ -108,6 +101,12 @@ class GoogleDriveManager:
         store = Storage(credential_path)
         credentials = store.get()
         if not credentials or credentials.invalid:
+            try:
+                import argparse
+
+                flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
+            except ImportError:
+                flags = None
             flow = client.flow_from_clientsecrets(self._secret, self.SCOPES)
             flow.user_agent = self.APPLICATION_NAME
             flags.noauth_local_webserver = True
