@@ -121,14 +121,14 @@ class GoogleDriveUploader(base_module.Module):
         """
         Returns html code to include in website.
         """
-        id = str(self.id)
+        id, port = str(self.id), str(self.port)
         return '<div class="card-panel"> \
                <script>  \
                function updateLastUpload_' + id + '(text) { \n\
                     document.getElementById("googleDriveUploaderDiv' + id + '").innerHTML = text;\n \
                } \n\
                function getLastUpload' + id + '() { \n\
-                    getRequest("localhost", ' + self.port + ', "", updateLastUpload_' + id + ');\n\
+                    getRequest("localhost", ' + port + ', "", updateLastUpload_' + id + ');\n\
                } \
                getLastUpload_' + id + '(); \
                setInterval(function() { \n\
