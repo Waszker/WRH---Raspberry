@@ -99,7 +99,7 @@ class GoogleDriveManager:
         return success
 
     def _credentials_procedure(self):
-        credential_dir = os.path.expanduser('~') + '.credentials'
+        credential_dir = os.path.expanduser('~') + os.sep + '.credentials'
         if not os.path.exists(credential_dir):
             os.makedirs(credential_dir)
         credential_path = os.path.join(credential_dir, 'wrh_uploader_%i.json' % int(self._file_id))
