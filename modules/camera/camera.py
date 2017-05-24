@@ -12,6 +12,7 @@ import sys
 import threading
 import time as t
 from urllib2 import urlopen
+import datetime
 
 import requests
 from wrh_engine import module_base as base_module
@@ -161,9 +162,11 @@ class CameraModule(base_module.Module):
         Thread taking measurements in specified interval.
         """
         while True:
-            t.sleep(60 * 60)
+            t.sleep(5)
             image = self.get_measurement()
-            # TODO: Image could be saved somewhere?
+            with open("/tmp/google_drive_upload/" + str(datetime.datetime.now()), 'wb') as img:
+                img.write(base64.decodestring(image))
+
 
     def _stunnel_thread(self):
         filename = "/tmp/stunnel" + str(self.id) + ".conf"

@@ -1,4 +1,4 @@
-import signal
+import re
 import sys
 from wrh_engine import module_base as base_module
 
@@ -12,6 +12,8 @@ class DummyModule(base_module.Module):
     # TODO: Module name should be written in uppercase, will be displayed on Tornado web page screen and should
     # not be too long
     TYPE_NAME = "UNDEFINED"
+    # TODO: Most of the time configuration line will have TYPE_NUMBER;id;name;port;__other__ structure
+    CONFIGURATION_LINE_PATTERN = str(TYPE_NUMBER) + ";([0-9]{1,9});(.+?);([1-9][0-9]{0,9});__other__$"
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
@@ -25,8 +27,9 @@ class DummyModule(base_module.Module):
         :param configuration_line:
         :return:
         """
-        # TODO: This function checks if its configuration file line is well formed
-        return False
+        # TODO: Change class name
+        checker = re.compile(DummyModule.CONFIGURATION_LINE_PATTERN)
+        return checker.match(configuration_line) is not None
 
     @staticmethod
     def get_starting_command():
@@ -43,12 +46,16 @@ class DummyModule(base_module.Module):
         :return: Properly formatted configuration file line
         """
         # TODO: Return configuration line to be saved in WRH configuration file
-        return str(DummyModule.TYPE_NUMBER) + ";" + str(self.id)
+        return str(self.TYPE_NUMBER) + ";" + str(self.id)
 
     def _parse_configuration_line(self, configuration_file_line):
         """
         Initializes class variables from provided configuration line.
         """
+        matches = re.search(self.CONFIGURATION_LINE_PATTERN, configuration_file_line)
+        self.id = int(matches.group(1))
+        self.name = str(matches.group(2))
+        self.port = int(matches.group(3))
         # TODO: Parse module's configuration line and initialize its variables
 
     def get_measurement(self):
@@ -83,6 +90,7 @@ class DummyModule(base_module.Module):
         Starts working procedure.
         """
         # TODO: Start module working procedure, can run base module's implementation too!
+        # TODO: Base module's implementation starts own web_connection thread that awaits incoming connections
 
     def get_html_representation(self, website_host_address):
         """

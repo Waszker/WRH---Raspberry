@@ -243,7 +243,6 @@ class RangoIrygaSchedulerModule(base_module.Module):
         """
         print 'Provide new module information (leave fields blank if you don\'t want to change)'
         print 'Please note that changes other than name will always succeed'
-        print 'Name changing requires active Internet connection'
         new_name = raw_input('New module\'s name: ')
         new_port = raw_input("Please input new port on which this module will be listening for commands: ")
         new_rango_port = raw_input("Please input new port number of Rango Iryga installed in this system: ")
