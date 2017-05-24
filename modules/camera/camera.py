@@ -162,8 +162,9 @@ class CameraModule(base_module.Module):
         Thread taking measurements in specified interval.
         """
         while True:
-            t.sleep(5)
+            t.sleep(15 * 60)
             image = self.get_measurement()
+            # TODO: Change upload folder!
             with open("/tmp/google_drive_upload/" + str(datetime.datetime.now()) + ".jpg", 'wb') as img:
                 img.write(base64.decodestring(image))
 

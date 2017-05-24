@@ -11,6 +11,7 @@ import subprocess
 import sys
 import threading
 import time as t
+import datetime
 from urllib2 import urlopen
 
 import requests
@@ -153,9 +154,11 @@ class IpCameraModule(base_module.Module):
         Thread taking measurements in specified interval.
         """
         while True:
-            t.sleep(60 * 60)
+            t.sleep(15 * 60)
             image = self.get_measurement()
-            # TODO: Image could be saved somewhere?
+            # TODO: Change upload folder!
+            with open("/tmp/google_drive_upload/" + str(datetime.datetime.now()) + ".jpg", 'wb') as img:
+                img.write(base64.decodestring(image))
 
     def _sigint_handler(self, *_):
         self._should_end = True
