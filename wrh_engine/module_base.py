@@ -70,7 +70,7 @@ class Module:
         """
         Runs interactive procedure to register new module.
         """
-        print "*** Registering new " + str(Module.TYPE_NAME) + " module ***"
+        print "*** Registering new " + str(self.TYPE_NAME) + " module ***"
         self.id = new_id
         self.name = raw_input("Module name: ")
         # This method ends here because every module should have different
