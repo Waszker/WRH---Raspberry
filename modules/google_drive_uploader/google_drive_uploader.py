@@ -146,9 +146,9 @@ class GoogleDriveUploader(base_module.Module):
                 thread = threading.Thread(target=method, args=args, kwargs=kwargs)
                 thread.daemon = True
                 thread.start()
+
             return run_thread
 
-        @in_thread
         def _upload_file(filename, file_path):
             if self.drive is None: return
             drive_folder = "%s - %s" % (self.UPLOAD_DRIVE_FOLDER, self.name)
@@ -157,8 +157,12 @@ class GoogleDriveUploader(base_module.Module):
             if self.drive.upload_image(filename, file_path, drive_folder):
                 os.remove(file_path)
 
-        while True:
+        @in_thread
+        def upload_files():
             [_upload_file(f, self.UPLOAD_FOLDER + os.sep + f) for f in os.listdir(self.UPLOAD_FOLDER)]
+
+        while True:
+            upload_files()
             self.last_upload = datetime.datetime.now()
             time.sleep(15 * 60)
 
