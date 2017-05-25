@@ -18,6 +18,7 @@ import requests
 from wrh_engine import module_base as base_module
 from utils.processes import *
 from utils.io import *
+from utils.decorators import in_thread
 
 ninput = non_empty_input
 iinput = non_empty_positive_numeric_input
@@ -78,10 +79,15 @@ class CameraModule(base_module.Module):
     def get_measurement(self):
         """
         Returns base64 encoded string containing image taken from connected USB camera.
+        None if the image capture failed.
         """
-        r = requests.get("http://localhost:" + str(self.port) + "?action=snapshot",
-                         auth=(str(self.login), str(self.password)))
-        image = base64.b64encode(r.content)
+        try:
+            r = requests.get("http://localhost:" + str(self.port) + "?action=snapshot",
+                             auth=(str(self.login), str(self.password)))
+            image = base64.b64encode(r.content)
+        except requests.exceptions.RequestException:
+            image = None
+
         return image
 
     def get_module_description(self):
@@ -127,19 +133,12 @@ class CameraModule(base_module.Module):
         Starts working procedure.
         """
         signal.signal(signal.SIGINT, self._sigint_handler)
-        self._start_camera_threads()
+        self._snapshot_thread()
+        self._mjpeg_streamer_thread()
+        self._stunnel_thread()
 
         while self._should_end is False:
             signal.pause()
-
-    def _start_camera_threads(self):
-        snapshot_thread = threading.Thread(target=self._snapshot_thread, args=())
-        mjpeg_thread = threading.Thread(target=self._mjpeg_streamer_thread, args=())
-        stunnel_thread = threading.Thread(target=self._stunnel_thread(), args=())
-        threads = [snapshot_thread, mjpeg_thread, stunnel_thread]
-        for thread in threads:
-            thread.daemon = True
-            thread.start()
 
     def get_html_representation(self, website_host_address):
         """
@@ -157,6 +156,7 @@ class CameraModule(base_module.Module):
         address += ":1" + str(self.port)
         return address
 
+    @in_thread
     def _snapshot_thread(self):
         """
         Thread taking measurements in specified interval.
@@ -164,11 +164,13 @@ class CameraModule(base_module.Module):
         while True:
             t.sleep(15 * 60)
             image = self.get_measurement()
-            # TODO: Change upload folder!
-            with open("/tmp/google_drive_upload/" + str(datetime.datetime.now()) + ".jpg", 'wb') as img:
-                img.write(base64.decodestring(image))
+            if image is not None:
+                pass
+                # TODO: Change upload folder!
+                # with open("/tmp/google_drive_upload/" + str(datetime.datetime.now()) + ".jpg", 'wb') as img:
+                #     img.write(base64.decodestring(image))
 
-
+    @in_thread
     def _stunnel_thread(self):
         filename = "/tmp/stunnel" + str(self.id) + ".conf"
         with open(filename, "w") as f:
@@ -184,6 +186,7 @@ class CameraModule(base_module.Module):
         self.stunnel = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         print_process_errors(self.stunnel)
 
+    @in_thread
     def _mjpeg_streamer_thread(self):
         password_subcommand = "" if not self.password else " -c " + self.login + ":" + self.password
         os.environ['LD_LIBRARY_PATH'] = '/usr/local/lib/'

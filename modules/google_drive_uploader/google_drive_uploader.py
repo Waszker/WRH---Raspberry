@@ -9,6 +9,7 @@ from wrh_engine import module_base as base_module
 from utils.io import non_empty_positive_numeric_input as iinput
 from utils.io import non_empty_input as ninput
 from google_drive.google_drive import GoogleDriveManager
+from utils.decorators import in_thread
 
 
 class GoogleDriveUploader(base_module.Module):
@@ -107,9 +108,7 @@ class GoogleDriveUploader(base_module.Module):
         if not os.path.exists(self.UPLOAD_FOLDER):
             os.makedirs(self.UPLOAD_FOLDER)
         base_module.Module.start_work(self)
-        uploader_thread = threading.Thread(target=self._uploader_thread)
-        uploader_thread.daemon = True
-        uploader_thread.start()
+        self._uploader_thread()
 
         while self._should_end is False:
             signal.pause()
@@ -136,22 +135,11 @@ class GoogleDriveUploader(base_module.Module):
                <div id="googleDriveUploaderDiv' + id + '" class="googleDriveUploaderDiv"> </div>\
                </div>'
 
+    @in_thread
     def _uploader_thread(self):
         """
         Check for possible scenario execution each minute.
         """
-
-        def in_thread(method):
-            def run_thread(*args, **kwargs):
-                thread = threading.Thread(target=method, args=args, kwargs=kwargs)
-                thread.daemon = True
-                thread.start()
-
-            return run_thread
-
-        def _upload_file(filename, file_path, drive_folder):
-            if self.drive.upload_image(filename, file_path, drive_folder):
-                os.remove(file_path)
 
         @in_thread
         def upload_files():
@@ -159,7 +147,9 @@ class GoogleDriveUploader(base_module.Module):
             drive_folder = "%s - %s" % (self.UPLOAD_DRIVE_FOLDER, self.name)
             if self.drive.check_if_exists(drive_folder) is False:
                 self.drive.create_folder(drive_folder)
-            [_upload_file(f, self.UPLOAD_FOLDER + os.sep + f, drive_folder) for f in os.listdir(self.UPLOAD_FOLDER)]
+            for f in os.listdir(self.UPLOAD_FOLDER):
+                if self.drive.upload_image(f, self.UPLOAD_FOLDER + os.sep + f, drive_folder):
+                    os.remove(self.UPLOAD_FOLDER + os.sep + f)
 
         while True:
             upload_files()

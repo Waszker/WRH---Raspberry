@@ -7,6 +7,7 @@ import signal
 
 from wrh_engine import module_base as base_module
 from utils.io import *
+from utils.decorators import in_thread
 
 ninput = non_empty_input
 iinput = non_empty_positive_numeric_input
@@ -48,7 +49,8 @@ class SpeedTestModule(base_module.Module):
         Creates module configuration line.
         :return: Properly formatted configuration file line
         """
-        return str(SpeedTestModule.TYPE_NUMBER) + ";" + str(self.id) + ";" + self.name + ";" + str(self.interval) + ";" + str(
+        return str(SpeedTestModule.TYPE_NUMBER) + ";" + str(self.id) + ";" + self.name + ";" + str(
+            self.interval) + ";" + str(
             self.port)
 
     def _parse_configuration_line(self, configuration_file_line):
@@ -118,9 +120,7 @@ class SpeedTestModule(base_module.Module):
         Starts working procedure.
         """
         base_module.Module.start_work(self)
-        measurement_thread = threading.Thread(target=self._measurement_thread)
-        measurement_thread.daemon = True
-        measurement_thread.start()
+        self._measurement_thread()
 
         while self._should_end is False:
             signal.pause()
@@ -146,6 +146,7 @@ class SpeedTestModule(base_module.Module):
     def _react_to_connection(self, connection, _):
         connection.send(str(self.last_download) + " " + str(self.last_upload))
 
+    @in_thread
     def _measurement_thread(self):
         while self._should_end is False:
             self.last_download, self.last_upload = self.get_measurement()

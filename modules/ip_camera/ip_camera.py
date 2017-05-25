@@ -12,7 +12,7 @@ import sys
 import threading
 import time as t
 import datetime
-from urllib2 import urlopen
+from utils.decorators import in_thread
 
 import requests
 from wrh_engine import module_base as base_module
@@ -76,11 +76,16 @@ class IpCameraModule(base_module.Module):
 
     def get_measurement(self):
         """
-        Returns base64 encoded string containing image taken from IP camera.
+        Returns base64 encoded string containing image taken from connected USB camera.
+        None if the image capture failed.
         TODO: Currently only IP cameras using mjpg-streamer are supported!
         """
-        r = requests.get("http://localhost:" + str(self.port) + "?action=snapshot")
-        image = base64.b64encode(r.content)
+        try:
+            r = requests.get("http://localhost:" + str(self.port) + "?action=snapshot")
+            image = base64.b64encode(r.content)
+        except requests.exceptions.RequestException:
+            image = None
+
         return image
 
     def get_module_description(self):
@@ -121,17 +126,11 @@ class IpCameraModule(base_module.Module):
         Starts working procedure.
         """
         signal.signal(signal.SIGINT, self._sigint_handler)
-        self._start_camera_threads()
+        self._socat_thread()
+        self._snapshot_thread()
 
         while self._should_end is False:
             signal.pause()
-
-    def _start_camera_threads(self):
-        socat_thread = threading.Thread(target=self._socat_thread, args=())
-        snapshot_thread = threading.Thread(target=self._snapshot_thread, args=())
-        snapshot_thread.daemon = socat_thread.daemon = True
-        snapshot_thread.start()
-        socat_thread.start()
 
     def get_html_representation(self, website_host_address):
         """
@@ -143,12 +142,14 @@ class IpCameraModule(base_module.Module):
         return "<div class=\"card-panel\"><h5>" + self.name + "</h5> \
             <img style=\"width: 50%\" src = \"http://" + website_host_address + ":" + self.port + "/?action=stream\" /></div>"
 
+    @in_thread
     def _socat_thread(self):
         command = ["socat", "TCP4-LISTEN:%s,fork" % str(self.port),
                    "TCP4:%s:%s" % (str(self.camera_address), str(self.camera_port))]
         self.socat_process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=os.environ)
         print_process_errors(self.socat_process)
 
+    @in_thread
     def _snapshot_thread(self):
         """
         Thread taking measurements in specified interval.
@@ -157,8 +158,9 @@ class IpCameraModule(base_module.Module):
             t.sleep(15 * 60)
             image = self.get_measurement()
             # TODO: Change upload folder!
-            with open("/tmp/google_drive_upload/" + str(datetime.datetime.now()) + ".jpg", 'wb') as img:
-                img.write(base64.decodestring(image))
+            if image is not None:
+                with open("/tmp/google_drive_upload/" + str(datetime.datetime.now()) + ".jpg", 'wb') as img:
+                    img.write(base64.decodestring(image))
 
     def _sigint_handler(self, *_):
         self._should_end = True
