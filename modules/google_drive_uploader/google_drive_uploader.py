@@ -149,17 +149,17 @@ class GoogleDriveUploader(base_module.Module):
 
             return run_thread
 
-        def _upload_file(filename, file_path):
-            if self.drive is None: return
-            drive_folder = "%s - %s" % (self.UPLOAD_DRIVE_FOLDER, self.name)
-            if self.drive.check_if_exists(drive_folder) is False:
-                self.drive.create_folder(drive_folder)
+        def _upload_file(filename, file_path, drive_folder):
             if self.drive.upload_image(filename, file_path, drive_folder):
                 os.remove(file_path)
 
         @in_thread
         def upload_files():
-            [_upload_file(f, self.UPLOAD_FOLDER + os.sep + f) for f in os.listdir(self.UPLOAD_FOLDER)]
+            if self.drive is None: return
+            drive_folder = "%s - %s" % (self.UPLOAD_DRIVE_FOLDER, self.name)
+            if self.drive.check_if_exists(drive_folder) is False:
+                self.drive.create_folder(drive_folder)
+            [_upload_file(f, self.UPLOAD_FOLDER + os.sep + f, drive_folder) for f in os.listdir(self.UPLOAD_FOLDER)]
 
         while True:
             upload_files()
