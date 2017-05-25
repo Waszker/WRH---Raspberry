@@ -141,6 +141,14 @@ class GoogleDriveUploader(base_module.Module):
         Check for possible scenario execution each minute.
         """
 
+        def in_thread(method):
+            def run_thread(*args, **kwargs):
+                thread = threading.Thread(target=method, args=args, kwargs=kwargs)
+                thread.daemon = True
+                thread.start()
+            return run_thread
+
+        @in_thread
         def _upload_file(filename, file_path):
             if self.drive is None: return
             drive_folder = "%s - %s" % (self.UPLOAD_DRIVE_FOLDER, self.name)
