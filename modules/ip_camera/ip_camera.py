@@ -83,7 +83,7 @@ class IpCameraModule(base_module.Module):
         try:
             r = requests.get("http://localhost:" + str(self.port) + "?action=snapshot")
             image = base64.b64encode(r.content)
-        except requests.exceptions.RequestException:
+        except (requests.exceptions.RequestException, requests.exceptions.ConnectionError):
             image = None
 
         return image

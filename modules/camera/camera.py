@@ -85,7 +85,7 @@ class CameraModule(base_module.Module):
             r = requests.get("http://localhost:" + str(self.port) + "?action=snapshot",
                              auth=(str(self.login), str(self.password)))
             image = base64.b64encode(r.content)
-        except requests.exceptions.RequestException:
+        except (requests.exceptions.RequestException, requests.exceptions.ConnectionError):
             image = None
 
         return image
