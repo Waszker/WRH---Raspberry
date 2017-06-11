@@ -280,11 +280,11 @@ class RangoIrygaModule(base_module.Module):
             thread_list.append(thread)
 
     def _parse_duration_value(self, should_turn_on, duration):
-        # Duration value should be from range [-1, 600]
+        # Duration value should be from range [-1, 3600]
         # If the desired state of the Rango Iryga is OFF then duration is undefined (infinity)
         try:
             duration = int(duration)
-            if duration < -1 or duration > 600:
+            if duration < -1 or duration > 3600:
                 raise ValueError
         except ValueError:
             if should_turn_on:
