@@ -1,6 +1,6 @@
 import signal
 import socket
-from abc import abstractmethod
+from abc import abstractmethod, ABCMeta
 import threading
 from utils.io import log
 from utils.sockets import await_connection, wait_bind_socket
@@ -10,6 +10,7 @@ class Module:
     """
     Abstract base class for modules used in WRH.
     """
+    __metaclass__ = ABCMeta
     TYPE_NUMBER = -1
     TYPE_NAME = "AbstractModule"
 
@@ -103,7 +104,7 @@ class Module:
         Returns html code to include in website.
         Tornado server will be responsible for pasting it.
         :param website_host_address: ip address of server
-        :return:
+        :return: module's html code to be displayed on the tornado website
         """
         pass
 
