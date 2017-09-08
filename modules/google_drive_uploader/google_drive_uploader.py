@@ -24,8 +24,7 @@ class GoogleDriveUploader(base_module.Module):
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
-        self.last_upload = None
-        self.drive = GoogleDriveManager(self.api_location, self.id) if configuration_file_line is not None else None
+        self.last_upload = self.drive = None
 
     @staticmethod
     def is_configuration_line_sane(configuration_line):
@@ -143,7 +142,7 @@ class GoogleDriveUploader(base_module.Module):
 
         @in_thread
         def upload_files():
-            if self.drive is None: return
+            if self.drive is None: self.drive = GoogleDriveManager(self.api_location, self.id)
             drive_folder = "%s - %s" % (self.UPLOAD_DRIVE_FOLDER, self.name)
             if self.drive.check_if_exists(drive_folder) is False:
                 self.drive.create_folder(drive_folder)
