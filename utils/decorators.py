@@ -15,5 +15,6 @@ def in_thread(method):
         thread = threading.Thread(target=method, args=args, kwargs=kwargs)
         thread.daemon = True
         thread.start()
+        return thread
 
     return run_thread
