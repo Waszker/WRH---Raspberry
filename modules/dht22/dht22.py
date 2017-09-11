@@ -22,9 +22,8 @@ class DHT22Module(base_module.Module):
     $ cd Adafruit_Python_DHT
     $ sudo python setup.py install
     """
-    TYPE_NUMBER = 1
     TYPE_NAME = "DHT22 TEMP./HUM. SENSOR"
-    CONFIGURATION_LINE_PATTERN = str(TYPE_NUMBER) + ";([0-9]{1,9});(.+?);([1-9][0-9]{0,9});([1-9][0-9]{0,9});(.+)$"
+    CONFIGURATION_LINE_PATTERN = "([0-9]{1,9});(.+?);([1-9][0-9]{0,9});([1-9][0-9]{0,9});(.+)$"
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
@@ -53,7 +52,7 @@ class DHT22Module(base_module.Module):
         Creates module configuration line.
         :return: Properly formatted configuration file line
         """
-        return "%s;%s;%s;%s;%s;%s" % tuple(map(str, (DHT22Module.TYPE_NUMBER, self.id, self.name, self.gpio,
+        return "%s;%s;%s;%s;%s;%s" % tuple(map(str, (self.__class__.__name__, self.id, self.name, self.gpio,
                                                      self.interval, self.port)))
 
     def _parse_configuration_line(self, configuration_file_line):

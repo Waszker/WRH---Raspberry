@@ -34,7 +34,9 @@ class ConfigurationParser:
         :return: list of modules instances
         """
         with open(self.configuration_file, 'r') as f:
-            instances = [self.module_classes[ConfigurationParser._get_module_type_from_line(line)](line) for line in f]
+            instances = [
+                self.module_classes[ConfigurationParser._get_module_type_from_line(line)](self._cut_module_name(line))
+                for line in f]
         return instances
 
     def save_configuration(self, installed_modules):
@@ -56,18 +58,22 @@ class ConfigurationParser:
     def _check_file_sanity(self):
         try:
             with open(self.configuration_file, 'r') as f:
-                sanity = [self.module_classes[ConfigurationParser._get_module_type_from_line(line)]
-                              .is_configuration_line_sane(line) for line in f]
+                sanity = [self.module_classes[self._get_module_type_from_line(line)]
+                              .is_configuration_line_sane(self._cut_module_name(line)) for line in f]
         except KeyError as e:
-            raise UnknownModuleException("Unknown module with id=%s" % str(e))
+            raise UnknownModuleException("Unknown module %s" % str(e))
 
         if not all(sanity):
             raise BadConfigurationException(
                 "Bad configuration line(s): " + ', '.join(([str(i) for i, b in enumerate(sanity) if b is False])))
 
     @staticmethod
+    def _cut_module_name(line):
+        return ';'.join(line.split(";")[1:])
+
+    @staticmethod
     def _get_module_type_from_line(line):
-        return int(line.split(";")[0])
+        return line.split(";")[0]
 
     @staticmethod
     def _get_module_id_from_line(line):

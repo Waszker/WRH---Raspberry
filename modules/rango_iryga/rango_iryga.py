@@ -16,9 +16,8 @@ class RangoIrygaModule(base_module.Module):
     """
     Rango Iryga module makes it easier for the user to interact with Rango Irygation system.
     """
-    TYPE_NUMBER = 7
     TYPE_NAME = "RANGO IRYGA"
-    CONFIGURATION_LINE_PATTERN = str(TYPE_NUMBER) + ";([0-9]{1,9});(.+?);(.+?);([1-9][0-9]{0,9})$"
+    CONFIGURATION_LINE_PATTERN = "([0-9]{1,9});(.+?);(.+?);([1-9][0-9]{0,9})$"
     RELAYS = [5, 4, 15, 14]
     DELAY = 120
 
@@ -49,8 +48,8 @@ class RangoIrygaModule(base_module.Module):
         Creates module configuration line.
         :return: Properly formatted configuration file line
         """
-        return str(RangoIrygaModule.TYPE_NUMBER) + ";" + str(
-            self.id) + ";" + self.name + ";" + self.address + ";" + str(self.port)
+        return str(self.__class__.__name__) + ";" + str(self.id) + ";" + self.name + ";" + self.address + ";" + str(
+            self.port)
 
     def _parse_configuration_line(self, configuration_file_line):
         """

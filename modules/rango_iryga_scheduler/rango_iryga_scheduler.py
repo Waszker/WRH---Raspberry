@@ -155,9 +155,8 @@ class RangoIrygaSchedulerModule(base_module.Module):
     """
     Rango Iryga Scheduler is a module responsible for automatically running watering scenarios.
     """
-    TYPE_NUMBER = 8
     TYPE_NAME = "RANGO IRYGA SCHEDULER"
-    CONFIGURATION_LINE_PATTERN = str(TYPE_NUMBER) + ";([0-9]{1,9});(.+?);([1-9][0-9]{0,9});([1-9][0-9]{0,9})$"
+    CONFIGURATION_LINE_PATTERN = "([0-9]{1,9});(.+?);([1-9][0-9]{0,9});([1-9][0-9]{0,9})$"
     _saved_scenarios_file = "modules/rango_iryga_scheduler/.scenarios"
 
     def __init__(self, configuration_file_line=None):
@@ -188,8 +187,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
         Creates module configuration line.
         :return: Properly formatted configuration file line
         """
-        return "%i;%i;%s;%i;%i" % (
-            RangoIrygaSchedulerModule.TYPE_NUMBER, self.id, self.name, self.port, self.rango_port)
+        return "%s;%i;%s;%i;%i" % (self.__class__.__name__, self.id, self.name, self.port, self.rango_port)
 
     def _parse_configuration_line(self, configuration_file_line):
         """

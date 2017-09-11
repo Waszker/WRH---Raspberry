@@ -6,12 +6,17 @@ from utils.io import log
 from utils.sockets import await_connection, wait_bind_socket
 
 
+class ModuleMeta(ABCMeta):
+    def __new__(cls, name, bases, attributes):
+        attributes['WRHID'] = name
+        return super(ModuleMeta, cls).__new__(cls, name, bases, attributes)
+
+
 class Module:
     """
     Abstract base class for modules used in WRH.
     """
-    __metaclass__ = ABCMeta
-    TYPE_NUMBER = -1
+    __metaclass__ = ModuleMeta
     TYPE_NAME = "AbstractModule"
 
     def __init__(self, configuration_file_line=None):

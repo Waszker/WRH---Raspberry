@@ -29,9 +29,8 @@ class IpCameraModule(base_module.Module):
     It takes snapshots from those cameras as well as provides streaming options
     via mjpg_streamer (mjpg_streamer has to be installed to work).
     """
-    TYPE_NUMBER = 9
     TYPE_NAME = "IP CAMERA"
-    CONFIGURATION_LINE_PATTERN = str(TYPE_NUMBER) + ";([0-9]{1,9});(.+?);(.+?);(.+?);(.*)$"
+    CONFIGURATION_LINE_PATTERN = "([0-9]{1,9});(.+?);(.+?);(.+?);(.*)$"
 
     def __init__(self, configuration_file_line=None):
         self.camera_address = self.camera_port = self.socat_process = None
@@ -60,7 +59,7 @@ class IpCameraModule(base_module.Module):
         Creates module configuration line
         :return: Properly formatted configuration file line
         """
-        return '%s;%s;%s;%s;%s;%s' % tuple(map(str, (IpCameraModule.TYPE_NUMBER, self.id, self.name,
+        return '%s;%s;%s;%s;%s;%s' % tuple(map(str, (self.__class__.__name__, self.id, self.name,
                                                      self.camera_address, self.camera_port, self.port)))
 
     def _parse_configuration_line(self, configuration_file_line):

@@ -18,9 +18,8 @@ class SpeedTestModule(base_module.Module):
     This is Internet speed test module that checks Internet connection speed regularly.
     It's not recommended to add more than one speed test to WRH system.
     """
-    TYPE_NUMBER = 6
     TYPE_NAME = "INTERNET SPEED TEST"
-    CONFIGURATION_LINE_PATTERN = str(TYPE_NUMBER) + ";([0-9]{1,9});(.+?);([1-9][0-9]{0,9});([1-9][0-9]{0,9})$"
+    CONFIGURATION_LINE_PATTERN = "([0-9]{1,9});(.+?);([1-9][0-9]{0,9});([1-9][0-9]{0,9})$"
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
@@ -49,7 +48,7 @@ class SpeedTestModule(base_module.Module):
         Creates module configuration line.
         :return: Properly formatted configuration file line
         """
-        return str(SpeedTestModule.TYPE_NUMBER) + ";" + str(self.id) + ";" + self.name + ";" + str(
+        return str(self.__class__.__name__) + ";" + str(self.id) + ";" + self.name + ";" + str(
             self.interval) + ";" + str(
             self.port)
 
