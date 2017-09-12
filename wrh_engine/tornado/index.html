@@ -43,7 +43,7 @@
 
             <!-- Top Navigation: Left Menu -->
             <ul id="nav-mobile" class="right hide-on-med-and-down">
-                <li><a href="/?class=-1">SYSTEM</a></li>
+                <li><a href="/?">SYSTEM</a></li>
                 {%for mclass, _ in classes.iteritems()%}
                         {%for m in modules%}
                             {%if m.WRHID == mclass%}
@@ -56,7 +56,7 @@
                 {%end%}
             </ul>
             <ul class="side-nav" id="mobile-demo">
-                <li><a href="/?class=-1">SYSTEM</a></li>
+                <li><a href="/?">SYSTEM</a></li>
                 {%for mclass, _ in classes.iteritems()%}
                         {%for m in modules%}
                             {%if m.WRHID == mclass%}
