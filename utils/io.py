@@ -15,6 +15,9 @@ class Color(Enum):
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+    def __str__(self):
+        return str(self.value)
+
 
 def log(message, color=Color.NORMAL):
     """
@@ -22,8 +25,11 @@ def log(message, color=Color.NORMAL):
     :param message: text to display
     :param color: color enum
     """
-    isinstance(color, Color)
-    print ''.join((''.join(color), str(message), str(Color.NORMAL)))
+    try:
+        decoration = ''.join([str(c) for c in color])
+    except TypeError:
+        decoration = str(color)
+    print ''.join((decoration, str(message), str(Color.NORMAL)))
 
 
 def non_empty_input(message=''):

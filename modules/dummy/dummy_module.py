@@ -7,13 +7,11 @@ class DummyModule(base_module.Module):
     """
     This is dummy module which can be used as a starting point when writing own one.
     """
-    # TODO: Module number must be unique across all modules in order to prevent failures during WRH system boot
-    TYPE_NUMBER = None
     # TODO: Module name should be written in uppercase, will be displayed on Tornado web page screen and should
     # not be too long
     TYPE_NAME = "UNDEFINED"
-    # TODO: Most of the time configuration line will have TYPE_NUMBER;id;name;port;__other__ structure
-    CONFIGURATION_LINE_PATTERN = str(TYPE_NUMBER) + ";([0-9]{1,9});(.+?);([1-9][0-9]{0,9});__other__$"
+    # TODO: Most of the time configuration line will have id;name;port;__other__ structure
+    CONFIGURATION_LINE_PATTERN = "([0-9]{1,9});(.+?);([1-9][0-9]{0,9});__other__$"
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
@@ -46,7 +44,7 @@ class DummyModule(base_module.Module):
         :return: Properly formatted configuration file line
         """
         # TODO: Return configuration line to be saved in WRH configuration file
-        return str(self.TYPE_NUMBER) + ";" + str(self.id)
+        return str(self.id)
 
     def _parse_configuration_line(self, configuration_file_line):
         """

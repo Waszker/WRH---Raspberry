@@ -29,10 +29,9 @@ class WRHEngine:
         log("WRH System main engine starting", (Color.BOLD, Color.UNDERLINE))
         log("Scanning for available modules")
         loader = ModuleDynamicLoader(self._modules_folder)
-        self.modules_info = loader.get_modules_info()
         self.module_classes = loader.get_module_classes()
         log("Found modules: ")
-        [log('*' + str(module_name), Color.BLUE) for module_name in self.modules_info.keys()]
+        [log('*' + str(module_name), Color.BLUE) for module_name in self.module_classes.keys()]
         self.overlord_instances = []
 
     def start(self):
@@ -73,11 +72,12 @@ class WRHEngine:
 
     def _add_new_module(self):
         log("\nChose which module to add")
-        [log('%d) %s' % (number, m_class.TYPE_NAME)) for number, m_class in self.module_classes.iteritems()]
+        module_classes = self.module_classes.values()
+        [log('%d) %s' % (number, m_class.TYPE_NAME)) for number, m_class in enumerate(module_classes)]
 
         choice = ninput('> ')
         try:
-            module = self.module_classes[int(choice)]()
+            module = module_classes[int(choice)]()
             module.run_registration_procedure(self.configuration_parser.get_new_module_id())
             self.installed_modules.append(module)
             self.configuration_parser.save_configuration(self.installed_modules)

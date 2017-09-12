@@ -20,9 +20,8 @@ class ESP8266SocketModule(base_module.Module):
     """
     This class works with ESP8266 WiFi socket.
     """
-    TYPE_NUMBER = 5
     TYPE_NAME = "ESP8266 WIFI SOCKET"
-    CONFIGURATION_LINE_PATTERN = str(TYPE_NUMBER) + ";([0-9]{1,9});(.+?);(.+?);(.+)$"
+    CONFIGURATION_LINE_PATTERN = "([0-9]{1,9});(.+?);(.+?);(.+)$"
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
@@ -50,8 +49,7 @@ class ESP8266SocketModule(base_module.Module):
         Creates module configuration line
         :return: Properly formatted configuration file line
         """
-        return str(ESP8266SocketModule.TYPE_NUMBER) + ";" + str(
-            self.id) + ";" + self.name + ";" + self.gpio + ";" + self.port
+        return str(self.id) + ";" + self.name + ";" + self.gpio + ";" + self.port
 
     def _parse_configuration_line(self, configuration_file_line):
         """

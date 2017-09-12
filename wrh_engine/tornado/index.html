@@ -43,12 +43,12 @@
 
             <!-- Top Navigation: Left Menu -->
             <ul id="nav-mobile" class="right hide-on-med-and-down">
-                <li><a href="/?class=-1">SYSTEM</a></li>
-                {%for mclass, m in classes.iteritems()%}
+                <li><a href="/?">SYSTEM</a></li>
+                {%for mclass, _ in classes.iteritems()%}
                         {%for m in modules%}
-                            {%if m.TYPE_NUMBER == mclass%}
+                            {%if m.WRHID == mclass%}
                                 <li>
-                                    <a href="/?class={{m.TYPE_NUMBER}}">{{m.TYPE_NAME}}</a>
+                                    <a href="/?class={{m.WRHID}}">{{m.TYPE_NAME}}</a>
                                 </li>
                                 {%break%}
                             {%end%}
@@ -56,12 +56,12 @@
                 {%end%}
             </ul>
             <ul class="side-nav" id="mobile-demo">
-                <li><a href="/?class=-1">SYSTEM</a></li>
-                {%for mclass, m in classes.iteritems()%}
+                <li><a href="/?">SYSTEM</a></li>
+                {%for mclass, _ in classes.iteritems()%}
                         {%for m in modules%}
-                            {%if m.TYPE_NUMBER == mclass%}
+                            {%if m.WRHID == mclass%}
                                 <li>
-                                    <a href="/?class={{m.TYPE_NUMBER}}">{{m.TYPE_NAME}}</a>
+                                    <a href="/?class={{m.WRHID}}">{{m.TYPE_NAME}}</a>
                                 </li>
                                 {%break%}
                             {%end%}
@@ -82,7 +82,7 @@
                     System statistics
                     {% else %}
                         {%for m in modules%}
-                            {%if m.TYPE_NUMBER == target%}
+                            {%if m.WRHID == target%}
                                 {{ m.TYPE_NAME }}
                                 {%break%}
                             {%end%}
@@ -102,7 +102,7 @@
                  </div>
             {% else %}
                 {%for m in modules%}
-                    {%if m.TYPE_NUMBER == target%}
+                    {%if m.WRHID == target%}
                         {{ m.get_html_representation(ipaddress) }}
                         <br />
                     {%end%}

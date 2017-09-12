@@ -16,11 +16,10 @@ class GoogleDriveUploader(base_module.Module):
     """
     This WRH module takes care of uploading files that appear in its "upload" folder.
     """
-    TYPE_NUMBER = 10
     TYPE_NAME = "GOOGLE DRIVE UPLOADER"
     UPLOAD_FOLDER = "/tmp/google_drive_upload"
     UPLOAD_DRIVE_FOLDER = "WRH UPLOADS"
-    CONFIGURATION_LINE_PATTERN = str(TYPE_NUMBER) + ";([0-9]{1,9});(.+?);([1-9][0-9]{0,9});(.+)$"
+    CONFIGURATION_LINE_PATTERN = "([0-9]{1,9});(.+?);([1-9][0-9]{0,9});(.+)$"
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
@@ -49,7 +48,7 @@ class GoogleDriveUploader(base_module.Module):
         Creates module configuration line.
         :return: Properly formatted configuration file line
         """
-        return "%i;%i;%s;%i;%s" % (self.TYPE_NUMBER, self.id, self.name, self.port, self.api_location)
+        return "%i;%s;%i;%s" % (self.id, self.name, self.port, self.api_location)
 
     def _parse_configuration_line(self, configuration_file_line):
         """
