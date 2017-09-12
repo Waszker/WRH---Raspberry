@@ -9,7 +9,8 @@ import resources
 from utils.sockets import send_message, receive_message
 
 __UPLOADS__ = "/tmp/"
-modules = None
+modules = []
+classes = []
 ip = None
 
 
@@ -21,8 +22,8 @@ class Userform(BaseHandler):
     def get(self):
         global modules, ip
         try:
-            class_type_number = int(self.get_argument("class"))
-        except (ValueError, tornado.web.MissingArgumentError):
+            class_type_number = self.get_argument("class")
+        except tornado.web.MissingArgumentError:
             class_type_number = -1
         ip = str(self.request.host).split(":")[0]
 
