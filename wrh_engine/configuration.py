@@ -45,7 +45,7 @@ class ConfigurationParser:
         :param installed_modules: list containing instances of installed modules
         """
         with open(self.configuration_file, 'w+') as f:
-            f.write('\n'.join([module.get_configuration_line() for module in installed_modules]))
+            f.write('\n'.join([module.WRHID + ';' + module.get_configuration_line() for module in installed_modules]))
 
     def get_new_module_id(self):
         """

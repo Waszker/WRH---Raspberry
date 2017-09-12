@@ -48,7 +48,7 @@ class GoogleDriveUploader(base_module.Module):
         Creates module configuration line.
         :return: Properly formatted configuration file line
         """
-        return "%s;%i;%s;%i;%s" % (self.__class__.__name__, self.id, self.name, self.port, self.api_location)
+        return "%i;%s;%i;%s" % (self.id, self.name, self.port, self.api_location)
 
     def _parse_configuration_line(self, configuration_file_line):
         """

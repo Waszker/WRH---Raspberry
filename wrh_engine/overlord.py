@@ -18,7 +18,6 @@ class Overlord:
         self.is_ending = False
         self.modules = configuration_parser.get_installed_modules()
         self.commands = [module.get_starting_command() for module in self.modules]
-        # TODO: Cut the module name from line!
         [command.append(self.modules[i].get_configuration_line()) for i, command in enumerate(self.commands)]
         self.commands = [tornado_command] + self.commands
         self.processes = []

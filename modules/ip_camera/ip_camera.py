@@ -59,8 +59,8 @@ class IpCameraModule(base_module.Module):
         Creates module configuration line
         :return: Properly formatted configuration file line
         """
-        return '%s;%s;%s;%s;%s;%s' % tuple(map(str, (self.__class__.__name__, self.id, self.name,
-                                                     self.camera_address, self.camera_port, self.port)))
+        return '%s;%s;%s;%s;%s' % tuple(map(str, (self.id, self.name, self.camera_address,
+                                                     self.camera_port, self.port)))
 
     def _parse_configuration_line(self, configuration_file_line):
         """

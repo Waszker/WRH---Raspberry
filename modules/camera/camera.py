@@ -60,8 +60,8 @@ class CameraModule(base_module.Module):
         Creates module configuration line
         :return: Properly formatted configuration file line
         """
-        return '%s;%s;%s;%s;%s;%s;%s' % tuple(map(str, (self.__class__.__name__, self.id, self.name,
-                                                        self.gpio, self.port, self.login, self.password)))
+        return '%s;%s;%s;%s;%s;%s' % tuple(map(str, (self.id, self.name, self.gpio, self.port,
+                                                     self.login, self.password)))
 
     def _parse_configuration_line(self, configuration_file_line):
         """

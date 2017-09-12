@@ -48,9 +48,7 @@ class SpeedTestModule(base_module.Module):
         Creates module configuration line.
         :return: Properly formatted configuration file line
         """
-        return str(self.__class__.__name__) + ";" + str(self.id) + ";" + self.name + ";" + str(
-            self.interval) + ";" + str(
-            self.port)
+        return str(self.id) + ";" + self.name + ";" + str(self.interval) + ";" + str(self.port)
 
     def _parse_configuration_line(self, configuration_file_line):
         """

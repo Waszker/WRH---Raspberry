@@ -187,7 +187,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
         Creates module configuration line.
         :return: Properly formatted configuration file line
         """
-        return "%s;%i;%s;%i;%i" % (self.__class__.__name__, self.id, self.name, self.port, self.rango_port)
+        return "%i;%s;%i;%i" % (self.id, self.name, self.port, self.rango_port)
 
     def _parse_configuration_line(self, configuration_file_line):
         """

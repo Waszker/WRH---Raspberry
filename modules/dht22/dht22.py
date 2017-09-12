@@ -52,8 +52,7 @@ class DHT22Module(base_module.Module):
         Creates module configuration line.
         :return: Properly formatted configuration file line
         """
-        return "%s;%s;%s;%s;%s;%s" % tuple(map(str, (self.__class__.__name__, self.id, self.name, self.gpio,
-                                                     self.interval, self.port)))
+        return "%s;%s;%s;%s;%s;%s" % tuple(map(str, (self.id, self.name, self.gpio, self.interval, self.port)))
 
     def _parse_configuration_line(self, configuration_file_line):
         """

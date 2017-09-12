@@ -49,7 +49,7 @@ class ESP8266SocketModule(base_module.Module):
         Creates module configuration line
         :return: Properly formatted configuration file line
         """
-        return str(self.__class__.__name__) + ";" + str(self.id) + ";" + self.name + ";" + self.gpio + ";" + self.port
+        return str(self.id) + ";" + self.name + ";" + self.gpio + ";" + self.port
 
     def _parse_configuration_line(self, configuration_file_line):
         """
