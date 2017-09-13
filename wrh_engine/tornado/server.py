@@ -21,7 +21,8 @@ class Userform(BaseHandler):
     def get(self):
         global modules, ip
         try:
-            class_type_number = self.get_argument("class")
+            requested_module = self.get_argument("class")
+            class_type_number = requested_module if requested_module in [c.WRHID for c in classes] else -1
         except tornado.web.MissingArgumentError:
             class_type_number = -1
         ip = str(self.request.host).split(":")[0]

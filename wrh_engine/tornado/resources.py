@@ -11,7 +11,8 @@ def get_installed_modules_info():
     modules_classes = loader.get_module_classes()
     parser = ConfigurationParser('.', modules_classes)
     modules = parser.get_installed_modules()
-    return sorted(modules_classes.values(), key=lambda x: x.WRHID), modules
+    unique_classes = list({modules_classes[m.WRHID] for m in modules})
+    return sorted(unique_classes, key=lambda x: x.WRHID), modules
 
 
 def get_system_stats():
