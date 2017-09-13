@@ -6,12 +6,12 @@ from wrh_engine.engine import ConfigurationParser
 from utils.system_info import get_uptime, get_cpu_temp
 
 
-def get_available_module_types():
+def get_installed_modules_info():
     loader = ModuleDynamicLoader('modules/')
     modules_classes = loader.get_module_classes()
     parser = ConfigurationParser('.', modules_classes)
     modules = parser.get_installed_modules()
-    return modules_classes, modules
+    return sorted(modules_classes.values(), key=lambda x: x.WRHID), modules
 
 
 def get_system_stats():
@@ -27,4 +27,3 @@ def get_system_stats():
 def restart():
     print "Restarting system"
     s.call("sudo reboot", shell=True)
-    return

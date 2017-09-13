@@ -15,7 +15,9 @@ class ConfigurationParser:
         """
         Creates configuration parses object that parses configuration file in the provided path.
         :param configuration_file_path: filesystem path in which configuration file is present
-        :param module_classes: list of module instances, one for each detected module type in the system
+        :param module_classes: dictionary of module classes, with keys being the class names and values class objects
+        :type configuration_file_path: str
+        :type module_classes: dict
         :raises UnknownModuleException: configuration file contains unknown module info
         :raises BadConfigurationException: configuration file is invalid
         """
@@ -32,10 +34,11 @@ class ConfigurationParser:
         Please do check it before invoking!
         Returns instances of installed modules ready to be run as a separate process.
         :return: list of modules instances
+        :rtype: list
         """
         with open(self.configuration_file, 'r') as f:
             instances = [
-                self.module_classes[ConfigurationParser._get_module_type_from_line(line)](self._cut_module_name(line))
+                self.module_classes[self._get_module_class_name_from_line(line)](self._cut_module_name(line))
                 for line in f]
         return instances
 
@@ -43,6 +46,7 @@ class ConfigurationParser:
         """
         Overwrites configuration file and saves installed modules' information to it.
         :param installed_modules: list containing instances of installed modules
+        :type installed_modules: list
         """
         with open(self.configuration_file, 'w+') as f:
             f.write('\n'.join([module.WRHID + ';' + module.get_configuration_line() for module in installed_modules]))
@@ -58,7 +62,7 @@ class ConfigurationParser:
     def _check_file_sanity(self):
         try:
             with open(self.configuration_file, 'r') as f:
-                sanity = [self.module_classes[self._get_module_type_from_line(line)]
+                sanity = [self.module_classes[self._get_module_class_name_from_line(line)]
                               .is_configuration_line_sane(self._cut_module_name(line)) for line in f]
         except KeyError as e:
             raise UnknownModuleException("Unknown module %s" % str(e))
@@ -72,7 +76,7 @@ class ConfigurationParser:
         return ';'.join(line.split(";")[1:])
 
     @staticmethod
-    def _get_module_type_from_line(line):
+    def _get_module_class_name_from_line(line):
         return line.split(";")[0]
 
     @staticmethod

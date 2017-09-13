@@ -19,6 +19,7 @@ class ModuleDynamicLoader:
         """
         Creates instance of DynamicLoader scanning provided path for modules.
         :param path: filesystem path name to scan
+        :type path: str
         :raise OSError: if the specified path does not exist
         """
         if not os.path.exists(path):
@@ -31,6 +32,7 @@ class ModuleDynamicLoader:
         """
         Returns available modules classes.
         :return: dictionary containing module classes with key being class name and value class object
+        :rtype: dict
         """
         return self.module_classes
 
@@ -39,7 +41,10 @@ class ModuleDynamicLoader:
         """
         Checks if folder at certain path contains WRH-compliant module.
         CAUTION: This method checks only if module magic file exists, nothing more!
+        :param path: path leading to folder that is intended to be checked
+        :type path: str
         :return: boolean response
+        :rtype: bool
         """
         magic_file = os.sep.join((path, ModuleDynamicLoader.MAGIC_FILENAME))
         return os.path.exists(magic_file) and os.path.isfile(magic_file)

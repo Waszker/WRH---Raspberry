@@ -12,6 +12,7 @@ class Overlord:
         """
         Creates instance of Overlord class that prepares commands for starting modules.
         :param configuration_parser: parser that returns information about modules registered for this particular system
+        :type configuration_parser: ConfigurationParser
         """
         tornado_command = ["/usr/bin/python2.7", "-m", "wrh_engine.tornado.server",
                            configuration_parser.configuration_filename]

@@ -9,8 +9,7 @@ import resources
 from utils.sockets import send_message, receive_message
 
 __UPLOADS__ = "/tmp/"
-modules = []
-classes = []
+modules, classes = [], []
 ip = None
 
 
@@ -69,8 +68,7 @@ def sigint_handler(*_):
 
 
 if __name__ == "__main__":
-    __CONFIG_FILE__ = sys.argv[1]
-    classes, modules = resources.get_available_module_types()
+    classes, modules = resources.get_installed_modules_info()
     signal.signal(signal.SIGINT, sigint_handler)
     application.listen(8888)
     print 'Tornado: Started.'
