@@ -23,7 +23,7 @@ class GoogleDriveUploader(base_module.Module):
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
-        self.last_upload = self.drive = None
+        self.last_upload = self.drive = self.html_repr = None
 
     @staticmethod
     def is_configuration_line_sane(configuration_line):
@@ -115,23 +115,11 @@ class GoogleDriveUploader(base_module.Module):
         """
         Returns html code to include in website.
         """
-        id, port = str(self.id), str(self.port)
-        return '<div class="card-panel"> \
-               <script>  \
-               function updateLastUpload_' + id + '(text) { \n\
-                    document.getElementById("googleDriveUploaderDiv' + id + '").innerHTML = text;\n \
-               } \n\
-               function getLastUpload_' + id + '() { \n\
-                    getRequest("localhost", ' + port + ', "", updateLastUpload_' + id + ');\n\
-               } \
-               getLastUpload_' + id + '(); \
-               setInterval(function() { \n\
-                    getLastUpload_' + id + '(); \n\
-               }, 60*1000);\n\
-               </script> \n\
-               <h5>' + self.name + '</h5>\
-               <div id="googleDriveUploaderDiv' + id + '" class="googleDriveUploaderDiv"> </div>\
-               </div>'
+        if not self.html_repr:
+            with open('modules/google_drive_uploader/html/repr.html', 'r') as f:
+                html = f.read()
+                self.html_repr = html.format(id=self.id, name=self.name, port=self.port)
+        return self.html_repr
 
     @in_thread
     def _uploader_thread(self):

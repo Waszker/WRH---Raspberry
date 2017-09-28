@@ -27,7 +27,7 @@ class DHT22Module(base_module.Module):
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
-        self.last_temperature, self.last_humidity, self.socket = None, None, None
+        self.last_temperature, self.last_humidity, self.socket, self.html_repr = None, None, None, None
 
     @staticmethod
     def is_configuration_line_sane(configuration_line):
@@ -117,19 +117,11 @@ class DHT22Module(base_module.Module):
         """
         Returns html code to include in website.
         """
-        return '<div class="card-panel"> \
-               <script> function update_measurements_dht22_' + self.id + '(text) \n\
-               { var res = text.split(";"); var h = res[0]; var t = res[1]; \
-               document.getElementById("dht22Div' + self.id + '").innerHTML = "Humidity: " + h + "% Temperature: " + t + "*C"; } \n\
-               function getMeasurements' + self.id + '() { getRequest("localhost", ' + self.port + ', "", update_measurements_dht22_' + self.id + '); } \
-               getMeasurements' + self.id + '(); \
-               setInterval(function() { \n\
-               getMeasurements' + self.id + '(); \n\
-               }, 60*1000);\n\
-               </script> \n\
-               <h5>' + self.name + '</h5>\
-               <div id="dht22Div' + self.id + '" class="dht22Div"> </div>\
-               </div>'
+        if not self.html_repr:
+            with open('modules/dht22/html/repr.html', 'r') as f:
+                html = f.read()
+                self.html_repr = html.format(id=self.id, name=self.name, port=self.port)
+        return self.html_repr
 
     @in_thread
     def _measurement_thread(self):

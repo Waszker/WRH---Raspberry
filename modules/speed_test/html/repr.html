@@ -1,0 +1,18 @@
+<div class="card-panel">
+    <script>
+        function updateMeasurementsSpeedtest{id}(text) {{
+            document.getElementById("speedTestDiv{id}").innerHTML = text;
+        }}
+
+        function getMeasurements{id}() {{
+            getRequest("localhost", {port}, "", updateMeasurementsSpeedtest{id});
+        }}
+
+        getMeasurements{id}();
+        setInterval(function() {{
+            getMeasurements{id}();
+        }}, 60*1000);
+    </script>
+    <h5>{name}</h5>
+    <div id="speedTestDiv{id}" class="speedTestDiv"></div>
+</div>

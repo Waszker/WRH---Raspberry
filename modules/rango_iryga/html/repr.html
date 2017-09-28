@@ -1,0 +1,206 @@
+<div class="card-panel">
+    <h5>{name}</h5>
+
+    <table style="margin: 0px auto; max-width: 95%; width: auto">
+        <tr>
+            <td>
+                <h5>Linia&nbsp;1</h5></td>
+            <td>
+                <div id="rangoIrygaDiv_1_{id}" style="height: 50px; margin: auto">
+                    <img src="static/images/loading_spinner.gif" style="width: 50px;"/>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td><h6>Czas trwania (sek.):</h6></td>
+            <td>
+                <div style="margin: 3%; width: 100%">
+                    <p class="input-field"><input id="relay1_time_{id}" type="number" style="width: 90%"
+                                                  value="300"/></p>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td><h6>Liczba cykli:</h6></td>
+            <td>
+                <div style="margin: 3%; width: 100%">
+                    <p class="input-field"><input id="relay1_cycles_{id}" type="number" style="width: 90%"
+                                                  value="1"/></p>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td columnspan="2"><a class="dropdown-button btn grey darken-3" href="#"
+                                  data-activates="dropdown1{id}">State</a></td>
+        </tr>
+    </table>
+    <ul id="dropdown1{id}" class="dropdown-content">
+        <li>
+            <a onclick="setState{id}('ON', 5, 'relay1_time_{id}', 'relay1_cycles_{id}')">ON</a>
+        </li>
+        <li><a onclick="setState{id}('OFF', 5, null)">OFF</a></li>
+        <li><a onclick="getState{id}(5)">REFRESH</a></li>
+    </ul>
+    <br/>
+    <div class="line"></div>
+    <br/>
+
+    <table style="margin: 0px auto; max-width: 95%; width: auto">
+        <tr>
+            <td>
+                <h5>Linia&nbsp;2</h5></td>
+            <td>
+                <div id="rangoIrygaDiv_2_{id}" style="height: 50px; margin: auto">
+                    <img src="static/images/loading_spinner.gif" style="width: 50px;"/>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td><h6>Czas trwania (sek.):</h6></td>
+            <td>
+                <div style="margin: 3%; width: 100%">
+                    <p class="input-field"><input id="relay2_time_{id}" type="number" style="width: 90%"
+                                                  value="80"/></p>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td><h6>Liczba cykli:</h6></td>
+            <td>
+                <div style="margin: 3%; width: 100%">
+                    <p class="input-field"><input id="relay2_cycles_{id}" type="number" style="width: 90%"
+                                                  value="4"/></p>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td columnspan="2"><a class="dropdown-button btn grey darken-3" href="#"
+                                  data-activates="dropdown2{id}">State</a></td>
+        </tr>
+    </table>
+    <ul id="dropdown2{id}" class="dropdown-content">
+        <li>
+            <a onclick="setState{id}('ON', 4, 'relay2_time_{id}', 'relay2_cycles_{id}')">ON</a>
+        </li>
+        <li><a onclick="setState{id}('OFF', 4, null)">OFF</a></li>
+        <li><a onclick="getState{id}(4)">REFRESH</a></li>
+    </ul>
+    <br/>
+    <div class="line"></div>
+    <br/>
+
+    <table style="margin: 0px auto; max-width: 95%; width: auto">
+        <tr>
+            <td>
+                <h5>Linia&nbsp;3</h5></td>
+            <td>
+                <div id="rangoIrygaDiv_3_{id}" style="height: 50px; margin: auto">
+                    <img src="static/images/loading_spinner.gif" style="width: 50px;"/>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td><h6>Czas trwania (sek.):</h6></td>
+            <td>
+                <div style="margin: 3%; width: 100%">
+                    <p class="input-field"><input id="relay3_time_{id}" type="number" style="width: 90%"
+                                                  value="300"/></p>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td><h6>Liczba cykli:</h6></td>
+            <td>
+                <div style="margin: 3%; width: 100%">
+                    <p class="input-field"><input id="relay3_cycles_{id}" type="number" style="width: 90%"
+                                                  value="1"/></p>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td columnspan="2"><a class="dropdown-button btn grey darken-3" href="#"
+                                  data-activates="dropdown3{id}">State</a></td>
+        </tr>
+    </table>
+    <ul id="dropdown3{id}" class="dropdown-content">
+        <li>
+            <a onclick="setState{id}('ON', 15, 'relay3_time_{id}', 'relay3_cycles_{id}')">ON</a>
+        </li>
+        <li><a onclick="setState{id}('OFF', 15, null)">OFF</a></li>
+        <li><a onclick="getState{id}(15)">REFRESH</a></li>
+    </ul>
+    <br/>
+    <div class="line"></div>
+    <br/>
+
+    <table style="margin: 0px auto; max-width: 95%; width: auto">
+        <tr>
+            <td>
+                <h5>Linia&nbsp;4</h5></td>
+            <td>
+                <div id="rangoIrygaDiv_4_{id}" style="height: 50px; margin: auto">
+                    <img src="static/images/loading_spinner.gif" style="width: 50px;"/>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td><h6>Czas trwania (sek.):</h6></td>
+            <td>
+                <div style="margin: 3%; width: 100%">
+                    <p class="input-field"><input id="relay4_time_{id}" type="number" style="width: 90%" value="300"/>
+                    </p>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td><h6>Liczba cykli:</h6></td>
+            <td>
+                <div style="margin: 3%; width: 100%">
+                    <p class="input-field"><input id="relay4_cycles_{id}" type="number" style="width: 90%" value="1"/>
+                    </p>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td columnspan="2"><a class="dropdown-button btn grey darken-3" href="#" data-activates="dropdown4{id}">State</a>
+            </td>
+        </tr>
+    </table>
+    <ul id="dropdown4{id}" class="dropdown-content">
+        <li>
+            <a onclick="setState{id}('ON', 14, 'relay4_time_{id}', 'relay4_cycles_{id}')">ON</a>
+        </li>
+        <li><a onclick="setState{id}('OFF', 14, null)">OFF</a></li>
+        <li><a onclick="getState{id}(14)">REFRESH</a></li>
+    </ul>
+    <br/>
+
+    <script> function update_relay_state_message{id}(text){{
+                states=text.split("&");
+                document.getElementById("rangoIrygaDiv_1_{id}").innerHTML = states[0];
+                document.getElementById("rangoIrygaDiv_2_{id}").innerHTML = states[1];
+                document.getElementById("rangoIrygaDiv_3_{id}").innerHTML = states[2];
+                document.getElementById("rangoIrygaDiv_4_{id}").innerHTML = states[3];
+               }}
+
+               function getState{id}(num) {{
+                    if(num == 0 || num == 5) {{document.getElementById("rangoIrygaDiv_1_{id}").innerHTML = "<img src=\"static/images/loading_spinner.gif\" style=\"width: 50px;\" />";}}
+                    if(num == 0 || num == 4) {{document.getElementById("rangoIrygaDiv_2_{id}").innerHTML = "<img src=\"static/images/loading_spinner.gif\" style=\"width: 50px;\" />";}}
+                    if(num == 0 || num == 15) {{document.getElementById("rangoIrygaDiv_3_{id}").innerHTML = "<img src=\"static/images/loading_spinner.gif\" style=\"width: 50px;\" />";}}
+                    if(num == 0 || num == 14) {{document.getElementById("rangoIrygaDiv_4_{id}").innerHTML = "<img src=\"static/images/loading_spinner.gif\" style=\"width: 50px;\" />";}}
+                    getRequest("localhost", {port}, "STATE", update_relay_state_message{id});
+               }}
+
+               function setState{id}(state, gpio, input_id, input_id2) {{
+                        time_wait = input_id == null ? -1 : document.getElementById(input_id).value;
+                        repeats = input_id == null ? -1 : document.getElementById(input_id2).value;
+                        sendRequest('localhost', {port}, state + "," + gpio + "," + time_wait + "," + repeats);
+                        setTimeout(function() {{getState{id}(gpio);}}, 500);
+               }}
+
+               getState{id}(0);
+               setInterval(function() {{
+                    getState{id}(0);
+               }}, 60*1000);
+    </script>
+</div>

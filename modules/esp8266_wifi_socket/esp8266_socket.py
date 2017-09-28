@@ -25,6 +25,7 @@ class ESP8266SocketModule(base_module.Module):
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
+        self.html_repr = None
 
     @staticmethod
     def is_configuration_line_sane(configuration_line):
@@ -127,41 +128,12 @@ class ESP8266SocketModule(base_module.Module):
         :param website_host_address: ip address of server
         :return:
         """
-        text_input_name = "esp_timeout_" + self.id
-        return '<div class="card-panel"> \
-                <h5>' + self.name + '</h5>\
-                <div id="esp8266SocketDiv' + self.id + '" class="socketDiv" style="height: 50px; margin: auto"> \
-                <img src="static/images/loading_spinner.gif" style="width: 50px;" /> \
-                </div> \
-                <table style="margin: 0px auto; max-width: 95%; width: auto"><tr> \
-                <td><div style="margin: 3%; width: 100%"><p class="input-field"><input id="' + text_input_name + '" type="number" style="width: 90%" value="-1"/></p></div></td> \
-                <td><a class="dropdown-button btn grey darken-3" href="#" data-activates="dropdown' + self.id + '">State</a></td></tr></table> \
-                <ul id="dropdown' + self.id + '" class="dropdown-content"> \
-                <li><a onclick="setState' + self.id + '(\'ON\', \'' + text_input_name + '\')">ON</a></li> \
-                <li><a onclick="setState' + self.id + '(\'OFF\', \'' + text_input_name + '\')">OFF</a></li> \
-                <li><a onclick="getState' + self.id + '()">REFRESH</a></li></ul> \
-                 \
-                <script> \
-                function update_state_message' + self.id + '(text) \n { \
-                   if (text == "OFF") text = "<a style=\\"color: green; font-size: 25px\\">OFF</a>"; \
-                   else if (text == "ON") text = "<a style=\\"color: red; font-size: 25px\\">ON</a>"; \
-                   else text = "<a style=\\"color: black; font-size: 25px\\">UNKNOWN</a>"; \
-                   document.getElementById("esp8266SocketDiv' + self.id + '").innerHTML = text; \
-                } \n\
-                function getState' + self.id + '() { \
-                document.getElementById("esp8266SocketDiv' + self.id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />"; \
-                    getRequest("localhost", ' + self.port + ', "STATE", update_state_message' + self.id + '); \
-                } \
-                function setState' + self.id + '(state, input_id) { \
-                    time_wait = input_id == null ? -1 : document.getElementById(input_id).value; \
-                    sendRequest(\'localhost\', ' + self.port + ', state + "," + time_wait); getState' + self.id + '(); \
-                } \
-                getState' + self.id + '(); \
-                setInterval(function() { \n\
-                getState' + self.id + '(); \n\
-                }, 60*1000);\n\
-                </script> \n\
-                </div>'
+        if not self.html_repr:
+            with open('modules/esp8266_wifi_socket/html/repr.html', 'r') as f:
+                text_input_name = "esp_timeout_" + self.id
+                html = f.read()
+                self.html_repr = html.format(id=self.id, name=self.name, port=self.port, input_text=text_input_name)
+        return self.html_repr
 
     def _set_socket_state(self, should_turn_on, time_wait):
         state = "OFF"

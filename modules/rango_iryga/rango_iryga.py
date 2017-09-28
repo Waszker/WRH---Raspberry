@@ -24,6 +24,7 @@ class RangoIrygaModule(base_module.Module):
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
         self.relay_actions = {i: [] for i in RangoIrygaModule.RELAYS}
+        self.html_repr = None
 
     @staticmethod
     def is_configuration_line_sane(configuration_line):
@@ -139,114 +140,11 @@ class RangoIrygaModule(base_module.Module):
         """
         Returns html code to include in website.
         """
-        my_id = str(self.id)
-        port = str(self.port)
-        return '<div class="card-panel"> \
-                    <h5>' + self.name + '</h5>\
-                    \
-                    <table style="margin: 0px auto; max-width: 95%; width: auto"><tr><td> \
-                    <h5>Linia&nbsp;1</h5> </td><td>\
-                    <div id="rangoIrygaDiv_1_' + my_id + '" style="height: 50px; margin: auto">\
-                        <img src="static/images/loading_spinner.gif" style="width: 50px;" />\
-                    </div></td></tr>\
-                    <tr><td><h6>Czas trwania (sek.):</h6></td> \
-                    <td><div style="margin: 3%; width: 100%">\
-                        <p class="input-field"><input id=\"relay1_time_' + my_id + '\" type=\"number\" style="width: 90%" value="300"/></p>\
-                    </div></td></tr>\
-                    <tr><td><h6>Liczba cykli:</h6></td> \
-                    <td><div style="margin: 3%; width: 100%">\
-                        <p class="input-field"><input id=\"relay1_cycles_' + my_id + '\" type=\"number\" style="width: 90%" value="1"/></p>\
-                    </div></td></tr>\
-                    <tr><td columnspan="2"><a class="dropdown-button btn grey darken-3" href="#" data-activates="dropdown1' + my_id + '">State</a></td></tr></table> \
-                    <ul id="dropdown1' + my_id + '" class="dropdown-content"> \
-                    <li><a onclick="setState' + my_id + '(\'ON\', 5, \'relay1_time_' + my_id + '\', \'relay1_cycles_' + my_id + '\')">ON</a></li> \
-                    <li><a onclick="setState' + my_id + '(\'OFF\', 5, null)">OFF</a></li> \
-                    <li><a onclick="getState' + my_id + '(5)">REFRESH</a></li></ul></br> \
-                    <div class="line"></div><br \>\
-                    \
-                    <table style="margin: 0px auto; max-width: 95%; width: auto"><tr><td> \
-                    <h5>Linia&nbsp;2</h5> </td><td>\
-                    <div id="rangoIrygaDiv_2_' + my_id + '" style="height: 50px; margin: auto">\
-                        <img src="static/images/loading_spinner.gif" style="width: 50px;" />\
-                    </div></td></tr>\
-                    <tr><td><h6>Czas trwania (sek.):</h6></td> \
-                    <td><div style="margin: 3%; width: 100%">\
-                        <p class="input-field"><input id=\"relay2_time_' + my_id + '\" type=\"number\" style="width: 90%" value="80"/></p>\
-                    </div></td></tr>\
-                    <tr><td><h6>Liczba cykli:</h6></td> \
-                    <td><div style="margin: 3%; width: 100%">\
-                        <p class="input-field"><input id=\"relay2_cycles_' + my_id + '\" type=\"number\" style="width: 90%" value="4"/></p>\
-                    </div></td></tr>\
-                    <tr><td columnspan="2"><a class="dropdown-button btn grey darken-3" href="#" data-activates="dropdown2' + my_id + '">State</a></td></tr></table> \
-                    <ul id="dropdown2' + my_id + '" class="dropdown-content"> \
-                    <li><a onclick="setState' + my_id + '(\'ON\', 4, \'relay2_time_' + my_id + '\', \'relay2_cycles_' + my_id + '\')">ON</a></li> \
-                    <li><a onclick="setState' + my_id + '(\'OFF\', 4, null)">OFF</a></li> \
-                    <li><a onclick="getState' + my_id + '(4)">REFRESH</a></li></ul></br> \
-                    <div class="line"></div><br \>\
-                    \
-                    <table style="margin: 0px auto; max-width: 95%; width: auto"><tr><td> \
-                    <h5>Linia&nbsp;3</h5> </td><td>\
-                    <div id="rangoIrygaDiv_3_' + my_id + '" style="height: 50px; margin: auto">\
-                        <img src="static/images/loading_spinner.gif" style="width: 50px;" />\
-                    </div></td></tr>\
-                    <tr><td><h6>Czas trwania (sek.):</h6></td> \
-                    <td><div style="margin: 3%; width: 100%">\
-                        <p class="input-field"><input id=\"relay3_time_' + my_id + '\" type=\"number\" style="width: 90%" value="300"/></p>\
-                    </div></td></tr>\
-                    <tr><td><h6>Liczba cykli:</h6></td> \
-                    <td><div style="margin: 3%; width: 100%">\
-                        <p class="input-field"><input id=\"relay3_cycles_' + my_id + '\" type=\"number\" style="width: 90%" value="1"/></p>\
-                    </div></td></tr>\
-                    <tr><td columnspan="2"><a class="dropdown-button btn grey darken-3" href="#" data-activates="dropdown3' + my_id + '">State</a></td></tr></table> \
-                    <ul id="dropdown3' + my_id + '" class="dropdown-content"> \
-                    <li><a onclick="setState' + my_id + '(\'ON\', 15, \'relay3_time_' + my_id + '\', \'relay3_cycles_' + my_id + '\')">ON</a></li> \
-                    <li><a onclick="setState' + my_id + '(\'OFF\', 15, null)">OFF</a></li> \
-                    <li><a onclick="getState' + my_id + '(15)">REFRESH</a></li></ul></br> \
-                    <div class="line"></div><br \>\
-                    \
-                    <table style="margin: 0px auto; max-width: 95%; width: auto"><tr><td> \
-                    <h5>Linia&nbsp;4</h5> </td><td>\
-                    <div id="rangoIrygaDiv_4_' + my_id + '" style="height: 50px; margin: auto">\
-                        <img src="static/images/loading_spinner.gif" style="width: 50px;" />\
-                    </div></td></tr>\
-                    <tr><td><h6>Czas trwania (sek.):</h6></td> \
-                    <td><div style="margin: 3%; width: 100%">\
-                        <p class="input-field"><input id=\"relay4_time_' + my_id + '\" type=\"number\" style="width: 90%" value="300"/></p>\
-                    </div></td></tr>\
-                    <tr><td><h6>Liczba cykli:</h6></td> \
-                    <td><div style="margin: 3%; width: 100%">\
-                        <p class="input-field"><input id=\"relay4_cycles_' + my_id + '\" type=\"number\" style="width: 90%" value="1"/></p>\
-                    </div></td></tr>\
-                    <tr><td columnspan="2"><a class="dropdown-button btn grey darken-3" href="#" data-activates="dropdown4' + my_id + '">State</a></td></tr></table> \
-                    <ul id="dropdown4' + my_id + '" class="dropdown-content"> \
-                    <li><a onclick="setState' + my_id + '(\'ON\', 14, \'relay4_time_' + my_id + '\', \'relay4_cycles_' + my_id + '\')">ON</a></li> \
-                    <li><a onclick="setState' + my_id + '(\'OFF\', 14, null)">OFF</a></li> \
-                    <li><a onclick="getState' + my_id + '(14)">REFRESH</a></li></ul></br> \
-                    \
-               <script> function update_relay_state_message' + my_id + '(text) \n\
-               { states=text.split("&");\
-                 document.getElementById("rangoIrygaDiv_1_' + my_id + '").innerHTML = states[0]; \
-                 document.getElementById("rangoIrygaDiv_2_' + my_id + '").innerHTML = states[1]; \
-                 document.getElementById("rangoIrygaDiv_3_' + my_id + '").innerHTML = states[2]; \
-                 document.getElementById("rangoIrygaDiv_4_' + my_id + '").innerHTML = states[3]; \
-               } \n\
-               function getState' + my_id + '(num) { \
-                        if(num == 0 || num == 5) {document.getElementById("rangoIrygaDiv_1_' + my_id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />";} \
-                        if(num == 0 || num == 4) {document.getElementById("rangoIrygaDiv_2_' + my_id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />";} \
-                        if(num == 0 || num == 15) {document.getElementById("rangoIrygaDiv_3_' + my_id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />";} \
-                        if(num == 0 || num == 14) {document.getElementById("rangoIrygaDiv_4_' + my_id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />";} \
-                        getRequest("localhost", ' + port + ', "STATE", update_relay_state_message' + my_id + '); } \
-               function setState' + my_id + '(state, gpio, input_id, input_id2) { \
-                        time_wait = input_id == null ? -1 : document.getElementById(input_id).value; \
-                        repeats = input_id == null ? -1 : document.getElementById(input_id2).value; \
-                        sendRequest(\'localhost\', ' + port + ', state + "," + gpio + "," + time_wait + "," + repeats); \
-                        setTimeout(function() {getState' + my_id + '(gpio);}, 500); } \
-               getState' + my_id + '(0); \
-               setInterval(function() { \n\
-               getState' + my_id + '(0); \n\
-               }, 60*1000);\n\
-               </script> \n\
-               </div>'
+        if not self.html_repr:
+            with open('modules/rango_iryga/html/repr.html', 'r') as f:
+                html = f.read()
+                self.html_repr = html.format(id=self.id, name=self.name, port=self.port)
+        return self.html_repr
 
     def _stop_already_working_relay_threads(self, relay_number):
         thread_list = self.relay_actions[relay_number]

@@ -1,0 +1,46 @@
+<div class="card-panel">
+    <h5>{name}</h5>
+    <div id="esp8266SocketDiv{id}" class="socketDiv" style="height: 50px; margin: auto">
+        <img src="static/images/loading_spinner.gif" style="width: 50px;"/>
+    </div>
+    <table style="margin: 0px auto; max-width: 95%; width: auto">
+        <tr>
+            <td>
+                <div style="margin: 3%; width: 100%">
+                    <p class="input-field"><input id="{input_text}" type="number" style="width: 90%" value="-1"/></p>
+                </div>
+            </td>
+            <td><a class="dropdown-button btn grey darken-3" href="#" data-activates="dropdown{id}">State</a>
+            </td>
+        </tr>
+    </table>
+    <ul id="dropdown{id}" class="dropdown-content">
+        <li><a onclick="setState{id}('ON', '{input_text}')">ON</a></li>
+        <li><a onclick="setState{id}('OFF', '{input_text}')">OFF</a></li>
+        <li><a onclick="getState{id}()">REFRESH</a></li>
+    </ul>
+
+    <script>
+                function update_state_message{id}(text) {{
+                   if (text == "OFF") text = "<a style=\"color: green; font-size: 25px\">OFF</a>";
+                   else if (text == "ON") text = "<a style=\"color: red; font-size: 25px\">ON</a>";
+                   else text = "<a style=\"color: black; font-size: 25px\">UNKNOWN</a>";
+                   document.getElementById("esp8266SocketDiv{id}").innerHTML = text;
+                }}
+
+                function getState{id}() {{
+                    document.getElementById("esp8266SocketDiv{id}").innerHTML = "<img src=\"static/images/loading_spinner.gif\" style=\"width: 50px;\" />";
+                    getRequest("localhost", {port}, "STATE", update_state_message{id});
+                }}
+
+                function setState{id}(state, input_id) {{
+                    time_wait = input_id == null ? -1 : document.getElementById(input_id).value;
+                    sendRequest('localhost', {port}, state + "," + time_wait); getState{id}();
+                }}
+
+                getState{id}();
+                setInterval(function() {{
+                    getState{id}();
+                }}, 60*1000);
+    </script>
+</div>

@@ -24,6 +24,7 @@ class SpeedTestModule(base_module.Module):
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
         self.last_download, self.last_upload = "? Mbit/s", "? Mbit/s"
+        self.html_repr = None
 
     @staticmethod
     def is_configuration_line_sane(configuration_line):
@@ -126,19 +127,11 @@ class SpeedTestModule(base_module.Module):
         """
         Returns html code to include in website.
         """
-        return '<div class="card-panel"> \
-               <script> function update_measurements_speedtest_' + str(self.id) + '(text) \n\
-               { document.getElementById("speedTestDiv' + str(self.id) + '").innerHTML = text; } \n\
-               function getMeasurements' + str(self.id) + '() { getRequest("localhost", ' + str(self.port) + ', "", \
-               update_measurements_speedtest_' + str(self.id) + '); } \
-               getMeasurements' + str(self.id) + '(); \
-               setInterval(function() { \n\
-               getMeasurements' + str(self.id) + '(); \n\
-               }, 60*1000);\n\
-               </script> \n\
-               <h5>' + str(self.name) + '</h5>\
-               <div id="speedTestDiv' + str(self.id) + '" class="speedTestDiv"> </div>\
-               </div>'
+        if not self.html_repr:
+            with open('modules/speed_test/html/repr.html', 'r') as f:
+                html = f.read()
+                self.html_repr = html.format(id=self.id, name=self.name, port=self.port)
+        return self.html_repr
 
     def _react_to_connection(self, connection, _):
         connection.send(str(self.last_download) + " " + str(self.last_upload))
