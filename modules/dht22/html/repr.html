@@ -1,0 +1,22 @@
+<div class="card-panel">
+    <script>
+        function update_measurements_dht22_{id}(text) {{
+            var res = text.split(";");
+            var h = res[0];
+            var t = res[1];
+            document.getElementById("dht22Div{id}").innerHTML = "Humidity: " + h + "% Temperature: " + t + "*C";
+        }}
+
+        function getMeasurements{id}() {{
+            getRequest("localhost", {port}, "", update_measurements_dht22_{id});
+        }}
+
+        getMeasurements{id}();
+
+        setInterval(function() {{
+            getMeasurements{id}();
+        }}, 60*1000);
+    </script>
+    <h5>{name}</h5>
+    <div id="dht22Div{id}" class="dht22Div"></div>
+</div>

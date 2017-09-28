@@ -130,12 +130,6 @@ class RangoScenario:
         del self.watering_threads[:]
 
     def _should_activate(self, date):
-        # print "Checking if scenario starting at %i:%i on %s should be activated" % (self.start_time.hour, self.start_time.minute, str(self.active_on_days))
-        # print "Current date is " + str(date)
-        # print "Is scenario active: " + str(self.is_active)
-        # print "Is weekday ok: " + str((date.weekday() in self.active_on_days))
-        # print "Is hour ok: " + str((date.hour == self.start_time.hour))
-        # print "Is minute ok: " + str((date.minute == self.start_time.minute))
         return self.is_active and \
                (date.weekday() in self.active_on_days) and \
                (date.hour == self.start_time.hour) and \

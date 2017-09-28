@@ -1,0 +1,18 @@
+<div class="card-panel">
+    <script>
+        function updateLastUpload_{id}(text) {{
+            document.getElementById("googleDriveUploaderDiv{id}").innerHTML = text;
+        }}
+
+        function getLastUpload_{id}() {{
+            getRequest("localhost", {port}, "", updateLastUpload_{id});
+        }}
+
+        getLastUpload_{id}();
+        setInterval(function() {{
+            getLastUpload_{id}();
+        }}, 60*1000);
+    </script>
+    <h5>{name}</h5>
+    <div id="googleDriveUploaderDiv{id}" class="googleDriveUploaderDiv"></div>
+</div>
