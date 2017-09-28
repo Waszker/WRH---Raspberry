@@ -69,7 +69,7 @@ class ESP8266SocketModule(base_module.Module):
         value_finding_pattern = ".+?value=\"(.+?)\".*$"
         checker = re.compile(value_finding_pattern)
         try:
-            response = requests.get("http://" + str(self.gpio) + "/socket.lua")
+            response = requests.get("http://" + str(self.gpio) + "/socket.lua", timeout=5)
             # Remove all characters other than letters, numbers or = and " if connection was successful
             response_content = ''.join(e for e in response.content if e.isalnum() or e == '=' or e == '"')
         except requests.ConnectionError:
@@ -136,8 +136,7 @@ class ESP8266SocketModule(base_module.Module):
         return self.html_repr
 
     def _set_socket_state(self, should_turn_on, time_wait):
-        state = "OFF"
-        if should_turn_on: state = "ON"
+        state = "ON" if should_turn_on else "OFF"
         url = "http://" + self.gpio + "/socket.lua?wait=" + time_wait + "&state=" + state
         try:
             request = urllib2.Request(url)
