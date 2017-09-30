@@ -8,7 +8,7 @@ from utils.sockets import await_connection, wait_bind_socket
 
 class ModuleMeta(ABCMeta):
     def __new__(cls, name, bases, attributes):
-        attributes['WRHID'] = name
+        if not attributes.get('WRHID'): attributes['WRHID'] = name
         if 'TYPE_NAME' not in attributes: raise Exception('TYPE_NAME class attribute missing')
         return super(ModuleMeta, cls).__new__(cls, name, bases, attributes)
 
