@@ -111,9 +111,9 @@ class CameraModule(base_module.Module):
         Runs interactive procedure to edit module.
         Returns connection status and response.
         """
-        print 'Provide new module information (leave fields blank if you don\'t want to change)'
-        print 'Please note that changes other than name will always succeed'
-        print 'Name changing requires active Internet connection'
+        log('Provide new module information (leave fields blank if you don\'t want to change)')
+        log('Please note that changes other than name will always succeed')
+        log('Name changing requires active Internet connection')
         new_name = raw_input('New module\'s name: ')
         new_gpio = raw_input(
             "Please input new name of the webcam device (usually /dev/video# where # is the specific number): ")
@@ -203,7 +203,7 @@ class CameraModule(base_module.Module):
 
 
 if __name__ == "__main__":
-    print 'Camera: started.'
+    log('Camera: started.')
     conf_line = sys.argv[1]
 
     camera = CameraModule(conf_line)

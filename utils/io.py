@@ -29,7 +29,7 @@ def log(message, color=Color.NORMAL):
         decoration = ''.join([str(c) for c in color])
     except TypeError:
         decoration = str(color)
-    print ''.join((decoration, str(message), str(Color.NORMAL)))
+    print(''.join((decoration, str(message), str(Color.NORMAL))))
 
 
 def non_empty_input(message=''):

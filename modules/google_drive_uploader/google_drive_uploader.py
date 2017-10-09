@@ -1,15 +1,16 @@
-import signal
-import os
-import sys
-import re
-import threading
-import time
 import datetime
-from wrh_engine import module_base as base_module
-from utils.io import non_empty_positive_numeric_input as iinput
-from utils.io import non_empty_input as ninput
+import os
+import re
+import signal
+import sys
+import time
+
 from google_drive.google_drive import GoogleDriveManager
 from utils.decorators import in_thread
+from utils.io import log
+from utils.io import non_empty_input as ninput
+from utils.io import non_empty_positive_numeric_input as iinput
+from wrh_engine import module_base as base_module
 
 
 class GoogleDriveUploader(base_module.Module):
@@ -87,8 +88,8 @@ class GoogleDriveUploader(base_module.Module):
         Runs interactive procedure to edit module.
         Returns connection status and response.
         """
-        print 'Provide new module information (leave fields blank if you don\'t want to change)'
-        print 'Please note that changes other than name will always succeed'
+        log('Provide new module information (leave fields blank if you don\'t want to change)')
+        log('Please note that changes other than name will always succeed')
         new_name = raw_input('New module\'s name: ')
         new_port = raw_input("Please input new port on which this module will be listening for commands: ")
         new_api_location = raw_input("Please input new GoogleAPI key location: ")
@@ -151,7 +152,7 @@ class GoogleDriveUploader(base_module.Module):
 
 
 if __name__ == "__main__":
-    print 'Google Drive Uploader module: started.'
+    log('Google Drive Uploader module: started.')
     conf_line = sys.argv[1]
 
     uploader = GoogleDriveUploader(conf_line)

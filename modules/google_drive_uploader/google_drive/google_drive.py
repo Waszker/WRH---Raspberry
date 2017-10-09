@@ -111,5 +111,5 @@ class GoogleDriveManager:
             flow.user_agent = self.APPLICATION_NAME
             flags.noauth_local_webserver = True
             credentials = tools.run_flow(flow, store, flags)
-            print('Storing credentials to ' + credential_path)
+            log('Storing credentials to ' + credential_path)
         return credentials

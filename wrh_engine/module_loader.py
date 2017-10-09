@@ -17,7 +17,7 @@ class ModuleDynamicLoader:
 
     def __init__(self, path):
         """
-        Creates instance of DynamicLoader scanning provided path for modules.
+        Creates instance of DynamicLoader class which is responsible for scanning provided path for available modules.
         :param path: filesystem path name to scan
         :type path: str
         :raise OSError: if the specified path does not exist
@@ -27,6 +27,7 @@ class ModuleDynamicLoader:
 
         self.path = path + (os.sep if path[-1] != os.sep else '')
         self.module_classes = self._get_module_classes()
+        self._check_module_abstractness()
 
     def get_module_classes(self):
         """
@@ -57,10 +58,15 @@ class ModuleDynamicLoader:
             module = import_module(str(module_path + module_name).replace(os.sep, '.'))
             attributes = [getattr(module, attr) for attr in module.__dict__]
             classes_in_module = [attr for attr in attributes if isinstance(attr, type) and issubclass(attr, Module)]
-            [module_classes.update({c.WRHID: c}) for c in classes_in_module]
+            module_classes.update({c.WRHID: c for c in classes_in_module})
 
         return module_classes
 
     @staticmethod
     def _get_modules_info(path):
         return [(path, f[:-3]) for f in os.listdir(path) if (len(f) > 3 and f[-3:] == '.py' and f != "__init__.py")]
+
+    def _check_module_abstractness(self):
+        # Tries to instantiate each module class.
+        # If there are some abstract methods not overridden the exception will be raised.
+        [m() for m in self.module_classes.itervalues()]

@@ -1,13 +1,12 @@
 import re
+import signal
 import subprocess
 import sys
-import threading
 import time
-import signal
 
-from wrh_engine import module_base as base_module
-from utils.io import *
 from utils.decorators import in_thread
+from utils.io import *
+from wrh_engine import module_base as base_module
 
 ninput = non_empty_input
 iinput = non_empty_positive_numeric_input
@@ -71,7 +70,7 @@ class SpeedTestModule(base_module.Module):
         except subprocess.CalledProcessError:
             results = ""
         results = results.replace('\n', '')
-        print "The results are as follows: " + str(results)
+        log("The results are as follows: " + str(results))
         pattern = ".+?Download: (.+?/s).+?Upload: (.+?/s).*"
         checker = re.compile(pattern)
 
@@ -102,9 +101,9 @@ class SpeedTestModule(base_module.Module):
         Runs interactive procedure to edit module.
         Returns connection status and response.
         """
-        print 'Provide new module information (leave fields blank if you don\'t want to change)'
-        print 'Please note that changes other than name will always succeed'
-        print 'Name changing requires active Internet connection'
+        log('Provide new module information (leave fields blank if you don\'t want to change)')
+        log('Please note that changes other than name will always succeed')
+        log('Name changing requires active Internet connection')
         new_name = raw_input('New module\'s name: ')
         new_interval = raw_input("Please input new interval (in minutes) for taking consecutive measurements: ")
         new_port = raw_input("Please input new port on which this module will be listening for commands: ")
@@ -144,7 +143,7 @@ class SpeedTestModule(base_module.Module):
 
 
 if __name__ == "__main__":
-    print 'SpeedTest module: started.'
+    log('SpeedTest module: started.')
     conf_line = sys.argv[1]
 
     speedtest = SpeedTestModule(conf_line)

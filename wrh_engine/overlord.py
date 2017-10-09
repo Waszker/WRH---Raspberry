@@ -4,8 +4,8 @@ from utils.processes import *
 
 class Overlord:
     """
-    Class taking care of running modules, each in as a separate subprocess.
-    It also resurrects them in case of their failure and maintains their lifetime in case of whole system shutdown.
+    Starts one subprocess for each installed module.
+    Resurrects them in case of their failure and maintains them in case of the whole system shutdown.
     """
 
     def __init__(self, configuration_parser):

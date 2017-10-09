@@ -101,9 +101,9 @@ class ESP8266SocketModule(base_module.Module):
         Runs interactive procedure to edit module.
         Returns connection status and response.
         """
-        print 'Provide new module information (leave fields blank if you don\'t want to change)'
-        print 'Please note that changes other than name will always succeed'
-        print 'Name changing requires active Internet connection'
+        log('Provide new module information (leave fields blank if you don\'t want to change)')
+        log('Please note that changes other than name will always succeed')
+        log('Name changing requires active Internet connection')
         new_name = raw_input('New module\'s name: ')
         new_gpio = raw_input("Please input new IP address of ESP8266 device: ")
         new_port = raw_input("Please input new port on which module will be listening for commands: ")
@@ -156,7 +156,7 @@ class ESP8266SocketModule(base_module.Module):
 
 
 if __name__ == "__main__":
-    print 'ESP8266 WiFi socket: started.'
+    log('ESP8266 WiFi socket: started.')
     conf_line = sys.argv[1]
     esp8266 = ESP8266SocketModule(conf_line)
     esp8266.start_work()

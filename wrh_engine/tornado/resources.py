@@ -26,5 +26,4 @@ def get_system_stats():
 
 
 def restart():
-    print "Restarting system"
     s.call("sudo reboot", shell=True)

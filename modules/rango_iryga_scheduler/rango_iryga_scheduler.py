@@ -10,6 +10,7 @@ import datetime
 import threading
 from wrh_engine import module_base as base_module
 from utils.sockets import send_message
+from utils.io import log
 from utils.io import non_empty_positive_numeric_input as iinput
 from modules.rango_iryga.rango_iryga import RangoIrygaModule
 
@@ -233,8 +234,8 @@ class RangoIrygaSchedulerModule(base_module.Module):
         Runs interactive procedure to edit module.
         Returns connection status and response.
         """
-        print 'Provide new module information (leave fields blank if you don\'t want to change)'
-        print 'Please note that changes other than name will always succeed'
+        log('Provide new module information (leave fields blank if you don\'t want to change)')
+        log('Please note that changes other than name will always succeed')
         new_name = raw_input('New module\'s name: ')
         new_port = raw_input("Please input new port on which this module will be listening for commands: ")
         new_rango_port = raw_input("Please input new port number of Rango Iryga installed in this system: ")
@@ -426,7 +427,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
 
 
 if __name__ == "__main__":
-    print 'Rango Iryga module: started.'
+    log('Rango Iryga module: started.')
     conf_line = sys.argv[1]
 
     rango_iryga_scheduler = RangoIrygaSchedulerModule(conf_line)

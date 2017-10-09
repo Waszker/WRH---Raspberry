@@ -107,9 +107,9 @@ class IpCameraModule(base_module.Module):
         Runs interactive procedure to edit module.
         Returns connection status and response.
         """
-        print 'Provide new module information (leave fields blank if you don\'t want to change)'
-        print 'Please note that changes other than name will always succeed'
-        print 'Name changing requires active Internet connection'
+        log('Provide new module information (leave fields blank if you don\'t want to change)')
+        log('Please note that changes other than name will always succeed')
+        log('Name changing requires active Internet connection')
         new_name = raw_input('New module\'s name: ')
         new_camera_address = raw_input("Please input new IP address of camera: ")
         new_camera_port = raw_input("Please input new port on which IP camera can be accessed: ")
@@ -168,7 +168,7 @@ class IpCameraModule(base_module.Module):
 
 
 if __name__ == "__main__":
-    print 'IP Camera: started.'
+    log('IP Camera: started.')
     conf_line = sys.argv[1]
 
     camera = IpCameraModule(conf_line)

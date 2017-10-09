@@ -9,7 +9,7 @@ from utils.sockets import await_connection, wait_bind_socket
 class ModuleMeta(ABCMeta):
     def __new__(cls, name, bases, attributes):
         if not attributes.get('WRHID'): attributes['WRHID'] = name
-        if 'TYPE_NAME' not in attributes: raise Exception('TYPE_NAME class attribute missing')
+        if 'TYPE_NAME' not in attributes: raise TypeError('TYPE_NAME class attribute missing')
         return super(ModuleMeta, cls).__new__(cls, name, bases, attributes)
 
 
@@ -77,7 +77,7 @@ class Module:
         """
         Runs interactive procedure to register new module.
         """
-        print "*** Registering new " + str(self.TYPE_NAME) + " module ***"
+        log("*** Registering new " + str(self.TYPE_NAME) + " module ***")
         self.id = new_id
         self.name = raw_input("Module name: ")
         # This method ends here because every module should have different

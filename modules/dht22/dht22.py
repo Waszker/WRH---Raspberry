@@ -91,9 +91,9 @@ class DHT22Module(base_module.Module):
         Runs interactive procedure to edit module.
         Returns connection status and response.
         """
-        print 'Provide new module information (leave fields blank if you don\'t want to change)'
-        print 'Please note that changes other than name will always succeed'
-        print 'Name changing requires active Internet connection'
+        log('Provide new module information (leave fields blank if you don\'t want to change)')
+        log('Please note that changes other than name will always succeed')
+        log('Name changing requires active Internet connection')
         new_name = raw_input('New module\'s name: ')
         new_gpio = raw_input("Please input new gpio pin number to which sensor is connected: ")
         new_interval = raw_input("Please input new interval (in minutes) for taking consecutive measurements: ")
@@ -141,7 +141,7 @@ class DHT22Module(base_module.Module):
 
 
 if __name__ == "__main__":
-    print 'DHT22 module: started.'
+    log('DHT22 module: started.')
     conf_line = sys.argv[1]
 
     dht22 = DHT22Module(conf_line)
