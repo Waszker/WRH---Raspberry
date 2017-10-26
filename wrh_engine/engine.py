@@ -3,6 +3,7 @@ import os
 import signal
 from utils.io import *
 from wrh_engine.configuration import ConfigurationParser, BadConfigurationException, UnknownModuleException
+from wrh_engine.constants import WRH_MODULES_FOLDER
 from wrh_engine.module_loader import ModuleDynamicLoader
 from wrh_engine.overlord import Overlord
 
@@ -14,7 +15,6 @@ class WRHEngine:
     Main core of WRH system.
     There should be only one instance of WRHEngine running in the system at a time (this is not checked!).
     """
-    _modules_folder = 'modules/'
 
     def __init__(self, argv):
         """
@@ -24,11 +24,12 @@ class WRHEngine:
         :raises UnknownModuleException:
         :raises BadConfigurationException:
         """
+        os.environ[WRH_PATH_OS_VAR] = os.getcwd()
         self.should_end = False
         self.args = argv
         log("WRH System main engine starting", (Color.BOLD, Color.UNDERLINE))
         log("Scanning for available modules")
-        loader = ModuleDynamicLoader(self._modules_folder)
+        loader = ModuleDynamicLoader(WRH_MODULES_FOLDER)
         self.module_classes = loader.get_module_classes()
         log("Found modules: ")
         [log('*' + str(module_name), Color.BLUE) for module_name in self.module_classes.keys()]
@@ -40,7 +41,7 @@ class WRHEngine:
         """
         self._check_configuration()
         # TODO: Add better start options checking
-        if len(self.args) > 1 and self.args[1] == "--start-work":
+        if "--start-work" in self.args:
             self._run_system()
         else:
             self._show_installed_modules()
@@ -104,7 +105,7 @@ class WRHEngine:
 
     def _check_configuration(self):
         try:
-            self.configuration_parser = ConfigurationParser(os.getcwd(), self.module_classes)
+            self.configuration_parser = ConfigurationParser(self.module_classes)
         except (UnknownModuleException, BadConfigurationException) as e:
             log(str(e), Color.FAIL)
             sys.exit(1)

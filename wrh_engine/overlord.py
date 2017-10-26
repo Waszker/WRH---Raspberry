@@ -1,5 +1,6 @@
 import subprocess
 from utils.processes import *
+from wrh_engine.constants import WRH_CONFIGURATION_FILENAME
 
 
 class Overlord:
@@ -14,8 +15,7 @@ class Overlord:
         :param configuration_parser: parser that returns information about modules registered for this particular system
         :type configuration_parser: ConfigurationParser
         """
-        tornado_command = ["/usr/bin/python2.7", "-m", "wrh_engine.tornado.server",
-                           configuration_parser.configuration_filename]
+        tornado_command = ["/usr/bin/python2.7", "-m", "wrh_engine.tornado.server", WRH_CONFIGURATION_FILENAME]
         self.is_ending = False
         self.modules = configuration_parser.get_installed_modules()
         self.commands = [module.get_starting_command() for module in self.modules]

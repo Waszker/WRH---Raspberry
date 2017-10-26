@@ -1,15 +1,18 @@
 #!/bin/python2
 import datetime
+import os
 import subprocess as s
+
+from wrh_engine.constants import WRH_MODULES_FOLDER, WRH_PATH_OS_VAR
 from wrh_engine.module_loader import ModuleDynamicLoader
 from wrh_engine.engine import ConfigurationParser
 from utils.system_info import get_uptime, get_cpu_temp
 
 
 def get_installed_modules_info():
-    loader = ModuleDynamicLoader('modules/')
+    loader = ModuleDynamicLoader(WRH_MODULES_FOLDER)
     modules_classes = loader.get_module_classes()
-    parser = ConfigurationParser('.', modules_classes)
+    parser = ConfigurationParser(modules_classes)
     modules = parser.get_installed_modules()
     unique_classes = list({modules_classes[m.WRHID] for m in modules})
     return sorted(unique_classes, key=lambda x: x.WRHID), modules

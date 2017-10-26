@@ -11,9 +11,10 @@ import urllib2
 
 import requests
 from wrh_engine import module_base as base_module
-from utils.io import *
+from utils.io import non_empty_input, non_empty_positive_numeric_input, wrh_open, log
 
 ninput = non_empty_input
+npinput = non_empty_positive_numeric_input
 
 
 class ESP8266SocketModule(base_module.Module):
@@ -94,7 +95,7 @@ class ESP8266SocketModule(base_module.Module):
         """
         base_module.Module.run_registration_procedure(self, new_id)
         self.gpio = ninput("Please input ESP8266 WiFi socket IP address: ")
-        self.port = ninput("Please input port on which module will be listening for commands: ")
+        self.port = npinput("Please input port on which module will be listening for commands: ")
 
     def edit(self):
         """
@@ -129,7 +130,7 @@ class ESP8266SocketModule(base_module.Module):
         :return:
         """
         if not self.html_repr:
-            with open('modules/esp8266_wifi_socket/html/repr.html', 'r') as f:
+            with wrh_open('modules/esp8266_wifi_socket/html/repr.html', 'r') as f:
                 text_input_name = "esp_timeout_" + self.id
                 html = f.read()
                 self.html_repr = html.format(id=self.id, name=self.name, port=self.port, input_text=text_input_name)

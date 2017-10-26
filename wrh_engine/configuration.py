@@ -1,4 +1,7 @@
 import os
+
+from utils.decorators import with_open
+from wrh_engine.constants import WRH_CONFIGURATION_FILENAME
 from wrh_exceptions import *
 from utils.io import *
 
@@ -9,9 +12,8 @@ class ConfigurationParser:
     Configuration file should store only one line for each installed module.
     Each line should start with unique module number and its unique id - that's the only defined configuration option!
     """
-    configuration_filename = ".wrh.config"
 
-    def __init__(self, configuration_file_path, module_classes):
+    def __init__(self, module_classes):
         """
         Creates configuration parses object that parses configuration file in the provided path.
         :param configuration_file_path: filesystem path in which configuration file is present
@@ -21,49 +23,55 @@ class ConfigurationParser:
         :raises UnknownModuleException: configuration file contains unknown module info
         :raises BadConfigurationException: configuration file is invalid
         """
-        self.configuration_file = configuration_file_path + os.sep + self.configuration_filename
-        if not os.path.isfile(self.configuration_file):
+        try:
+            wrh_open(WRH_CONFIGURATION_FILENAME).close()
+        except IOError:
             log("No configuration file found, creating new one", Color.WARNING)
             self.save_configuration([])
         self.module_classes = module_classes
         self._check_file_sanity()
 
-    def get_installed_modules(self):
+    @with_open(WRH_CONFIGURATION_FILENAME, 'r')
+    def get_installed_modules(self, _file_=None):
         """
         This function does not check if configuration file is sane
         Please do check it before invoking!
         Returns instances of installed modules ready to be run as a separate process.
         :return: list of modules instances
         :rtype: list
+        :param _file_: opened configuration file object, passed by decorator
+        :type _file_: file
         """
-        with open(self.configuration_file, 'r') as f:
-            instances = [
-                self.module_classes[self._get_module_class_name_from_line(line)](self._cut_module_name(line))
-                for line in f]
+        instances = [self.module_classes[self._get_module_class_name_from_line(line)](self._cut_module_name(line))
+                     for line in _file_]
         return instances
 
-    def save_configuration(self, installed_modules):
+    @with_open(WRH_CONFIGURATION_FILENAME, 'w+')
+    def save_configuration(self, installed_modules, _file_=None):
         """
         Overwrites configuration file and saves installed modules' information to it.
         :param installed_modules: list containing instances of installed modules
         :type installed_modules: list
+        :param _file_: opened configuration file object, passed by decorator
+        :type _file_: file
         """
-        with open(self.configuration_file, 'w+') as f:
-            f.write('\n'.join([module.WRHID + ';' + module.get_configuration_line() for module in installed_modules]))
+        _file_.write('\n'.join([module.WRHID + ';' + module.get_configuration_line() for module in installed_modules]))
 
-    def get_new_module_id(self):
+    @with_open(WRH_CONFIGURATION_FILENAME, 'r')
+    def get_new_module_id(self, _file_=None):
         """
         Returns unique module id.
+        :param _file_: opened configuration file object, passed by decorator
+        :type _file_: file
         """
-        with open(self.configuration_file, 'r') as f:
-            ids = [ConfigurationParser._get_module_id_from_line(line) for line in f]
+        ids = [ConfigurationParser._get_module_id_from_line(line) for line in _file_]
         return (max(ids) + 1) if len(ids) > 0 else 0
 
-    def _check_file_sanity(self):
+    @with_open(WRH_CONFIGURATION_FILENAME, 'r')
+    def _check_file_sanity(self, _file_=None):
         try:
-            with open(self.configuration_file, 'r') as f:
-                sanity = [self.module_classes[self._get_module_class_name_from_line(line)]
-                              .is_configuration_line_sane(self._cut_module_name(line)) for line in f]
+            sanity = [self.module_classes[self._get_module_class_name_from_line(line)]
+                          .is_configuration_line_sane(self._cut_module_name(line)) for line in _file_]
         except KeyError as e:
             raise UnknownModuleException("Unknown module %s" % str(e))
 

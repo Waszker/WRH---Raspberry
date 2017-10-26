@@ -1,6 +1,7 @@
 import os
 from importlib import import_module
 
+from wrh_engine.constants import MAGIC_FILENAME
 from wrh_engine.module_base import Module
 
 
@@ -13,7 +14,6 @@ class ModuleDynamicLoader:
     *.py file containing module implementation
     This class does not support any other module implementations and rely heavily on assumptions stated above.
     """
-    MAGIC_FILENAME = ".wrh_module"
 
     def __init__(self, path):
         """
@@ -47,7 +47,7 @@ class ModuleDynamicLoader:
         :return: boolean response
         :rtype: bool
         """
-        magic_file = os.sep.join((path, ModuleDynamicLoader.MAGIC_FILENAME))
+        magic_file = os.sep.join((path, MAGIC_FILENAME))
         return os.path.exists(magic_file) and os.path.isfile(magic_file)
 
     def _get_module_classes(self):

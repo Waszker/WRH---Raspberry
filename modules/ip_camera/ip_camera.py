@@ -60,7 +60,7 @@ class IpCameraModule(base_module.Module):
         :return: Properly formatted configuration file line
         """
         return '%s;%s;%s;%s;%s' % tuple(map(str, (self.id, self.name, self.camera_address,
-                                                     self.camera_port, self.port)))
+                                                  self.camera_port, self.port)))
 
     def _parse_configuration_line(self, configuration_file_line):
         """
@@ -158,8 +158,11 @@ class IpCameraModule(base_module.Module):
             image = self.get_measurement()
             # TODO: Change upload folder!
             if image is not None:
-                with open("/tmp/google_drive_upload/" + str(datetime.datetime.now()) + ".jpg", 'wb') as img:
-                    img.write(base64.decodestring(image))
+                try:
+                    with open("/tmp/google_drive_upload/" + str(datetime.datetime.now()) + ".jpg", 'wb') as img:
+                        img.write(base64.decodestring(image))
+                except IOError:
+                    pass
 
     def _sigint_handler(self, *_):
         self._should_end = True

@@ -5,6 +5,8 @@ import threading
 import time
 
 import Adafruit_DHT
+
+from utils.database import send_measurement
 from wrh_engine import module_base as base_module
 from utils.io import *
 from utils.decorators import in_thread
@@ -118,7 +120,7 @@ class DHT22Module(base_module.Module):
         Returns html code to include in website.
         """
         if not self.html_repr:
-            with open('modules/dht22/html/repr.html', 'r') as f:
+            with wrh_open('modules/dht22/html/repr.html', 'r') as f:
                 html = f.read()
                 self.html_repr = html.format(id=self.id, name=self.name, port=self.port)
         return self.html_repr
@@ -128,7 +130,7 @@ class DHT22Module(base_module.Module):
         while self._should_end is False:
             try:
                 self.last_humidity, self.last_temperature = self.get_measurement()
-                # TODO: Send those values to WRH?
+                send_measurement(self.id, (self.last_humidity, self.last_temperature))
                 time.sleep(self.interval * 60)
             except AttributeError:
                 pass

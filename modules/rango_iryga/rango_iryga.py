@@ -141,7 +141,7 @@ class RangoIrygaModule(base_module.Module):
         Returns html code to include in website.
         """
         if not self.html_repr:
-            with open('modules/rango_iryga/html/repr.html', 'r') as f:
+            with wrh_open('modules/rango_iryga/html/repr.html', 'r') as f:
                 html = f.read()
                 self.html_repr = html.format(id=self.id, name=self.name, port=self.port)
         return self.html_repr
