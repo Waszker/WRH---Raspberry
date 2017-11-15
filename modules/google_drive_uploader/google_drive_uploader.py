@@ -148,7 +148,7 @@ class GoogleDriveUploader(base_module.Module):
         Generally respond to incoming connection.
         Maybe send some information about current module state?
         """
-        connection.send("Last upload done {} minutes ago: %s".format(
+        connection.send("Last upload done {} minutes ago".format(
             int((datetime.datetime.now() - self.last_upload).total_seconds() / 60)
             if self.last_upload is not None else "..."))
 
