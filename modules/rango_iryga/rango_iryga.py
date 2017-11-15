@@ -6,8 +6,9 @@ import threading
 import urllib2
 
 import requests
+
+from utils.io import non_empty_input, log
 from wrh_engine import module_base as base_module
-from utils.io import *
 
 ninput = non_empty_input
 
@@ -141,7 +142,7 @@ class RangoIrygaModule(base_module.Module):
         Returns html code to include in website.
         """
         if not self.html_repr:
-            with wrh_open('modules/rango_iryga/html/repr.html', 'r') as f:
+            with open('modules/rango_iryga/html/repr.html', 'r') as f:
                 html = f.read()
                 self.html_repr = html.format(id=self.id, name=self.name, port=self.port)
         return self.html_repr

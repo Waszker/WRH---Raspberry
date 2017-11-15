@@ -1,18 +1,18 @@
-#!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
 
+import datetime
 import os
 import re
-import sys
 import signal
-import time
-import datetime
+import sys
 import threading
-from wrh_engine import module_base as base_module
-from utils.sockets import send_message
-from utils.io import log, wrh_open
-from utils.io import non_empty_positive_numeric_input as iinput
+import time
+
 from modules.rango_iryga.rango_iryga import RangoIrygaModule
+from utils.io import log
+from utils.io import non_empty_positive_numeric_input as iinput
+from utils.sockets import send_message
+from wrh_engine import module_base as base_module
 
 
 class WateringThread(threading.Thread):
@@ -394,7 +394,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
 
     def _read_scenarios_from_file(self):
         mode = "r+" if os.path.isfile(RangoIrygaSchedulerModule._saved_scenarios_file) else "w+"
-        with wrh_open(RangoIrygaSchedulerModule._saved_scenarios_file, mode) as f:
+        with open(RangoIrygaSchedulerModule._saved_scenarios_file, mode) as f:
             self.scenarios.extend([RangoScenario(line) for line in f])
 
     def _scheduler_thread(self):
@@ -422,7 +422,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
             connection.send(self.get_measurement())
             return
 
-        with wrh_open(RangoIrygaSchedulerModule._saved_scenarios_file, 'w+') as f:
+        with open(RangoIrygaSchedulerModule._saved_scenarios_file, 'w+') as f:
             f.writelines([(scenario.request + "\n") for scenario in self.scenarios])
 
 

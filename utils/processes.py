@@ -1,5 +1,6 @@
-import time
 import signal
+import time
+
 from utils.io import log, Color
 
 """

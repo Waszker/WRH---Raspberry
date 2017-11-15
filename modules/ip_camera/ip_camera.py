@@ -1,23 +1,17 @@
-#!/bin/python2.7
-####################################################
-# Set of functions to work with ip camera module
-# connected the network with Raspberry Pi device.
-####################################################
-
 import base64
+import datetime
 import os
 import re
 import subprocess
 import sys
-import threading
 import time as t
-import datetime
-from utils.decorators import in_thread
 
 import requests
+
+from utils.decorators import in_thread
+from utils.io import non_empty_input, non_empty_positive_numeric_input, log
+from utils.processes import print_process_errors, end_process
 from wrh_engine import module_base as base_module
-from utils.processes import *
-from utils.io import *
 
 ninput = non_empty_input
 iinput = non_empty_positive_numeric_input

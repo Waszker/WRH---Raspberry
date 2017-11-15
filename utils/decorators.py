@@ -1,7 +1,4 @@
-import os
 import threading
-
-from utils.io import wrh_open
 
 """
 Set of decorators that can be useful.
@@ -40,7 +37,7 @@ def with_open(filename, mode):
 
         def open_and_run(*args, **kwargs):
             try:
-                with wrh_open(filename, mode) as f:
+                with open(filename, mode) as f:
                     kwargs['_file_'] = f
                     return method(*args, **kwargs)
             except IOError:

@@ -1,9 +1,7 @@
-import os
-
 from utils.decorators import with_open
+from utils.io import *
 from wrh_engine.constants import WRH_CONFIGURATION_FILENAME
 from wrh_exceptions import *
-from utils.io import *
 
 
 class ConfigurationParser:
@@ -24,7 +22,7 @@ class ConfigurationParser:
         :raises BadConfigurationException: configuration file is invalid
         """
         try:
-            wrh_open(WRH_CONFIGURATION_FILENAME).close()
+            open(WRH_CONFIGURATION_FILENAME).close()
         except IOError:
             log("No configuration file found, creating new one", Color.WARNING)
             self.save_configuration([])

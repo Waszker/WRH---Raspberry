@@ -15,9 +15,9 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import codecs
 import os
 import re
-import codecs
 
 from setuptools import setup
 

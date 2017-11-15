@@ -5,7 +5,7 @@ import sys
 import time
 
 from utils.decorators import in_thread
-from utils.io import *
+from utils.io import non_empty_input, non_empty_positive_numeric_input, log
 from wrh_engine import module_base as base_module
 
 ninput = non_empty_input
@@ -127,7 +127,7 @@ class SpeedTestModule(base_module.Module):
         Returns html code to include in website.
         """
         if not self.html_repr:
-            with wrh_open('modules/speed_test/html/repr.html', 'r') as f:
+            with open('modules/speed_test/html/repr.html', 'r') as f:
                 html = f.read()
                 self.html_repr = html.format(id=self.id, name=self.name, port=self.port)
         return self.html_repr

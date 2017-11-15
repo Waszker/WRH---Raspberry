@@ -1,11 +1,13 @@
 import os
+
+import googleapiclient
 import httplib2
 from apiclient import discovery
+from apiclient.http import MediaFileUpload
 from oauth2client import client
 from oauth2client import tools
 from oauth2client.file import Storage
-import googleapiclient
-from apiclient.http import MediaFileUpload
+
 from utils.io import log, Color
 
 

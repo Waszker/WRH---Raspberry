@@ -1,15 +1,14 @@
 import re
 import signal
 import sys
-import threading
 import time
 
 import Adafruit_DHT
 
 from utils.database import send_measurement
-from wrh_engine import module_base as base_module
-from utils.io import *
 from utils.decorators import in_thread
+from utils.io import non_empty_input, non_empty_positive_numeric_input, log
+from wrh_engine import module_base as base_module
 
 ninput = non_empty_input
 iinput = non_empty_positive_numeric_input
@@ -120,7 +119,7 @@ class DHT22Module(base_module.Module):
         Returns html code to include in website.
         """
         if not self.html_repr:
-            with wrh_open('modules/dht22/html/repr.html', 'r') as f:
+            with open('modules/dht22/html/repr.html', 'r') as f:
                 html = f.read()
                 self.html_repr = html.format(id=self.id, name=self.name, port=self.port)
         return self.html_repr

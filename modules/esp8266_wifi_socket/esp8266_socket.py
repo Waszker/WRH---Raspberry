@@ -1,8 +1,3 @@
-####################################################
-# Set of functions to work with ESP8266 WRH WiFi socket
-# connected to network with Raspberry Pi device.
-####################################################
-
 import re
 import signal
 import socket
@@ -10,8 +5,9 @@ import sys
 import urllib2
 
 import requests
+
+from utils.io import non_empty_input, non_empty_positive_numeric_input, log
 from wrh_engine import module_base as base_module
-from utils.io import non_empty_input, non_empty_positive_numeric_input, wrh_open, log
 
 ninput = non_empty_input
 npinput = non_empty_positive_numeric_input
@@ -51,7 +47,7 @@ class ESP8266SocketModule(base_module.Module):
         Creates module configuration line
         :return: Properly formatted configuration file line
         """
-        return str(self.id) + ";" + self.name + ";" + self.gpio + ";" + self.port
+        return ('{};' * 4)[:-1].format(self.id, self.name, self.gpio, self.port)
 
     def _parse_configuration_line(self, configuration_file_line):
         """
@@ -130,7 +126,7 @@ class ESP8266SocketModule(base_module.Module):
         :return:
         """
         if not self.html_repr:
-            with wrh_open('modules/esp8266_wifi_socket/html/repr.html', 'r') as f:
+            with open('modules/esp8266_wifi_socket/html/repr.html', 'r') as f:
                 text_input_name = "esp_timeout_" + self.id
                 html = f.read()
                 self.html_repr = html.format(id=self.id, name=self.name, port=self.port, input_text=text_input_name)

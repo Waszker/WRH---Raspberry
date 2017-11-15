@@ -1,8 +1,4 @@
-import os
-
 from enum import Enum
-
-from wrh_engine.constants import WRH_PATH_OS_VAR
 
 """
 Set of commands to deal with input/output operations.
@@ -77,11 +73,3 @@ def non_empty_positive_numeric_input(message=''):
         except ValueError:
             continue
     return answer
-
-
-def wrh_open(filename, *args, **kwargs):
-    """
-    Enhances builtin open function by specifying WRH working path along with filename.
-    Useful in situations where WRH system has been started from different path than required.
-    """
-    return open(os.sep.join((os.environ[WRH_PATH_OS_VAR], filename)), *args, **kwargs)

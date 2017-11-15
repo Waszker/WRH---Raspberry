@@ -7,7 +7,7 @@ import time
 
 from google_drive.google_drive import GoogleDriveManager
 from utils.decorators import in_thread
-from utils.io import log, wrh_open
+from utils.io import log
 from utils.io import non_empty_input as ninput
 from utils.io import non_empty_positive_numeric_input as iinput
 from wrh_engine import module_base as base_module
@@ -117,7 +117,7 @@ class GoogleDriveUploader(base_module.Module):
         Returns html code to include in website.
         """
         if not self.html_repr:
-            with wrh_open('modules/google_drive_uploader/html/repr.html', 'r') as f:
+            with open('modules/google_drive_uploader/html/repr.html', 'r') as f:
                 html = f.read()
                 self.html_repr = html.format(id=self.id, name=self.name, port=self.port)
         return self.html_repr

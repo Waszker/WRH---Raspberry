@@ -1,6 +1,8 @@
-import sys
+import getopt
 import os
 import signal
+import sys
+
 from utils.io import *
 from wrh_engine.configuration import ConfigurationParser, BadConfigurationException, UnknownModuleException
 from wrh_engine.constants import WRH_MODULES_FOLDER
@@ -24,9 +26,8 @@ class WRHEngine:
         :raises UnknownModuleException:
         :raises BadConfigurationException:
         """
-        os.environ[WRH_PATH_OS_VAR] = os.getcwd()
+        self.__parse_args(argv)
         self.should_end = False
-        self.args = argv
         log("WRH System main engine starting", (Color.BOLD, Color.UNDERLINE))
         log("Scanning for available modules")
         loader = ModuleDynamicLoader(WRH_MODULES_FOLDER)
@@ -40,8 +41,7 @@ class WRHEngine:
         Starts main engine work.
         """
         self._check_configuration()
-        # TODO: Add better start options checking
-        if "--start-work" in self.args:
+        if not self.run_interactive:
             self._run_system()
         else:
             self._show_installed_modules()
@@ -131,3 +131,12 @@ class WRHEngine:
             self.should_end = True
             signal.signal(signal.SIGCHLD, signal.SIG_IGN)
         [overlord.handle_signal(sig) for overlord in self.overlord_instances]
+
+    def __parse_args(self, argv):
+        try:
+            opts, _ = getopt.getopt(argv, 'p:s', ['path=', 'start-work'])
+            self.run_interactive = not (('-s', '') in opts or ('--start-work', '') in opts)
+            opts_dict = {key: args for (key, args) in opts}
+            os.chdir(opts_dict.get('-p' if '-p' in opts_dict else '--path', os.getcwd()))
+        except getopt.GetoptError:
+            pass

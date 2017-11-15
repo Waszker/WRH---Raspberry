@@ -1,12 +1,13 @@
 #!/bin/python2.7
 import os
-import sys
 import signal
+
 import tornado
 import tornado.ioloop
 import tornado.web
+
 import resources
-from utils.sockets import send_message, receive_message
+from utils.sockets import receive_message
 
 __UPLOADS__ = "/tmp/"
 modules, classes = [], []
@@ -55,13 +56,14 @@ class Request(BaseHandler):
 
 
 application = tornado.web.Application([
-    (r"/", Userform),
-    (r"/uptime", Uptime),
-    (r"/restart", Restart),
-    (r"/request", Request)
-],
+        (r"/", Userform),
+        (r"/uptime", Uptime),
+        (r"/restart", Restart),
+        (r"/request", Request)
+    ],
     debug=True,
-    static_path=os.path.join(os.path.dirname("wrh_engine/tornado"), "tornado"))
+    static_path=os.path.join(os.path.dirname("wrh_engine/tornado"), "tornado")
+)
 
 
 def sigint_handler(*_):

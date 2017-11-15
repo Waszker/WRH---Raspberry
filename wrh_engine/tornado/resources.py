@@ -1,12 +1,11 @@
 #!/bin/python2
 import datetime
-import os
 import subprocess as s
 
-from wrh_engine.constants import WRH_MODULES_FOLDER, WRH_PATH_OS_VAR
-from wrh_engine.module_loader import ModuleDynamicLoader
-from wrh_engine.engine import ConfigurationParser
 from utils.system_info import get_uptime, get_cpu_temp
+from wrh_engine.constants import WRH_MODULES_FOLDER
+from wrh_engine.engine import ConfigurationParser
+from wrh_engine.module_loader import ModuleDynamicLoader
 
 
 def get_installed_modules_info():

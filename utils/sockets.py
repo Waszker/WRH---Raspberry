@@ -1,6 +1,7 @@
-import time
 import socket as s
+import time
 from contextlib import contextmanager
+
 from io import log, Color
 
 """

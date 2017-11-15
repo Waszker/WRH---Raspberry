@@ -1,7 +1,8 @@
 import signal
 import socket
-from abc import abstractmethod, ABCMeta
 import threading
+from abc import abstractmethod, ABCMeta
+
 from utils.io import log
 from utils.sockets import await_connection, wait_bind_socket
 
