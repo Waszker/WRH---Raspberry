@@ -130,17 +130,18 @@ class GoogleDriveUploader(base_module.Module):
 
         @in_thread
         def upload_files():
-            if self.drive is None: self.drive = GoogleDriveManager(self.api_location, self.id)
+            if self.drive is None:
+                self.drive = GoogleDriveManager(self.api_location, self.id)
             drive_folder = "%s - %s" % (self.UPLOAD_DRIVE_FOLDER, self.name)
             if self.drive.check_if_exists(drive_folder) is False:
                 self.drive.create_folder(drive_folder)
             for f in os.listdir(self.UPLOAD_FOLDER):
                 if self.drive.upload_image(f, self.UPLOAD_FOLDER + os.sep + f, drive_folder):
                     os.remove(self.UPLOAD_FOLDER + os.sep + f)
+                    self.last_upload = datetime.datetime.now()
 
         while True:
             upload_files()
-            self.last_upload = datetime.datetime.now()
             time.sleep(15 * 60)
 
     def _react_to_connection(self, connection, _):
@@ -148,7 +149,7 @@ class GoogleDriveUploader(base_module.Module):
         Generally respond to incoming connection.
         Maybe send some information about current module state?
         """
-        connection.send("Last upload done {} minutes ago".format(
+        connection.send("Last successful upload done {} minutes ago".format(
             int((datetime.datetime.now() - self.last_upload).total_seconds() / 60)
             if self.last_upload is not None else "..."))
 
