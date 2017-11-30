@@ -60,7 +60,7 @@ class DHT22Module(base_module.Module):
         Initializes class variables from provided configuration line.
         """
         matches = re.search(DHT22Module.CONFIGURATION_LINE_PATTERN, configuration_file_line)
-        self.id = matches.group(1)
+        self.id = int(matches.group(1))
         self.name = matches.group(2)
         self.gpio = int(matches.group(3))
         self.interval = int(matches.group(4))
@@ -129,7 +129,7 @@ class DHT22Module(base_module.Module):
         while self._should_end is False:
             try:
                 self.last_humidity, self.last_temperature = self.get_measurement()
-                send_measurement(self.id, (self.last_humidity, self.last_temperature))
+                send_measurement(self.WRHID, self.id, (self.last_humidity, self.last_temperature))
                 time.sleep(self.interval * 60)
             except AttributeError:
                 pass
