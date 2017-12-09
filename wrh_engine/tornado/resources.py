@@ -22,7 +22,7 @@ def get_system_stats():
     stat_string = "Date: %02i-%02i-%02i <br />" % (now.day, now.month, now.year)
     stat_string += "Hour: %02i:%02i <br />" % (now.hour, now.minute)
     stat_string += "Uptime: " + get_uptime() + "<br />"
-    stat_string += "CPU temp: " + str(round(get_cpu_temp(), 1)) + "*C <br />"
+    stat_string += "CPU temp: " + str(round(get_cpu_temp(), 1)) + "&deg;C <br />"
 
     return stat_string
 
