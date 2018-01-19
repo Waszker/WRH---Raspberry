@@ -21,9 +21,8 @@ class SpeedTestModule(base_module.Module):
     CONFIGURATION_LINE_PATTERN = "([0-9]{1,9});(.+?);([1-9][0-9]{0,9});([1-9][0-9]{0,9})$"
 
     def __init__(self, configuration_file_line=None):
-        base_module.Module.__init__(self, configuration_file_line)
         self.last_download, self.last_upload = "? Mbit/s", "? Mbit/s"
-        self.html_repr = None
+        base_module.Module.__init__(self, configuration_file_line)
 
     @staticmethod
     def get_starting_command():
@@ -39,13 +38,13 @@ class SpeedTestModule(base_module.Module):
         :return: Properly formatted configuration file line
         """
         values = (self.id, self.name, self.interval, self.port)
-        return ('{};' * len(values))[:-1].format(values)
+        return ('{};' * len(values))[:-1].format(*values)
 
     def _parse_configuration_line(self, configuration_file_line):
         """
         Initializes class variables from provided configuration line.
         """
-        matches = re.search(SpeedTestModule.CONFIGURATION_LINE_PATTERN, configuration_file_line)
+        matches = re.search(self.CONFIGURATION_LINE_PATTERN, configuration_file_line)
         self.id = matches.group(1)
         self.name = matches.group(2)
         self.interval = int(matches.group(3))

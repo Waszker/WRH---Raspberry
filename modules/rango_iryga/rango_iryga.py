@@ -24,8 +24,8 @@ class RangoIrygaModule(base_module.Module):
     DELAY = 120
 
     def __init__(self, configuration_file_line=None):
-        base_module.Module.__init__(self, configuration_file_line)
         self.relay_actions = {i: [] for i in RangoIrygaModule.RELAYS}
+        base_module.Module.__init__(self, configuration_file_line)
 
     @staticmethod
     def get_starting_command():
@@ -47,7 +47,7 @@ class RangoIrygaModule(base_module.Module):
         """
         Initializes class variables from provided configuration line.
         """
-        matches = re.search(RangoIrygaModule.CONFIGURATION_LINE_PATTERN, configuration_file_line)
+        matches = re.search(self.CONFIGURATION_LINE_PATTERN, configuration_file_line)
         self.id = int(matches.group(1))
         self.name = str(matches.group(2))
         self.address = str(matches.group(3))

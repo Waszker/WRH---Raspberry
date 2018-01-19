@@ -27,9 +27,9 @@ class DHT22Module(base_module.Module):
     CONFIGURATION_LINE_PATTERN = "([0-9]{1,9});(.+?);([1-9][0-9]{0,9});([1-9][0-9]{0,9});(.+)$"
 
     def __init__(self, configuration_file_line=None):
-        base_module.Module.__init__(self, configuration_file_line)
         self.last_temperature = self.last_humidity = self.socket = None
         self.interval = 60
+        base_module.Module.__init__(self, configuration_file_line)
 
     @staticmethod
     def get_starting_command():
@@ -51,7 +51,7 @@ class DHT22Module(base_module.Module):
         """
         Initializes class variables from provided configuration line.
         """
-        matches = re.search(DHT22Module.CONFIGURATION_LINE_PATTERN, configuration_file_line)
+        matches = re.search(self.CONFIGURATION_LINE_PATTERN, configuration_file_line)
         self.id = int(matches.group(1))
         self.name = matches.group(2)
         self.gpio = int(matches.group(3))

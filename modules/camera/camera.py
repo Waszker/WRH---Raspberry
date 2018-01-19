@@ -28,9 +28,9 @@ class CameraModule(base_module.Module):
     CONFIGURATION_LINE_PATTERN = "([0-9]{1,9});(.+?);(.+?);(.+?);(.*?);(.*)$"
 
     def __init__(self, configuration_file_line=None):
-        base_module.Module.__init__(self, configuration_file_line)
         self.mjpeg_streamer = self.stunnel = None
         self.login = self.password = ''
+        base_module.Module.__init__(self, configuration_file_line)
 
     @staticmethod
     def get_starting_command():
@@ -52,8 +52,8 @@ class CameraModule(base_module.Module):
         """
         Initializes class variables from provided configuration line.
         """
-        matches = re.search(CameraModule.CONFIGURATION_LINE_PATTERN, configuration_file_line)
-        self.id = self.name = self.gpio = self.port = self.login = self.password = matches.groups()
+        matches = re.search(self.CONFIGURATION_LINE_PATTERN, configuration_file_line)
+        self.id, self.name, self.gpio, self.port, self.login, self.password = matches.groups()
 
     def get_measurement(self):
         """

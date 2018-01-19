@@ -28,8 +28,8 @@ class IpCameraModule(base_module.Module):
     CONFIGURATION_LINE_PATTERN = "([0-9]{1,9});(.+?);(.+?);(.+?);(.*)$"
 
     def __init__(self, configuration_file_line=None):
-        base_module.Module.__init__(self, configuration_file_line)
         self.camera_address = self.camera_port = self.socat_process = None
+        base_module.Module.__init__(self, configuration_file_line)
 
     @staticmethod
     def get_starting_command():
@@ -51,7 +51,7 @@ class IpCameraModule(base_module.Module):
         """
         Initializes class variables from provided configuration line.
         """
-        matches = re.search(IpCameraModule.CONFIGURATION_LINE_PATTERN, configuration_file_line)
+        matches = re.search(self.CONFIGURATION_LINE_PATTERN, configuration_file_line)
         self.id = matches.group(1)
         self.name = matches.group(2)
         self.camera_address = matches.group(3)
