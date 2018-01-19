@@ -1,3 +1,4 @@
+import re
 import signal
 import socket
 import threading
@@ -20,25 +21,28 @@ class Module:
     """
     __metaclass__ = ModuleMeta
     TYPE_NAME = "AbstractModule"
+    CONFIGURATION_LINE_PATTERN = None
 
     def __init__(self, configuration_file_line=None):
         """
         Creates instance of a specific module class from the information
         provided in configuration line.
         """
-        self.id = self.name = self.gpio = self.port = None
+        self.id = self.name = self.gpio = self.port = self.html_repr = None
         self._should_end, self._socket = False, None
         if configuration_file_line is not None:
             self._parse_configuration_line(configuration_file_line)
 
-    @staticmethod
-    @abstractmethod
-    def is_configuration_line_sane(configuration_line):
+    @classmethod
+    def is_configuration_line_sane(cls, configuration_line):
         """
         Checks if configuration line for this module is well formed
         :param configuration_line:
         :return: boolean
         """
+        if not cls.CONFIGURATION_LINE_PATTERN: raise ValueError('CONFIGURATION_LINE_PATTERN can\'t be empty')
+        checker = re.compile(cls.CONFIGURATION_LINE_PATTERN)
+        return checker.match(configuration_line) is not None
 
     @staticmethod
     @abstractmethod

@@ -28,17 +28,8 @@ class DHT22Module(base_module.Module):
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
-        self.last_temperature, self.last_humidity, self.socket, self.html_repr = None, None, None, None
-
-    @staticmethod
-    def is_configuration_line_sane(configuration_line):
-        """
-        Checks if configuration line for this module is well formed.
-        :param configuration_line:
-        :return:
-        """
-        checker = re.compile(DHT22Module.CONFIGURATION_LINE_PATTERN)
-        return checker.match(configuration_line) is not None
+        self.last_temperature = self.last_humidity = self.socket = None
+        self.interval = 60
 
     @staticmethod
     def get_starting_command():
@@ -53,7 +44,8 @@ class DHT22Module(base_module.Module):
         Creates module configuration line.
         :return: Properly formatted configuration file line
         """
-        return "%s;%s;%s;%s;%s" % tuple(map(str, (self.id, self.name, self.gpio, self.interval, self.port)))
+        values = (self.id, self.name, self.gpio, self.interval, self.port)
+        return ('{};' * len(values))[:-1].format(*values)
 
     def _parse_configuration_line(self, configuration_file_line):
         """
@@ -93,17 +85,13 @@ class DHT22Module(base_module.Module):
         Returns connection status and response.
         """
         log('Provide new module information (leave fields blank if you don\'t want to change)')
-        log('Please note that changes other than name will always succeed')
-        log('Name changing requires active Internet connection')
-        new_name = raw_input('New module\'s name: ')
-        new_gpio = raw_input("Please input new gpio pin number to which sensor is connected: ")
-        new_interval = raw_input("Please input new interval (in minutes) for taking consecutive measurements: ")
-        new_port = raw_input("Please input new port on which this module will be listening for commands: ")
-
-        if new_gpio: self.gpio = new_gpio
-        if new_interval: self.interval = new_interval
-        if new_port: self.port = new_port
-        if new_name: self.name = new_name
+        self.name = raw_input('New module\'s name: ') or self.name
+        self.gpio = iinput("Please input new gpio pin number to which sensor is connected: ",
+                           allowed_empty=True) or self.gpio
+        self.interval = iinput("Please input new interval (in minutes) for taking consecutive measurements: ",
+                               allowed_empty=True) or self.interval
+        self.port = iinput("Please input new port on which this module will be listening for commands: ",
+                           allowed_empty=True) or self.port
 
     def start_work(self):
         """

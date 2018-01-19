@@ -7,10 +7,11 @@ import urllib2
 
 import requests
 
-from utils.io import non_empty_input, log
+from utils.io import non_empty_input, non_empty_positive_numeric_input, log
 from wrh_engine import module_base as base_module
 
 ninput = non_empty_input
+iinput = non_empty_positive_numeric_input
 
 
 class RangoIrygaModule(base_module.Module):
@@ -25,17 +26,6 @@ class RangoIrygaModule(base_module.Module):
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
         self.relay_actions = {i: [] for i in RangoIrygaModule.RELAYS}
-        self.html_repr = None
-
-    @staticmethod
-    def is_configuration_line_sane(configuration_line):
-        """
-        Checks if configuration line for this module is well formed.
-        :param configuration_line:
-        :return:
-        """
-        checker = re.compile(RangoIrygaModule.CONFIGURATION_LINE_PATTERN)
-        return checker.match(configuration_line) is not None
 
     @staticmethod
     def get_starting_command():
@@ -50,7 +40,8 @@ class RangoIrygaModule(base_module.Module):
         Creates module configuration line.
         :return: Properly formatted configuration file line
         """
-        return str(self.id) + ";" + self.name + ";" + self.address + ";" + str(self.port)
+        values = (self.id, self.name, self.address, self.port)
+        return ('{};' * len(values))[:-1].format(*values)
 
     def _parse_configuration_line(self, configuration_file_line):
         """
@@ -105,13 +96,7 @@ class RangoIrygaModule(base_module.Module):
         """
         base_module.Module.run_registration_procedure(self, new_id)
         self.address = ninput("Please input Rango Iryga IP address: ")
-        while True:
-            try:
-                self.port = int(ninput(
-                    "Please input port on which this module will be listening for commands: "))
-                break
-            except ValueError:
-                pass
+        self.port = iinput("Please input port on which this module will be listening for commands: ")
 
     def edit(self):
         """
@@ -121,13 +106,10 @@ class RangoIrygaModule(base_module.Module):
         log('Provide new module information (leave fields blank if you don\'t want to change)')
         log('Please note that changes other than name will always succeed')
         log('Name changing requires active Internet connection')
-        new_name = raw_input('New module\'s name: ')
-        new_address = raw_input("Please input new Rango Iryga IP address: ")
-        new_port = raw_input("Please input new port on which this module will be listening for commands: ")
-
-        if new_address: self.address = new_address
-        if new_port: self.port = new_port
-        if new_name: self.name = new_name
+        self.name = raw_input('New module\'s name: ') or self.name
+        self.address = raw_input("Please input new Rango Iryga IP address: ") or self.address
+        self.port = iinput("Please input new port on which this module will be listening for commands: ",
+                           allowed_empty=True) or self.port
 
     def start_work(self):
         """

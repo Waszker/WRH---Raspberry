@@ -32,44 +32,58 @@ def log(message, color=Color.NORMAL):
     print(''.join((decoration, str(message), str(Color.NORMAL))))
 
 
-def non_empty_input(message=''):
+def wrh_input(allowed_empty=False, message='', input_type=str, sanitizer=lambda x: True, allowed_exceptions=()):
+    """
+    Input sanitizing function that can be used for requesting specific input formats
+    (see non_empty_numeric_input(), etc.)
+    :param allowed_empty: is input allowed to be empty
+    :param message: message to be displayed
+    :param input_type: type of the expected input (str, int, Object())
+    :type input_type: any
+    :param sanitizer: function returning bool value, that checks if input is OK
+    :param allowed_exceptions: exceptions that should not be raised during input parsing
+    :return: parsed user's input
+    """
+    while True:
+        try:
+            answer = raw_input(message)
+            if allowed_empty and not answer:
+                break
+            answer = input_type(answer)
+            if not sanitizer(answer):
+                continue
+            break
+        except allowed_exceptions:
+            pass
+    return answer
+
+
+def non_empty_input(message='', **kwargs):
     """
     Reads user input discarding all empty messages.
     :param message: message to display
+    :param kwargs: additional kwargs to be passed to wrh_input()
     :return: user's input
     """
-    answer = None
-    while answer is None or len(answer) == 0:
-        answer = raw_input(message)
-    return answer
+    return wrh_input(message=message, **kwargs)
 
 
-def non_empty_numeric_input(message=''):
+def non_empty_numeric_input(message='', **kwargs):
     """
     Reads user input discarding all empty and non-integer messages
     :param message: message to display
+    :param kwargs: additional kwargs to be passed to wrh_input()
     :return: user's input number
     """
-    while True:
-        try:
-            answer = int(non_empty_input(message))
-            break
-        except ValueError:
-            continue
-    return answer
+    return wrh_input(message=message, input_type=int, allowed_exceptions=(ValueError,), **kwargs)
 
 
-def non_empty_positive_numeric_input(message=''):
+def non_empty_positive_numeric_input(message='', **kwargs):
     """
     Reads user input discarding all empty and non-integer messages
     :param message: message to display
+    :param kwargs: additional kwargs to be passed to wrh_input()
     :return: user's input number
     """
-    while True:
-        try:
-            answer = int(non_empty_input(message))
-            if answer < 0: continue
-            break
-        except ValueError:
-            continue
-    return answer
+    return wrh_input(message=message, input_type=int, sanitizer=lambda x: x >= 0, allowed_exceptions=(ValueError,),
+                     **kwargs)

@@ -156,18 +156,8 @@ class RangoIrygaSchedulerModule(base_module.Module):
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
+        self.rango_port = None
         self.scenarios = []
-
-    @staticmethod
-    def is_configuration_line_sane(configuration_line):
-        """
-        Checks if configuration line for this module is well formed.
-        :param self:
-        :param configuration_line:
-        :return:
-        """
-        checker = re.compile(RangoIrygaSchedulerModule.CONFIGURATION_LINE_PATTERN)
-        return checker.match(configuration_line) is not None
 
     @staticmethod
     def get_starting_command():
@@ -182,7 +172,8 @@ class RangoIrygaSchedulerModule(base_module.Module):
         Creates module configuration line.
         :return: Properly formatted configuration file line
         """
-        return "%i;%s;%i;%i" % (self.id, self.name, self.port, self.rango_port)
+        values = (self.id, self.name, self.port, self.rango_port)
+        return ('{};' * len(values))[:-1].format(*values)
 
     def _parse_configuration_line(self, configuration_file_line):
         """
@@ -236,13 +227,11 @@ class RangoIrygaSchedulerModule(base_module.Module):
         """
         log('Provide new module information (leave fields blank if you don\'t want to change)')
         log('Please note that changes other than name will always succeed')
-        new_name = raw_input('New module\'s name: ')
-        new_port = raw_input("Please input new port on which this module will be listening for commands: ")
-        new_rango_port = raw_input("Please input new port number of Rango Iryga installed in this system: ")
-
-        if new_rango_port: self.rango_port = new_rango_port
-        if new_port: self.port = new_port
-        if new_name: self.name = new_name
+        self.name = raw_input('New module\'s name: ') or self.name
+        self.port = iinput("Please input new port on which this module will be listening for commands: ",
+                           allowed_empty=True) or self.port
+        self.rango_port = iinput("Please input new port number of Rango Iryga installed in this system: ",
+                                 allowed_empty=True) or self.rango_port
 
     def start_work(self):
         """

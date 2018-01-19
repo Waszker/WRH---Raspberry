@@ -29,17 +29,8 @@ class CameraModule(base_module.Module):
 
     def __init__(self, configuration_file_line=None):
         base_module.Module.__init__(self, configuration_file_line)
-        self.mjpeg_streamer, self.stunnel = None, None
-
-    @staticmethod
-    def is_configuration_line_sane(configuration_line):
-        """
-        Checks if configuration line for this module is well formed
-        :param configuration_line:
-        :return:
-        """
-        checker = re.compile(CameraModule.CONFIGURATION_LINE_PATTERN)
-        return checker.match(configuration_line) is not None
+        self.mjpeg_streamer = self.stunnel = None
+        self.login = self.password = ''
 
     @staticmethod
     def get_starting_command():
@@ -54,20 +45,15 @@ class CameraModule(base_module.Module):
         Creates module configuration line
         :return: Properly formatted configuration file line
         """
-        return '%s;%s;%s;%s;%s;%s' % tuple(map(str, (self.id, self.name, self.gpio, self.port,
-                                                     self.login, self.password)))
+        values = (self.id, self.name, self.gpio, self.port, self.login, self.password)
+        return ('{};' * len(values))[:-1].format(*values)
 
     def _parse_configuration_line(self, configuration_file_line):
         """
         Initializes class variables from provided configuration line.
         """
         matches = re.search(CameraModule.CONFIGURATION_LINE_PATTERN, configuration_file_line)
-        self.id = matches.group(1)
-        self.name = matches.group(2)
-        self.gpio = matches.group(3)
-        self.port = matches.group(4)
-        self.login = matches.group(5)
-        self.password = matches.group(6)
+        self.id = self.name = self.gpio = self.port = self.login = self.password = matches.groups()
 
     def get_measurement(self):
         """
@@ -106,20 +92,13 @@ class CameraModule(base_module.Module):
         Returns connection status and response.
         """
         log('Provide new module information (leave fields blank if you don\'t want to change)')
-        log('Please note that changes other than name will always succeed')
-        log('Name changing requires active Internet connection')
-        new_name = raw_input('New module\'s name: ')
-        new_gpio = raw_input(
-            "Please input new name of the webcam device (usually /dev/video# where # is the specific number): ")
-        new_port = raw_input("Please input new port on which streamed images can be accessed: ")
-        new_login = raw_input("Please input new login used to access the video stream: ")
-        new_password = raw_input("Please input new password used to access the video stream: ")
-
-        if new_gpio: self.gpio = new_gpio
-        if new_port: self.port = new_port
-        if new_login: self.login = new_login
-        if new_password: self.password = new_password
-        if new_name: self.name = new_name
+        self.name = raw_input('New module\'s name: ') or self.name
+        self.gpio = raw_input("Please input new name of the webcam device"
+                              "(usually /dev/video# where # is the specific number): ") or self.gpio
+        self.port = iinput("Please input new port on which streamed images can be accessed: ",
+                           allowed_empty=True) or self.port
+        self.login = raw_input("Please input new login used to access the video stream: ") or self.login
+        self.password = raw_input("Please input new password used to access the video stream: ") or self.password
 
     def start_work(self):
         """

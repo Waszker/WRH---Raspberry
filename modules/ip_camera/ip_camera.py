@@ -28,18 +28,8 @@ class IpCameraModule(base_module.Module):
     CONFIGURATION_LINE_PATTERN = "([0-9]{1,9});(.+?);(.+?);(.+?);(.*)$"
 
     def __init__(self, configuration_file_line=None):
-        self.camera_address = self.camera_port = self.socat_process = None
         base_module.Module.__init__(self, configuration_file_line)
-
-    @staticmethod
-    def is_configuration_line_sane(configuration_line):
-        """
-        Checks if configuration line for this module is well formed
-        :param configuration_line:
-        :return:
-        """
-        checker = re.compile(IpCameraModule.CONFIGURATION_LINE_PATTERN)
-        return checker.match(configuration_line) is not None
+        self.camera_address = self.camera_port = self.socat_process = None
 
     @staticmethod
     def get_starting_command():
@@ -54,8 +44,8 @@ class IpCameraModule(base_module.Module):
         Creates module configuration line
         :return: Properly formatted configuration file line
         """
-        return '%s;%s;%s;%s;%s' % tuple(map(str, (self.id, self.name, self.camera_address,
-                                                  self.camera_port, self.port)))
+        values = (self.id, self.name, self.camera_address, self.camera_port, self.port)
+        return ('{};' * len(values))[:-1].format(*values)
 
     def _parse_configuration_line(self, configuration_file_line):
         """
@@ -103,17 +93,11 @@ class IpCameraModule(base_module.Module):
         Returns connection status and response.
         """
         log('Provide new module information (leave fields blank if you don\'t want to change)')
-        log('Please note that changes other than name will always succeed')
-        log('Name changing requires active Internet connection')
-        new_name = raw_input('New module\'s name: ')
-        new_camera_address = raw_input("Please input new IP address of camera: ")
-        new_camera_port = raw_input("Please input new port on which IP camera can be accessed: ")
-        new_port = raw_input("Please input new port on which streamed images can be accessed: ")
-
-        if new_name: self.name = new_name
-        if new_camera_address: self.camera_address = new_camera_address
-        if new_camera_port: self.camera_port = new_camera_port
-        if new_port: self.port = new_port
+        self.name = raw_input('New module\'s name: ') or self.name
+        self.camera_address = raw_input("Please input new IP address of camera: ") or self.camera_address
+        self.camera_port = raw_input("Please input new port on which IP camera can be accessed: ") or self.camera_port
+        self.port = iinput("Please input new port on which streamed images can be accessed: ",
+                           allowed_empty=True) or self.port
 
     def start_work(self):
         """

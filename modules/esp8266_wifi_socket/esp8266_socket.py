@@ -20,20 +20,6 @@ class ESP8266SocketModule(base_module.Module):
     TYPE_NAME = "ESP8266 WIFI SOCKET"
     CONFIGURATION_LINE_PATTERN = "([0-9]{1,9});(.+?);(.+?);(.+)$"
 
-    def __init__(self, configuration_file_line=None):
-        base_module.Module.__init__(self, configuration_file_line)
-        self.html_repr = None
-
-    @staticmethod
-    def is_configuration_line_sane(configuration_line):
-        """
-        Checks if configuration line for this module is well formed
-        :param configuration_line:
-        :return:
-        """
-        checker = re.compile(ESP8266SocketModule.CONFIGURATION_LINE_PATTERN)
-        return checker.match(configuration_line) is not None
-
     @staticmethod
     def get_starting_command():
         """
@@ -47,17 +33,15 @@ class ESP8266SocketModule(base_module.Module):
         Creates module configuration line
         :return: Properly formatted configuration file line
         """
-        return ('{};' * 4)[:-1].format(self.id, self.name, self.gpio, self.port)
+        values = (self.id, self.name, self.gpio, self.port)
+        return ('{};' * len(values))[:-1].format(*values)
 
     def _parse_configuration_line(self, configuration_file_line):
         """
         Initializes class variables from provided configuration line.
         """
         matches = re.search(ESP8266SocketModule.CONFIGURATION_LINE_PATTERN, configuration_file_line)
-        self.id = matches.group(1)
-        self.name = matches.group(2)
-        self.gpio = matches.group(3)
-        self.port = matches.group(4)
+        self.id, self.name, self.gpio, self.port = matches.groups()
 
     def get_measurement(self):
         """
@@ -99,15 +83,10 @@ class ESP8266SocketModule(base_module.Module):
         Returns connection status and response.
         """
         log('Provide new module information (leave fields blank if you don\'t want to change)')
-        log('Please note that changes other than name will always succeed')
-        log('Name changing requires active Internet connection')
-        new_name = raw_input('New module\'s name: ')
-        new_gpio = raw_input("Please input new IP address of ESP8266 device: ")
-        new_port = raw_input("Please input new port on which module will be listening for commands: ")
-
-        if new_gpio: self.gpio = new_gpio
-        if new_port: self.port = new_port
-        if new_name: self.name = new_name
+        self.name = raw_input('New module\'s name: ') or self.name
+        self.gpio = raw_input("Please input new IP address of ESP8266 device: ") or self.gpio
+        self.port = npinput("Please input new port on which module will be listening for commands: ",
+                            allowed_empty=True) or self.port
 
     def start_work(self):
         """
