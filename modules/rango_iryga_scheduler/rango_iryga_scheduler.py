@@ -179,7 +179,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
         """
         Initializes class variables from provided configuration line.
         """
-        matches = re.search(RangoIrygaSchedulerModule.CONFIGURATION_LINE_PATTERN, configuration_file_line)
+        matches = re.search(self.CONFIGURATION_LINE_PATTERN, configuration_file_line)
         self.id = int(matches.group(1))
         self.name = str(matches.group(2))
         self.port = int(matches.group(3))

@@ -39,13 +39,13 @@ class SpeedTestModule(base_module.Module):
         :return: Properly formatted configuration file line
         """
         values = (self.id, self.name, self.interval, self.port)
-        return ('{};' * len(values))[:-1].format(values)
+        return ('{};' * len(values))[:-1].format(*values)
 
     def _parse_configuration_line(self, configuration_file_line):
         """
         Initializes class variables from provided configuration line.
         """
-        matches = re.search(SpeedTestModule.CONFIGURATION_LINE_PATTERN, configuration_file_line)
+        matches = re.search(self.CONFIGURATION_LINE_PATTERN, configuration_file_line)
         self.id = matches.group(1)
         self.name = matches.group(2)
         self.interval = int(matches.group(3))

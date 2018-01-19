@@ -52,8 +52,8 @@ class CameraModule(base_module.Module):
         """
         Initializes class variables from provided configuration line.
         """
-        matches = re.search(CameraModule.CONFIGURATION_LINE_PATTERN, configuration_file_line)
-        self.id = self.name = self.gpio = self.port = self.login = self.password = matches.groups()
+        matches = re.search(self.CONFIGURATION_LINE_PATTERN, configuration_file_line)
+        self.id, self.name, self.gpio, self.port, self.login, self.password = matches.groups()
 
     def get_measurement(self):
         """
