@@ -5,7 +5,6 @@ import time
 
 import Adafruit_DHT
 
-from utils.database import send_measurement
 from utils.decorators import in_thread
 from utils.io import non_empty_input, non_empty_positive_numeric_input, log
 from wrh_engine import module_base as base_module
@@ -117,8 +116,7 @@ class DHT22Module(base_module.Module):
         while self._should_end is False:
             try:
                 self.last_humidity, self.last_temperature = self.get_measurement()
-                send_measurement(self.WRHID, self.id,
-                                 {'humidity': self.last_humidity, 'temperature': self.last_temperature})
+                self._send_measurement({'humidity': self.last_humidity, 'temperature': self.last_temperature})
                 time.sleep(self.interval * 60)
             except AttributeError:
                 pass

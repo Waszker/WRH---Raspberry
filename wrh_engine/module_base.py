@@ -1,12 +1,16 @@
+import json
 import re
 import signal
 import socket
 import threading
 from abc import abstractmethod, ABCMeta
 
-from utils.decorators import in_thread
+import datetime
+
+from utils.decorators import in_thread, with_open
 from utils.io import log
-from utils.sockets import await_connection, wait_bind_socket
+from utils.sockets import await_connection, wait_bind_socket, open_connection
+from wrh_engine.constants import WRH_DATABASE_CONFIGURATION_FILENAME
 
 
 class ModuleMeta(ABCMeta):
@@ -120,6 +124,24 @@ class Module:
         """
         pass
 
+    @with_open(WRH_DATABASE_CONFIGURATION_FILENAME, 'r')
+    def _send_measurement(self, measurement, _file_=None):
+        """
+        Sends measured data to remote database.
+        Remote server's credentials should be present in WRH server configuration file.
+        :param measurement: measurement value to be stored in database
+        :type measurement: any
+        :param _file_: parameter filled by function decorator
+        :type _file_: file
+        """
+        conf = json.loads(_file_.read())
+        data = {
+            'token': conf['token'], 'module_type': self.WRHID, 'module_id': self.id, 'measurement': measurement,
+            'date': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        }
+        with open_connection((conf['host'], conf['port'])) as connection:
+            connection.send(json.dumps(data))
+
     def _web_service_thread(self):
         predicate = (lambda: self._should_end is False)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -130,7 +152,8 @@ class Module:
         if bind_result is True:
             log("%s %s started listening" % (self.TYPE_NAME, self.name))
             self.socket.listen(10)
-            await_connection(self.socket, self._start_new_connection_thread, predicate=predicate)
+            await_connection(self.socket, self._start_new_connection_thread, predicate=predicate,
+                             close_connection=False)
 
     @in_thread
     def _start_new_connection_thread(self, connection, client_address):
