@@ -117,7 +117,8 @@ class DHT22Module(base_module.Module):
         while self._should_end is False:
             try:
                 self.last_humidity, self.last_temperature = self.get_measurement()
-                send_measurement(self.WRHID, self.id, (self.last_humidity, self.last_temperature))
+                send_measurement(self.WRHID, self.id,
+                                 {'humidity': self.last_humidity, 'temperature': self.last_temperature})
                 time.sleep(self.interval * 60)
             except AttributeError:
                 pass
