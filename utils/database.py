@@ -23,7 +23,7 @@ def send_measurement(module_type, module_id, measurement, _file_=None):
     conf = json.loads(_file_.read())
     data = {
         'token': conf['token'], 'module_type': module_type, 'module_id': module_id, 'measurement': measurement,
-        'date': datetime.datetime.now()
+        'date': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     }
     with open_connection((conf['host'], conf['port'])) as connection:
         connection.send(json.dumps(data))
