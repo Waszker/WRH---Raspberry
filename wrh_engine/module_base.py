@@ -4,6 +4,7 @@ import socket
 import threading
 from abc import abstractmethod, ABCMeta
 
+from utils.decorators import in_thread
 from utils.io import log
 from utils.sockets import await_connection, wait_bind_socket
 
@@ -131,11 +132,10 @@ class Module:
             self.socket.listen(10)
             await_connection(self.socket, self._start_new_connection_thread, predicate=predicate)
 
+    @in_thread
     def _start_new_connection_thread(self, connection, client_address):
-        thread = threading.Thread(target=self._react_to_connection, args=(connection, client_address))
-        thread.daemon = True
-        thread.start()
-        thread.join()
+        self._react_to_connection(connection, client_address)
+        connection.close()
 
     def _react_to_connection(self, connection, client_address):
         """
