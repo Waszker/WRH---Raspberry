@@ -7,7 +7,7 @@ from abc import abstractmethod, ABCMeta
 
 import datetime
 
-from utils.decorators import in_thread, with_open
+from utils.decorators import in_thread, with_open, ignore_exceptions
 from utils.io import log
 from utils.sockets import await_connection, wait_bind_socket, open_connection
 from wrh_engine.constants import WRH_DATABASE_CONFIGURATION_FILENAME
@@ -124,6 +124,7 @@ class Module:
         """
         pass
 
+    @ignore_exceptions((KeyError, ValueError))
     @with_open(WRH_DATABASE_CONFIGURATION_FILENAME, 'r')
     def _send_measurement(self, measurement, _file_=None):
         """
@@ -136,11 +137,12 @@ class Module:
         """
         conf = json.loads(_file_.read())
         data = {
-            'token': conf['token'], 'module_type': self.WRHID, 'module_id': self.id, 'measurement': measurement,
-            'date': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            'token': conf['token'], 'module_type': self.WRHID, 'module_id': self.id, 'module_name': self.name,
+            'measurement': measurement, 'date': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         }
-        with open_connection((conf['host'], conf['port'])) as connection:
+        for connection in open_connection((conf['host'], conf['port'])):
             connection.send(json.dumps(data))
+            log('Module {} successfully uploaded its measurement'.format(self.name))
 
     def _web_service_thread(self):
         predicate = (lambda: self._should_end is False)

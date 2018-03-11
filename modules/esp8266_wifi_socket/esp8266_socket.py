@@ -121,8 +121,7 @@ class ESP8266SocketModule(base_module.Module):
             pass
 
     def _react_to_connection(self, connection, _):
-        data = str(connection.recv(1024) + ",").split(',')
-        state, time_wait = data[0], data[1]
+        state, time_wait = (str(connection.recv(1024)) + ",").split(',')[:2]
         if str(state) == "ON" or str(state) == "on":
             self._set_socket_state(True, time_wait)
         elif str(state) == "OFF" or str(state) == "off":

@@ -203,8 +203,7 @@ class RangoIrygaModule(base_module.Module):
             pass
 
     def _react_to_connection(self, connection, _):
-        data = str(connection.recv(1024) + ",,,").split(',')
-        state, number, time_wait, repeats = data[0], data[1], data[2], data[3]
+        state, number, time_wait, repeats, = (str(connection.recv(1024)) + ',,,').split(',')[:4]
         if str(state) == "ON" or str(state) == "on":
             self._set_relay_state(number, True, time_wait, repeats)
         elif str(state) == "OFF" or str(state) == "off":

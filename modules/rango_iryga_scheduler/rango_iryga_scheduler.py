@@ -11,7 +11,6 @@ import time
 from modules.rango_iryga.rango_iryga import RangoIrygaModule
 from utils.io import log
 from utils.io import non_empty_positive_numeric_input as iinput
-from utils.sockets import send_message
 from wrh_engine import module_base as base_module
 
 
@@ -399,8 +398,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
             time.sleep(60.0 - ((time.time() - start_time) % 60.0))
 
     def _react_to_connection(self, connection, _):
-        data = connection.recv(1024)
-        action, request = data.split('|')
+        action, request = str(connection.recv(1024)).split('|')
         if action == "ADD" or action == "add":
             self.scenarios.append(RangoScenario(str(1) + RangoScenario.SEP + request))
         elif action == "DEL" or action == "del":
