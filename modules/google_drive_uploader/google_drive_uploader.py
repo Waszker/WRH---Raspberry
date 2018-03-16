@@ -6,8 +6,8 @@ import sys
 import time
 
 from google_drive.google_drive import GoogleDriveManager
-from utils.decorators import in_thread
-from utils.io import log
+from utils.decorators import in_thread, log_exceptions
+from utils.io import log, Color
 from utils.io import non_empty_input as ninput
 from utils.io import non_empty_positive_numeric_input as iinput
 from wrh_engine import module_base as base_module
@@ -111,12 +111,14 @@ class GoogleDriveUploader(base_module.Module):
         return self.html_repr
 
     @in_thread
+    @log_exceptions()
     def _uploader_thread(self):
         """
         Check for possible scenario execution each minute.
         """
 
         @in_thread
+        @log_exceptions()
         def upload_files():
             if self.drive is None:
                 self.drive = GoogleDriveManager(self.api_location, self.id)
@@ -143,8 +145,11 @@ class GoogleDriveUploader(base_module.Module):
 
 
 if __name__ == "__main__":
-    log('Google Drive Uploader module: started.')
-    conf_line = sys.argv[1]
+    try:
+        log('Google Drive Uploader module: started.')
+        conf_line = sys.argv[1]
 
-    uploader = GoogleDriveUploader(conf_line)
-    uploader.start_work()
+        uploader = GoogleDriveUploader(conf_line)
+        uploader.start_work()
+    except Exception as e:
+        log(e, Color.EXCEPTION)

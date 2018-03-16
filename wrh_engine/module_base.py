@@ -7,7 +7,7 @@ from abc import abstractmethod, ABCMeta
 
 import datetime
 
-from utils.decorators import in_thread, with_open, ignore_exceptions
+from utils.decorators import in_thread, with_open, ignore_exceptions, log_exceptions
 from utils.io import log
 from utils.sockets import await_connection, wait_bind_socket, open_connection
 from wrh_engine.constants import WRH_DATABASE_CONFIGURATION_FILENAME
@@ -144,6 +144,7 @@ class Module:
             connection.send(json.dumps(data))
             log('Module {} successfully uploaded its measurement'.format(self.name))
 
+    @log_exceptions()
     def _web_service_thread(self):
         predicate = (lambda: self._should_end is False)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -158,6 +159,7 @@ class Module:
                              close_connection=False)
 
     @in_thread
+    @log_exceptions()
     def _start_new_connection_thread(self, connection, client_address):
         self._react_to_connection(connection, client_address)
         connection.close()

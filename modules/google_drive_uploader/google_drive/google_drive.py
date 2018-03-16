@@ -43,7 +43,7 @@ class GoogleDriveManager:
             folder = self._service.files().create(body=file_metadata, fields='id').execute()
             folder_id = folder.get('id')
         except googleapiclient.errors.HttpError as e:
-            log(str(e), Color.FAIL)
+            log(str(e), Color.EXCEPTION)
 
         return folder_id
 
@@ -88,7 +88,7 @@ class GoogleDriveManager:
                                          fields='id').execute()
             success = True
         except googleapiclient.errors.HttpError as e:
-            log(str(e), Color.FAIL)
+            log(str(e), Color.EXCEPTION)
             success = False
 
         return success

@@ -7,6 +7,8 @@ import tornado.ioloop
 import tornado.web
 
 import resources
+from utils.decorators import log_exceptions
+from utils.io import log, Color
 from utils.sockets import receive_message
 
 __UPLOADS__ = "/tmp/"
@@ -19,6 +21,7 @@ class BaseHandler(tornado.web.RequestHandler):
 
 
 class Userform(BaseHandler):
+    @log_exceptions()
     def get(self):
         global modules, ip
         try:
@@ -32,22 +35,26 @@ class Userform(BaseHandler):
 
 
 class Uptime(BaseHandler):
+    @log_exceptions()
     def get(self):
         self.finish(resources.get_system_stats())
 
 
 class Restart(BaseHandler):
+    @log_exceptions()
     def get(self):
         self.finish(resources.restart())
 
 
 class Request(BaseHandler):
+    @log_exceptions()
     def get(self):
         host = self.get_argument("host")
         port = self.get_argument("port")
         message = self.get_argument("message")
         self.finish(receive_message(host, port, message=message))
 
+    @log_exceptions()
     def post(self):
         host = self.get_argument("host")
         port = self.get_argument("port")
@@ -71,8 +78,11 @@ def sigint_handler(*_):
 
 
 if __name__ == "__main__":
-    classes, modules = resources.get_installed_modules_info()
-    signal.signal(signal.SIGINT, sigint_handler)
-    application.listen(8888)
-    print 'Tornado: Started.'
-    tornado.ioloop.IOLoop.instance().start()
+    try:
+        classes, modules = resources.get_installed_modules_info()
+        signal.signal(signal.SIGINT, sigint_handler)
+        application.listen(8888)
+        print 'Tornado: Started.'
+        tornado.ioloop.IOLoop.instance().start()
+    except Exception as e:
+        log(e, Color.EXCEPTION)

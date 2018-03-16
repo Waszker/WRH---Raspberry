@@ -7,7 +7,7 @@ import urllib2
 
 import requests
 
-from utils.io import non_empty_input, non_empty_positive_numeric_input, log
+from utils.io import non_empty_input, non_empty_positive_numeric_input, log, Color
 from wrh_engine import module_base as base_module
 
 ninput = non_empty_input
@@ -213,8 +213,11 @@ class RangoIrygaModule(base_module.Module):
 
 
 if __name__ == "__main__":
-    log('Rango Iryga module: started.')
-    conf_line = sys.argv[1]
+    try:
+        log('Rango Iryga module: started.')
+        conf_line = sys.argv[1]
 
-    rango_iryga = RangoIrygaModule(conf_line)
-    rango_iryga.start_work()
+        rango_iryga = RangoIrygaModule(conf_line)
+        rango_iryga.start_work()
+    except Exception as e:
+        log(e, Color.EXCEPTION)

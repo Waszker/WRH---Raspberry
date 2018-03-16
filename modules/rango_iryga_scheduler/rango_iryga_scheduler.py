@@ -9,7 +9,8 @@ import threading
 import time
 
 from modules.rango_iryga.rango_iryga import RangoIrygaModule
-from utils.io import log
+from utils.decorators import log_exceptions
+from utils.io import log, Color
 from utils.io import non_empty_positive_numeric_input as iinput
 from wrh_engine import module_base as base_module
 
@@ -385,6 +386,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
         with open(RangoIrygaSchedulerModule._saved_scenarios_file, mode) as f:
             self.scenarios.extend([RangoScenario(line) for line in f])
 
+    @log_exceptions()
     def _scheduler_thread(self):
         """
         Check for possible scenario execution each minute.
@@ -414,8 +416,11 @@ class RangoIrygaSchedulerModule(base_module.Module):
 
 
 if __name__ == "__main__":
-    log('Rango Iryga module: started.')
-    conf_line = sys.argv[1]
+    try:
+        log('Rango Iryga module: started.')
+        conf_line = sys.argv[1]
 
-    rango_iryga_scheduler = RangoIrygaSchedulerModule(conf_line)
-    rango_iryga_scheduler.start_work()
+        rango_iryga_scheduler = RangoIrygaSchedulerModule(conf_line)
+        rango_iryga_scheduler.start_work()
+    except Exception as e:
+        log(e, Color.EXCEPTION)

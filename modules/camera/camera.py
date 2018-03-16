@@ -9,8 +9,8 @@ from urllib2 import urlopen
 
 import requests
 
-from utils.decorators import in_thread
-from utils.io import non_empty_input, non_empty_positive_numeric_input, log
+from utils.decorators import in_thread, log_exceptions
+from utils.io import non_empty_input, non_empty_positive_numeric_input, log, Color
 from utils.processes import print_process_errors, end_process
 from wrh_engine import module_base as base_module
 
@@ -129,6 +129,7 @@ class CameraModule(base_module.Module):
         return address
 
     @in_thread
+    @log_exceptions()
     def _snapshot_thread(self):
         """
         Thread taking measurements in specified interval.
@@ -143,6 +144,7 @@ class CameraModule(base_module.Module):
                 #     img.write(base64.decodestring(image))
 
     @in_thread
+    @log_exceptions()
     def _stunnel_thread(self):
         filename = "/tmp/stunnel" + str(self.id) + ".conf"
         with open(filename, "w") as f:
@@ -159,6 +161,7 @@ class CameraModule(base_module.Module):
         print_process_errors(self.stunnel)
 
     @in_thread
+    @log_exceptions()
     def _mjpeg_streamer_thread(self):
         password_subcommand = "" if not self.password else " -c " + self.login + ":" + self.password
         os.environ['LD_LIBRARY_PATH'] = '/usr/local/lib/'
@@ -176,8 +179,11 @@ class CameraModule(base_module.Module):
 
 
 if __name__ == "__main__":
-    log('Camera: started.')
-    conf_line = sys.argv[1]
+    try:
+        log('Camera: started.')
+        conf_line = sys.argv[1]
 
-    camera = CameraModule(conf_line)
-    camera.start_work()
+        camera = CameraModule(conf_line)
+        camera.start_work()
+    except Exception as e:
+        log(e, Color.EXCEPTION)

@@ -6,7 +6,7 @@ import urllib2
 
 import requests
 
-from utils.io import non_empty_input, non_empty_positive_numeric_input, log
+from utils.io import non_empty_input, non_empty_positive_numeric_input, log, Color
 from wrh_engine import module_base as base_module
 
 ninput = non_empty_input
@@ -131,7 +131,10 @@ class ESP8266SocketModule(base_module.Module):
 
 
 if __name__ == "__main__":
-    log('ESP8266 WiFi socket: started.')
-    conf_line = sys.argv[1]
-    esp8266 = ESP8266SocketModule(conf_line)
-    esp8266.start_work()
+    try:
+        log('ESP8266 WiFi socket: started.')
+        conf_line = sys.argv[1]
+        esp8266 = ESP8266SocketModule(conf_line)
+        esp8266.start_work()
+    except Exception as e:
+        log(e, Color.EXCEPTION)

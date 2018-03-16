@@ -28,7 +28,7 @@ class WRHEngine:
         """
         self.__parse_args(argv)
         self.should_end = False
-        log("WRH System main engine starting", (Color.BOLD, Color.UNDERLINE))
+        log("WRH System main engine starting", Color.BOLD, Color.UNDERLINE)
         log("Scanning for available modules")
         loader = ModuleDynamicLoader(WRH_MODULES_FOLDER)
         self.module_classes = loader.get_module_classes()
@@ -107,7 +107,7 @@ class WRHEngine:
         try:
             self.configuration_parser = ConfigurationParser(self.module_classes)
         except (UnknownModuleException, BadConfigurationException) as e:
-            log(str(e), Color.FAIL)
+            log(str(e), Color.EXCEPTION)
             sys.exit(1)
 
     def _run_system(self):

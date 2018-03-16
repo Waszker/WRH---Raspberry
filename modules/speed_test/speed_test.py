@@ -4,8 +4,8 @@ import subprocess
 import sys
 import time
 
-from utils.decorators import in_thread
-from utils.io import non_empty_input, non_empty_positive_numeric_input, log
+from utils.decorators import in_thread, log_exceptions
+from utils.io import non_empty_input, non_empty_positive_numeric_input, log, Color
 from wrh_engine import module_base as base_module
 
 ninput = non_empty_input
@@ -124,6 +124,7 @@ class SpeedTestModule(base_module.Module):
         connection.send(str(self.last_download) + " " + str(self.last_upload))
 
     @in_thread
+    @log_exceptions()
     def _measurement_thread(self):
         while self._should_end is False:
             self.last_download, self.last_upload = self.get_measurement()
@@ -131,8 +132,11 @@ class SpeedTestModule(base_module.Module):
 
 
 if __name__ == "__main__":
-    log('SpeedTest module: started.')
-    conf_line = sys.argv[1]
+    try:
+        log('SpeedTest module: started.')
+        conf_line = sys.argv[1]
 
-    speedtest = SpeedTestModule(conf_line)
-    speedtest.start_work()
+        speedtest = SpeedTestModule(conf_line)
+        speedtest.start_work()
+    except Exception as e:
+        log(e, Color.EXCEPTION)
