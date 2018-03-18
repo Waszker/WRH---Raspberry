@@ -5,11 +5,12 @@ import signal
 import tornado
 import tornado.ioloop
 import tornado.web
+import tornado.gen
+from tornado.tcpclient import TCPClient
 
 import resources
 from utils.decorators import log_exceptions
 from utils.io import log, Color
-from utils.sockets import receive_message
 
 __UPLOADS__ = "/tmp/"
 modules, classes = [], []
@@ -47,27 +48,27 @@ class Restart(BaseHandler):
 
 
 class Request(BaseHandler):
-    @log_exceptions()
+    @tornado.gen.coroutine
     def get(self):
         host = self.get_argument("host")
-        port = self.get_argument("port")
+        port = int(self.get_argument("port"))
         message = self.get_argument("message")
-        self.finish(receive_message(host, port, message=message))
+        stream = yield TCPClient().connect(host, port)
+        if message:
+            yield stream.write(bytes(message))
+        response = yield stream.read_until_close()
+        stream.close()
+        self.finish(response)
 
-    @log_exceptions()
-    def post(self):
-        host = self.get_argument("host")
-        port = self.get_argument("port")
-        message = self.get_argument("message")
-        self.finish(receive_message(host, port, message=message, buffer_size=1024 * 1024))
+    post = get
 
 
 application = tornado.web.Application([
-        (r"/", Userform),
-        (r"/uptime", Uptime),
-        (r"/restart", Restart),
-        (r"/request", Request)
-    ],
+    (r"/", Userform),
+    (r"/uptime", Uptime),
+    (r"/restart", Restart),
+    (r"/request", Request)
+],
     debug=True,
     static_path=os.path.join(os.path.dirname("wrh_engine/tornado"), "tornado")
 )
