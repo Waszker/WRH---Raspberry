@@ -9,9 +9,10 @@ import threading
 import time
 
 from modules.rango_iryga.rango_iryga import RangoIrygaModule
-from utils.decorators import log_exceptions
+from utils.decorators import in_thread, log_exceptions
 from utils.io import log, Color
 from utils.io import non_empty_positive_numeric_input as iinput
+from utils.sockets import send_message
 from wrh_engine import module_base as base_module
 
 
@@ -31,18 +32,20 @@ class WateringThread(threading.Thread):
         self.activation_time = activation_time
         self.repeats = repeats
         self.delay = delay
-        self.timer = threading.Timer(delay, self._change_relay_state, args=(True,))
+        self.timer = threading.Timer(interval=float(delay), function=self._change_relay_state, args=(True,))
 
     def run(self):
         self.timer.daemon = True
         self.timer.start()
         self.timer.join()
 
+    @log_exceptions()
     def cancel(self):
         message = "%s,%s,%s,%s" % tuple(map(str, ("OFF", self.relay, -1, -1)))
         send_message("127.0.0.1", self.rango_port, message)
         self.timer.cancel()
 
+    @log_exceptions()
     def _change_relay_state(self, turn_on):
         state = "ON" if turn_on else "OFF"
         activation_time = self.activation_time if turn_on else -1
@@ -88,7 +91,7 @@ class RangoScenario:
         Returns HTML formatted string to display one the tornado web page.
         :return: HTML formatted string
         """
-        weekdays = ['poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota', 'niedziela']
+        weekdays = ('poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota', 'niedziela')
         html_information = "<p>Czas rozpoczęcia <b>%02i:%02i</b></p>" % (self.start_time.hour, self.start_time.minute)
         for relay, time, repeats in zip(self.active_lines, self.line_activation_times, self.line_activation_repeats):
             html_information += "<p>Linia %i na %i sekund z %i powtórzeniami</p>" % (relay, time, repeats)
@@ -107,10 +110,8 @@ class RangoScenario:
         :param rango_port: port of the Rango Iryga system
         """
         if self._should_activate(date):
-            # Log action to file?
-            thread = threading.Thread(target=self._activate, args=(rango_port,))
-            thread.daemon = True
-            thread.start()
+            log('Scenario created from request string {} has been activated'.format(self.request))
+            self._activate(rango_port)
 
     def toggle_activity(self):
         """
@@ -136,6 +137,7 @@ class RangoScenario:
                (date.hour == self.start_time.hour) and \
                (date.minute == self.start_time.minute)
 
+    @in_thread
     def _activate(self, rango_port):
         self._cancel_all_watering_threads()
         delay = 0
@@ -417,9 +419,8 @@ class RangoIrygaSchedulerModule(base_module.Module):
 
 if __name__ == "__main__":
     try:
-        log('Rango Iryga module: started.')
+        log('Rango Iryga Scheduler module: started.')
         conf_line = sys.argv[1]
-
         rango_iryga_scheduler = RangoIrygaSchedulerModule(conf_line)
         rango_iryga_scheduler.start_work()
     except Exception as e:
