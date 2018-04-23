@@ -204,11 +204,15 @@ class RangoIrygaModule(base_module.Module):
 
     def _react_to_connection(self, connection, _):
         state, number, time_wait, repeats, = (str(connection.recv(1024)) + ',,,').split(',')[:4]
-        if str(state) == "ON" or str(state) == "on":
+        message = '{} received request for setting relay {} to state {} (seconds: {}, repeats {})'.format(
+            self.TYPE_NAME, number, state, time_wait, repeats)
+        if str(state).upper() == "ON":
+            log(message)
             self._set_relay_state(number, True, time_wait, repeats)
-        elif str(state) == "OFF" or str(state) == "off":
+        elif str(state).upper() == "OFF":
+            log(message)
             self._set_relay_state(number, False, time_wait, repeats)
-        elif str(state) == "STATE" or str(state) == "state":
+        elif str(state).upper() == "STATE":
             connection.send(self.get_measurement())
 
 

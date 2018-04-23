@@ -161,8 +161,10 @@ class Module:
     @in_thread
     @log_exceptions()
     def _start_new_connection_thread(self, connection, client_address):
-        self._react_to_connection(connection, client_address)
-        connection.close()
+        try:
+            self._react_to_connection(connection, client_address)
+        finally:
+            connection.close()
 
     def _react_to_connection(self, connection, client_address):
         """
