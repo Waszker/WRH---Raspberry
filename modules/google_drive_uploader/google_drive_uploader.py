@@ -5,7 +5,7 @@ import signal
 import sys
 import time
 
-from google_drive.google_drive import GoogleDriveManager
+from modules.google_drive_uploader.google_drive.google_drive import GoogleDriveManager
 from utils.decorators import in_thread, log_exceptions
 from utils.io import log, Color, wrh_input
 from utils.io import non_empty_input as ninput

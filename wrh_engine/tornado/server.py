@@ -8,9 +8,9 @@ import tornado.web
 import tornado.gen
 from tornado.tcpclient import TCPClient
 
-import resources
 from utils.decorators import log_exceptions
 from utils.io import log, Color
+from wrh_engine.tornado import resources
 
 __UPLOADS__ = "/tmp/"
 modules, classes = [], []
