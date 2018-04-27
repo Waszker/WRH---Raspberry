@@ -124,9 +124,9 @@ class DHT22Module(base_module.Module):
 
     def _react_to_connection(self, connection, _):
         if self.last_temperature is not None and self.last_humidity is not None:
-            connection.send('{0:0.1f};{1:0.1f}'.format(self.last_humidity, self.last_temperature))
+            connection.send(f'{self.last_humidity:0.1f};{self.last_temperature:0.1f}'.encode('utf-8'))
         else:
-            connection.send('?;?')
+            connection.send('?;?'.encode('utf-8'))
 
 
 if __name__ == "__main__":

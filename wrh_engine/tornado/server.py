@@ -48,14 +48,13 @@ class Restart(BaseHandler):
 
 
 class Request(BaseHandler):
-    @tornado.gen.coroutine
     async def get(self):
         host = self.get_argument("host")
         port = int(self.get_argument("port"))
         message = self.get_argument("message")
         stream = await TCPClient().connect(host, port)
         if message:
-            await stream.write(bytes(message))
+            await stream.write(message.encode('utf-8'))
         response = await stream.read_until_close()
         stream.close()
         self.finish(response)

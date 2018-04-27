@@ -56,7 +56,7 @@ class SpeedTestModule(base_module.Module):
         """
         command = ["/usr/bin/python2.7", "modules/speed_test/speedtest-cli/speedtest_cli.py"]
         try:
-            results = subprocess.check_output(command)
+            results = subprocess.check_output(command).decode('utf_8')
         except subprocess.CalledProcessError:
             results = ""
         results = results.replace('\n', '')
@@ -121,7 +121,7 @@ class SpeedTestModule(base_module.Module):
         return self.html_repr
 
     def _react_to_connection(self, connection, _):
-        connection.send(str(self.last_download) + " " + str(self.last_upload))
+        connection.send(f'{self.last_download} {self.last_upload}'.encode('utf-8'))
 
     @in_thread
     @log_exceptions()

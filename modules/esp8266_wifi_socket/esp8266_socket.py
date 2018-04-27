@@ -53,7 +53,7 @@ class ESP8266SocketModule(base_module.Module):
         try:
             response = requests.get("http://" + str(self.gpio) + "/socket.lua", timeout=5)
             # Remove all characters other than letters, numbers or = and " if connection was successful
-            response_content = ''.join(e for e in response.content if e.isalnum() or e == '=' or e == '"')
+            response_content = ''.join(c for c in response.content.decode('utf-8') if c.isalnum() or c in ('=', '"'))
         except requests.ConnectionError:
             response_content = ''
         if not checker.match(str(response_content)):
@@ -123,9 +123,8 @@ class ESP8266SocketModule(base_module.Module):
             pass
 
     def _react_to_connection(self, connection, _):
-        state, time_wait = (str(connection.recv(1024)) + ",").split(',')[:2]
-        message = '{} received request for setting socket state to {} for {} seconds'.format(self.TYPE_NAME,
-                                                                                             state, time_wait)
+        state, time_wait = (connection.recv(1024).decode('utf-8') + ",").split(',')[:2]
+        message = f'{self.TYPE_NAME} received request for setting socket {state} to state for {time_wait} seconds'
         if str(state) == "ON" or str(state) == "on":
             log(message)
             self._set_socket_state(True, time_wait)
@@ -133,7 +132,7 @@ class ESP8266SocketModule(base_module.Module):
             log(message)
             self._set_socket_state(False, time_wait)
         elif str(state) == "STATE" or str(state) == "state":
-            connection.send(self.get_measurement())
+            connection.send(self.get_measurement().encode('utf-8'))
 
 
 if __name__ == "__main__":

@@ -140,7 +140,7 @@ class Module(metaclass=ModuleMeta):
             'measurement': measurement, 'date': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         }
         for connection in open_connection((conf['host'], conf['port'])):
-            connection.send(json.dumps(data))
+            connection.send(json.dumps(data).encode('utf-8'))
             log('Module {} successfully uploaded its measurement'.format(self.name))
 
     @log_exceptions()

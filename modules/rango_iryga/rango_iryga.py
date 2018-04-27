@@ -64,7 +64,7 @@ class RangoIrygaModule(base_module.Module):
         try:
             response = requests.get("http://" + self.address + "/socket.lua")
             # Remove all characters other than letters, numbers or = and " if connection was successful
-            response_content = ''.join(e for e in response.content if e.isalnum() or e == '=' or e == '"')
+            response_content = ''.join(c for c in response.content.decode('utf-8') if c.isalnum() or c in ('=', '"'))
         except requests.ConnectionError:
             response_content = ''
         if not checker.match(str(response_content)):
@@ -204,7 +204,7 @@ class RangoIrygaModule(base_module.Module):
             pass
 
     def _react_to_connection(self, connection, _):
-        state, number, time_wait, repeats, = (str(connection.recv(1024)) + ',,,').split(',')[:4]
+        state, number, time_wait, repeats, = (connection.recv(1024).decode('utf-8') + ',,,').split(',')[:4]
         message = '{} received request for setting relay {} to state {} (seconds: {}, repeats {})'.format(
             self.TYPE_NAME, number, state, time_wait, repeats)
         if str(state).upper() == "ON":
@@ -214,7 +214,7 @@ class RangoIrygaModule(base_module.Module):
             log(message)
             self._set_relay_state(number, False, time_wait, repeats)
         elif str(state).upper() == "STATE":
-            connection.send(self.get_measurement())
+            connection.send(self.get_measurement().encode('utf-8'))
 
 
 if __name__ == "__main__":

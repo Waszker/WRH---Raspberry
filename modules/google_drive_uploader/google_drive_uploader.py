@@ -141,7 +141,8 @@ class GoogleDriveUploader(base_module.Module):
         """
         connection.send("Last successful upload done {} minutes ago".format(
             int((datetime.datetime.now() - self.last_upload).total_seconds() / 60)
-            if self.last_upload is not None else "..."))
+            if self.last_upload is not None else "..."
+        ).encode('utf-8'))
 
 
 if __name__ == "__main__":

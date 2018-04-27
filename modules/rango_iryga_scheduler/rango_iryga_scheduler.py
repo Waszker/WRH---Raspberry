@@ -402,7 +402,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
             time.sleep(60.0 - ((time.time() - start_time) % 60.0))
 
     def _react_to_connection(self, connection, _):
-        action, request = str(connection.recv(1024)).split('|')
+        action, request = connection.recv(1024).decode('utf-8').split('|')
         if action == "ADD" or action == "add":
             self.scenarios.append(RangoScenario(str(1) + RangoScenario.SEP + request))
         elif action == "DEL" or action == "del":
@@ -410,7 +410,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
         elif action == "ACT" or action == "act":
             self.scenarios[int(request)].toggle_activity()
         elif action == "MEASUREMENT" or action == "measurement":
-            connection.send(self.get_measurement())
+            connection.send(self.get_measurement().encode('utf-8'))
             return
 
         with open(RangoIrygaSchedulerModule._saved_scenarios_file, 'w+') as f:
