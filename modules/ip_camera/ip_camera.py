@@ -10,7 +10,7 @@ import time as t
 import requests
 
 from utils.decorators import in_thread, log_exceptions
-from utils.io import non_empty_input, non_empty_positive_numeric_input, log, Color
+from utils.io import non_empty_input, non_empty_positive_numeric_input, log, Color, wrh_input
 from utils.processes import print_process_errors, end_process
 from wrh_engine import module_base as base_module
 
@@ -37,7 +37,7 @@ class IpCameraModule(base_module.Module):
         Returns command used to start module as a new process.
         :return: Command to be executed when starting new process
         """
-        return ["/usr/bin/python2.7", "-m", "modules.ip_camera.ip_camera"]
+        return ["/usr/bin/python3.6", "-m", "modules.ip_camera.ip_camera"]
 
     def get_configuration_line(self):
         """
@@ -93,9 +93,11 @@ class IpCameraModule(base_module.Module):
         Returns connection status and response.
         """
         log('Provide new module information (leave fields blank if you don\'t want to change)')
-        self.name = raw_input('New module\'s name: ') or self.name
-        self.camera_address = raw_input("Please input new IP address of camera: ") or self.camera_address
-        self.camera_port = raw_input("Please input new port on which IP camera can be accessed: ") or self.camera_port
+        self.name = wrh_input(message='New module\'s name: ', allowed_empty=True) or self.name
+        self.camera_address = wrh_input(message="Please input new IP address of camera: ",
+                                        allowed_empty=True) or self.camera_address
+        self.camera_port = wrh_input(message="Please input new port on which IP camera can be accessed: ",
+                                     allowed_empty=True) or self.camera_port
         self.port = iinput("Please input new port on which streamed images can be accessed: ",
                            allowed_empty=True) or self.port
 
@@ -140,7 +142,7 @@ class IpCameraModule(base_module.Module):
             if image is not None:
                 try:
                     with open("/tmp/google_drive_upload/" + str(datetime.datetime.now()) + ".jpg", 'wb') as img:
-                        img.write(base64.decodestring(image))
+                        img.write(base64.decodebytes(image))
                 except IOError:
                     pass
 

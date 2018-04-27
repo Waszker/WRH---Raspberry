@@ -5,7 +5,7 @@ import sys
 import time
 
 from utils.decorators import in_thread, log_exceptions
-from utils.io import non_empty_input, non_empty_positive_numeric_input, log, Color
+from utils.io import non_empty_input, non_empty_positive_numeric_input, log, Color, wrh_input
 from wrh_engine import module_base as base_module
 
 ninput = non_empty_input
@@ -30,7 +30,7 @@ class SpeedTestModule(base_module.Module):
         Returns command used to start module as a new process.
         :return: Command to be executed when starting new process
         """
-        return ["/usr/bin/python2.7", "-m", "modules.speed_test.speed_test"]
+        return ["/usr/bin/python3.6", "-m", "modules.speed_test.speed_test"]
 
     def get_configuration_line(self):
         """
@@ -94,7 +94,7 @@ class SpeedTestModule(base_module.Module):
         log('Provide new module information (leave fields blank if you don\'t want to change)')
         log('Please note that changes other than name will always succeed')
         log('Name changing requires active Internet connection')
-        self.name = raw_input('New module\'s name: ') or self.name
+        self.name = wrh_input(message='New module\'s name: ', allowed_empty=True) or self.name
         self.interval = iinput("Please input new interval (in minutes) for taking consecutive measurements: ",
                                allowed_empty=True) or self.interval
         self.port = iinput("Please input new port on which this module will be listening for commands: ",

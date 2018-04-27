@@ -6,7 +6,7 @@ import time
 import Adafruit_DHT
 
 from utils.decorators import in_thread, log_exceptions
-from utils.io import non_empty_input, non_empty_positive_numeric_input, log, Color
+from utils.io import non_empty_input, non_empty_positive_numeric_input, log, Color, wrh_input
 from wrh_engine import module_base as base_module
 
 ninput = non_empty_input
@@ -36,7 +36,7 @@ class DHT22Module(base_module.Module):
         Returns command used to start module as a new process.
         :return: Command to be executed when starting new process
         """
-        return ["/usr/bin/python2.7", "-m", "modules.dht22.dht22"]
+        return ["/usr/bin/python3.6", "-m", "modules.dht22.dht22"]
 
     def get_configuration_line(self):
         """
@@ -84,7 +84,7 @@ class DHT22Module(base_module.Module):
         Returns connection status and response.
         """
         log('Provide new module information (leave fields blank if you don\'t want to change)')
-        self.name = raw_input('New module\'s name: ') or self.name
+        self.name = wrh_input(message='New module\'s name: ', allowed_empty=True) or self.name
         self.gpio = iinput("Please input new gpio pin number to which sensor is connected: ",
                            allowed_empty=True) or self.gpio
         self.interval = iinput("Please input new interval (in minutes) for taking consecutive measurements: ",

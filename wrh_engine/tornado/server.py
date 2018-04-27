@@ -49,14 +49,14 @@ class Restart(BaseHandler):
 
 class Request(BaseHandler):
     @tornado.gen.coroutine
-    def get(self):
+    async def get(self):
         host = self.get_argument("host")
         port = int(self.get_argument("port"))
         message = self.get_argument("message")
-        stream = yield TCPClient().connect(host, port)
+        stream = await TCPClient().connect(host, port)
         if message:
-            yield stream.write(bytes(message))
-        response = yield stream.read_until_close()
+            await stream.write(bytes(message))
+        response = await stream.read_until_close()
         stream.close()
         self.finish(response)
 
@@ -83,7 +83,7 @@ if __name__ == "__main__":
         classes, modules = resources.get_installed_modules_info()
         signal.signal(signal.SIGINT, sigint_handler)
         application.listen(8888)
-        print 'Tornado: Started.'
+        log('Tornado: Started.')
         tornado.ioloop.IOLoop.instance().start()
     except Exception as e:
         log(e, Color.EXCEPTION)

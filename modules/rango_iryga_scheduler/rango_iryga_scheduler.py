@@ -10,7 +10,7 @@ import time
 
 from modules.rango_iryga.rango_iryga import RangoIrygaModule
 from utils.decorators import in_thread, log_exceptions
-from utils.io import log, Color
+from utils.io import log, Color, wrh_input
 from utils.io import non_empty_positive_numeric_input as iinput
 from utils.sockets import send_message
 from wrh_engine import module_base as base_module
@@ -55,7 +55,7 @@ class WateringThread(threading.Thread):
 
     @staticmethod
     def get_real_relay_number(relay_order_number):
-        real_numbers = {i + 1: RangoIrygaModule.RELAYS[i] for i in xrange(4)}
+        real_numbers = {i + 1: RangoIrygaModule.RELAYS[i] for i in range(4)}
         try:
             real_number = real_numbers[relay_order_number]
         except (KeyError, ValueError):
@@ -167,7 +167,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
         Returns command used to start module as a new process.
         :return: Command to be executed when starting new process
         """
-        return ["/usr/bin/python2.7", "-m", "modules.rango_iryga_scheduler.rango_iryga_scheduler"]
+        return ["/usr/bin/python3.6", "-m", "modules.rango_iryga_scheduler.rango_iryga_scheduler"]
 
     def get_configuration_line(self):
         """
@@ -229,7 +229,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
         """
         log('Provide new module information (leave fields blank if you don\'t want to change)')
         log('Please note that changes other than name will always succeed')
-        self.name = raw_input('New module\'s name: ') or self.name
+        self.name = wrh_input(message='New module\'s name: ', allowed_empty=True) or self.name
         self.port = iinput("Please input new port on which this module will be listening for commands: ",
                            allowed_empty=True) or self.port
         self.rango_port = iinput("Please input new port number of Rango Iryga installed in this system: ",
@@ -267,7 +267,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
 
         repeats = [1, 4, 1, 1]
         times = [300, 80, 300, 300]
-        for i in xrange(4):
+        for i in range(4):
             representation += ' <tr>\n \
                                 <td>\n \
                                     <input type="checkbox" id="line' + str(i + 1) + id + '"/>\n \

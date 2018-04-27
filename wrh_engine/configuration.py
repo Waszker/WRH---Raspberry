@@ -1,7 +1,8 @@
 from utils.decorators import with_open
 from utils.io import *
 from wrh_engine.constants import WRH_CONFIGURATION_FILENAME
-from wrh_exceptions import *
+
+from wrh_engine.wrh_exceptions import UnknownModuleException, BadConfigurationException
 
 
 class ConfigurationParser:
@@ -14,9 +15,7 @@ class ConfigurationParser:
     def __init__(self, module_classes):
         """
         Creates configuration parses object that parses configuration file in the provided path.
-        :param configuration_file_path: filesystem path in which configuration file is present
         :param module_classes: dictionary of module classes, with keys being the class names and values class objects
-        :type configuration_file_path: str
         :type module_classes: dict
         :raises UnknownModuleException: configuration file contains unknown module info
         :raises BadConfigurationException: configuration file is invalid

@@ -3,11 +3,12 @@ import signal
 import socket
 import sys
 import threading
-import urllib2
+from urllib.error import URLError
+from urllib.request import Request, urlopen
 
 import requests
 
-from utils.io import non_empty_input, non_empty_positive_numeric_input, log, Color
+from utils.io import non_empty_input, non_empty_positive_numeric_input, log, Color, wrh_input
 from wrh_engine import module_base as base_module
 
 ninput = non_empty_input
@@ -20,7 +21,7 @@ class RangoIrygaModule(base_module.Module):
     """
     TYPE_NAME = "RANGO IRYGA"
     CONFIGURATION_LINE_PATTERN = "([0-9]{1,9});(.+?);(.+?);([1-9][0-9]{0,9})$"
-    RELAYS = [5, 4, 15, 14]
+    RELAYS = (5, 4, 15, 14)
     DELAY = 120
 
     def __init__(self, configuration_file_line=None):
@@ -33,7 +34,7 @@ class RangoIrygaModule(base_module.Module):
         Returns command used to start module as a new process.
         :return: Command to be executed when starting new process
         """
-        return ["/usr/bin/python2.7", "-m", "modules.rango_iryga.rango_iryga"]
+        return ["/usr/bin/python3.6", "-m", "modules.rango_iryga.rango_iryga"]
 
     def get_configuration_line(self):
         """
@@ -106,8 +107,9 @@ class RangoIrygaModule(base_module.Module):
         log('Provide new module information (leave fields blank if you don\'t want to change)')
         log('Please note that changes other than name will always succeed')
         log('Name changing requires active Internet connection')
-        self.name = raw_input('New module\'s name: ') or self.name
-        self.address = raw_input("Please input new Rango Iryga IP address: ") or self.address
+        self.name = wrh_input(message='New module\'s name: ', allowed_empty=True) or self.name
+        self.address = wrh_input(message="Please input new Rango Iryga IP address: ",
+                                 allowed_empty=True) or self.address
         self.port = iinput("Please input new port on which this module will be listening for commands: ",
                            allowed_empty=True) or self.port
 
@@ -144,7 +146,7 @@ class RangoIrygaModule(base_module.Module):
         thread_list = self._stop_already_working_relay_threads(int(relay_number))
 
         latency = 0
-        for i in xrange(repeats):
+        for i in range(repeats):
             self._create_watering_thread(thread_list, latency, relay_number, should_turn_on, duration)
             latency += (duration + RangoIrygaModule.DELAY)
 
@@ -186,7 +188,6 @@ class RangoIrygaModule(base_module.Module):
         return repeats
 
     def _set_relay_state_on_esp(self, relay_number, should_turn_on, duration):
-        # Then change relay's state
         try:
             relay_number = int(relay_number)
             state = "OFF"
@@ -195,9 +196,9 @@ class RangoIrygaModule(base_module.Module):
                 state) + "&gpio_num=" + str(
                 relay_number)
             try:
-                request = urllib2.Request(url)
-                urllib2.urlopen(request, timeout=5).read()
-            except urllib2.URLError, socket.timeout:
+                request = Request(url)
+                urlopen(request, timeout=5).read()
+            except (URLError, socket.timeout):
                 pass
         except ValueError:
             pass

@@ -7,7 +7,7 @@ import time
 
 from google_drive.google_drive import GoogleDriveManager
 from utils.decorators import in_thread, log_exceptions
-from utils.io import log, Color
+from utils.io import log, Color, wrh_input
 from utils.io import non_empty_input as ninput
 from utils.io import non_empty_positive_numeric_input as iinput
 from wrh_engine import module_base as base_module
@@ -32,7 +32,7 @@ class GoogleDriveUploader(base_module.Module):
         Returns command used to start module as a new process.
         :return: Command to be executed when starting new process
         """
-        return ["/usr/bin/python2.7", "-m", "modules.google_drive_uploader.google_drive_uploader"]
+        return ["/usr/bin/python3.6", "-m", "modules.google_drive_uploader.google_drive_uploader"]
 
     def get_configuration_line(self):
         """
@@ -80,10 +80,10 @@ class GoogleDriveUploader(base_module.Module):
         Returns connection status and response.
         """
         log('Provide new module information (leave fields blank if you don\'t want to change)')
-        self.name = raw_input('New module\'s name: ') or self.name
+        self.name = wrh_input(message='New module\'s name: ', allowed_empty=True) or self.name
         self.port = iinput("Please input new port on which this module will be listening for commands: ",
                            allowed_empty=True) or self.port
-        new_api_location = raw_input("Please input new GoogleAPI key location: ")
+        new_api_location = wrh_input(message="Please input new GoogleAPI key location: ", allowed_empty=True)
         if new_api_location:
             self.api_location = new_api_location
             self.drive = GoogleDriveManager(self.api_location, self.id)

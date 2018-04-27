@@ -16,7 +16,7 @@ class Overlord:
         :param configuration_parser: parser that returns information about modules registered for this particular system
         :type configuration_parser: ConfigurationParser
         """
-        tornado_command = ["/usr/bin/python2.7", "-m", "wrh_engine.tornado.server", WRH_CONFIGURATION_FILENAME]
+        tornado_command = ["/usr/bin/python3.6", "-m", "wrh_engine.tornado.server", WRH_CONFIGURATION_FILENAME]
         self.is_ending = False
         self.modules = configuration_parser.get_installed_modules()
         self.commands = [module.get_starting_command() for module in self.modules]
@@ -43,7 +43,7 @@ class Overlord:
         [end_process(process, 5) for process in self.processes]
 
     def _sigchld_handler(self, *_):
-        for i in xrange(len(self.processes)):
+        for i in range(len(self.processes)):
             if self.processes[i].poll() is None: continue
             log('OVERLORD resurrecting ' + str(self.commands[i]))
             self.processes[i] = subprocess.Popen(self.commands[i])

@@ -70,4 +70,4 @@ class ModuleDynamicLoader:
     def _check_module_abstractness(self):
         # Tries to instantiate each module class.
         # If there are some abstract methods not overridden the exception will be raised.
-        [m() for m in self.module_classes.itervalues()]
+        [m() for m in self.module_classes.values()]

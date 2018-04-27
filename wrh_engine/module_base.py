@@ -8,23 +8,22 @@ from abc import abstractmethod, ABCMeta
 import datetime
 
 from utils.decorators import in_thread, with_open, ignore_exceptions, log_exceptions
-from utils.io import log
+from utils.io import log, wrh_input
 from utils.sockets import await_connection, wait_bind_socket, open_connection
 from wrh_engine.constants import WRH_DATABASE_CONFIGURATION_FILENAME
 
 
 class ModuleMeta(ABCMeta):
     def __new__(cls, name, bases, attributes):
-        if not attributes.get('WRHID'): attributes['WRHID'] = name
+        if not attributes.get('WRHID', ''): attributes['WRHID'] = name
         if 'TYPE_NAME' not in attributes: raise TypeError('TYPE_NAME class attribute missing')
         return super(ModuleMeta, cls).__new__(cls, name, bases, attributes)
 
 
-class Module:
+class Module(metaclass=ModuleMeta):
     """
     Abstract base class for modules used in WRH.
     """
-    __metaclass__ = ModuleMeta
     TYPE_NAME = "AbstractModule"
     CONFIGURATION_LINE_PATTERN = None
 
@@ -89,7 +88,7 @@ class Module:
         """
         log("*** Registering new " + str(self.TYPE_NAME) + " module ***")
         self.id = new_id
-        self.name = raw_input("Module name: ")
+        self.name = wrh_input("Module name: ")
         # This method ends here because every module should have different
         # parameters descriptions
 

@@ -5,12 +5,12 @@ import signal
 import subprocess
 import sys
 import time as t
-from urllib2 import urlopen
+from urllib.request import urlopen
 
 import requests
 
 from utils.decorators import in_thread, log_exceptions
-from utils.io import non_empty_input, non_empty_positive_numeric_input, log, Color
+from utils.io import non_empty_input, non_empty_positive_numeric_input, log, Color, wrh_input
 from utils.processes import print_process_errors, end_process
 from wrh_engine import module_base as base_module
 
@@ -38,7 +38,7 @@ class CameraModule(base_module.Module):
         Returns command used to start module as a new process.
         :return: Command to be executed when starting new process
         """
-        return ["/usr/bin/python2.7", "-m", "modules.camera.camera"]
+        return ["/usr/bin/python3.6", "-m", "modules.camera.camera"]
 
     def get_configuration_line(self):
         """
@@ -83,7 +83,8 @@ class CameraModule(base_module.Module):
         base_module.Module.run_registration_procedure(self, new_id)
         self.gpio = ninput("Please input name of the webcam device (usually /dev/video#, # is the specific number): ")
         self.port = iinput("Please input port on which streamed images can be accessed: ")
-        self.login = raw_input("Please input login used to access the video stream (press ENTER if none): ")
+        self.login = wrh_input(message="Please input login used to access the video stream (press ENTER if none): ",
+                               allowed_empty=True)
         self.password = ninput("Please input password used to access the video stream: ") if self.login else ""
 
     def edit(self):
@@ -92,13 +93,17 @@ class CameraModule(base_module.Module):
         Returns connection status and response.
         """
         log('Provide new module information (leave fields blank if you don\'t want to change)')
-        self.name = raw_input('New module\'s name: ') or self.name
-        self.gpio = raw_input("Please input new name of the webcam device"
-                              "(usually /dev/video# where # is the specific number): ") or self.gpio
+        self.name = wrh_input(message='New module\'s name: ', allowed_empty=True) or self.name
+        self.gpio = wrh_input(
+            message="Please input new name of the webcam device (usually /dev/video# where # is the specific number): ",
+            allowed_empty=True
+        ) or self.gpio
         self.port = iinput("Please input new port on which streamed images can be accessed: ",
                            allowed_empty=True) or self.port
-        self.login = raw_input("Please input new login used to access the video stream: ") or self.login
-        self.password = raw_input("Please input new password used to access the video stream: ") or self.password
+        self.login = wrh_input(message="Please input new login used to access the video stream: ",
+                               allowed_empty=True) or self.login
+        self.password = wrh_input(message="Please input new password used to access the video stream: ",
+                                  allowed_empty=True) or self.password
 
     def start_work(self):
         """

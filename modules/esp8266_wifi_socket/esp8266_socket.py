@@ -2,11 +2,12 @@ import re
 import signal
 import socket
 import sys
-import urllib2
+from urllib.error import URLError
+from urllib.request import Request, urlopen
 
 import requests
 
-from utils.io import non_empty_input, non_empty_positive_numeric_input, log, Color
+from utils.io import non_empty_input, non_empty_positive_numeric_input, log, Color, wrh_input
 from wrh_engine import module_base as base_module
 
 ninput = non_empty_input
@@ -26,7 +27,7 @@ class ESP8266SocketModule(base_module.Module):
         Returns command used to start module as a new process.
         :return: Command to be executed when starting new process
         """
-        return ["/usr/bin/python2.7", "-m", "modules.esp8266_wifi_socket.esp8266_socket"]
+        return ["/usr/bin/python3.6", "-m", "modules.esp8266_wifi_socket.esp8266_socket"]
 
     def get_configuration_line(self):
         """
@@ -83,8 +84,9 @@ class ESP8266SocketModule(base_module.Module):
         Returns connection status and response.
         """
         log('Provide new module information (leave fields blank if you don\'t want to change)')
-        self.name = raw_input('New module\'s name: ') or self.name
-        self.gpio = raw_input("Please input new IP address of ESP8266 device: ") or self.gpio
+        self.name = wrh_input(message='New module\'s name: ', allowed_empty=True) or self.name
+        self.gpio = wrh_input(message="Please input new IP address of ESP8266 device: ",
+                              allowed_empty=True) or self.gpio
         self.port = npinput("Please input new port on which module will be listening for commands: ",
                             allowed_empty=True) or self.port
 
@@ -115,9 +117,9 @@ class ESP8266SocketModule(base_module.Module):
         state = "ON" if should_turn_on else "OFF"
         url = "http://" + self.gpio + "/socket.lua?wait=" + time_wait + "&state=" + state
         try:
-            request = urllib2.Request(url)
-            urllib2.urlopen(request, timeout=5).read()
-        except urllib2.URLError, socket.timeout:
+            request = Request(url)
+            urlopen(request, timeout=5).read()
+        except (URLError, socket.timeout):
             pass
 
     def _react_to_connection(self, connection, _):
