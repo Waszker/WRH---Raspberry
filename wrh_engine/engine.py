@@ -3,7 +3,7 @@ import os
 import signal
 import sys
 
-from utils.io import *
+from utils.io import log, Color, non_empty_input
 from wrh_engine.configuration import ConfigurationParser, BadConfigurationException, UnknownModuleException
 from wrh_engine.constants import WRH_MODULES_FOLDER
 from wrh_engine.module_loader import ModuleDynamicLoader
@@ -28,12 +28,12 @@ class WRHEngine:
         """
         self.__parse_args(argv)
         self.should_end = False
-        log("WRH System main engine starting", Color.BOLD, Color.UNDERLINE)
-        log("Scanning for available modules")
+        log('WRH System main engine starting', Color.BOLD, Color.UNDERLINE)
+        log('Scanning for available modules')
         loader = ModuleDynamicLoader(WRH_MODULES_FOLDER)
         self.module_classes = loader.get_module_classes()
-        log("Found modules: ")
-        [log('*' + str(module_name), Color.BLUE) for module_name in self.module_classes.keys()]
+        log('Found modules: ')
+        [log(f'*{module_name}', Color.BLUE) for module_name in self.module_classes.keys()]
         self.overlord_instances = []
 
     def start(self):
@@ -74,34 +74,33 @@ class WRHEngine:
     def _add_new_module(self):
         log("\nChose which module to add")
         module_classes = self.module_classes.values()
-        [log('%d) %s' % (number, m_class.TYPE_NAME)) for number, m_class in enumerate(module_classes)]
+        [log(f'{i}) {m_class.TYPE_NAME}') for i, m_class in enumerate(module_classes)]
 
-        choice = ninput('> ')
         try:
-            module = module_classes[int(choice)]()
+            module = module_classes[int(ninput('> '))]()
             module.run_registration_procedure(self.configuration_parser.get_new_module_id())
             self.installed_modules.append(module)
             self.configuration_parser.save_configuration(self.installed_modules)
-            log("Success!", Color.GREEN)
+            log('Success!', Color.GREEN)
         except (KeyError, ValueError, IndexError):
             pass
 
     def _remove_module(self):
         log('\nChoose which module to remove')
-        [log('%d) %s named %s' % (i, module.TYPE_NAME, module.name)) for i, module in enumerate(self.installed_modules)]
+        [log(f'{i}) {module.TYPE_NAME} named {module.name}') for i, module in enumerate(self.installed_modules)]
         choice = ninput('> ')
         try:
             del self.installed_modules[int(choice)]
             self.configuration_parser.save_configuration(self.installed_modules)
-            log("Success!", Color.GREEN)
+            log('Success!', Color.GREEN)
         except (KeyError, ValueError, IndexError):
             pass
 
     def _show_installed_modules(self):
         self.installed_modules = self.configuration_parser.get_installed_modules()
-        log("\nDetected installed modules:")
-        [log('%d) %s named %s' % (i, module.TYPE_NAME, module.name), Color.HEADER)
-         for i, module in enumerate(self.installed_modules)]
+        log('\nDetected installed modules:')
+        [log(f'{i}) {module.TYPE_NAME} named {module.name}', Color.HEADER) for i, module in
+         enumerate(self.installed_modules)]
 
     def _check_configuration(self):
         try:

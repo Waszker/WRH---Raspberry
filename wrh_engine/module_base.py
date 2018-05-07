@@ -86,9 +86,9 @@ class Module(metaclass=ModuleMeta):
         """
         Runs interactive procedure to register new module.
         """
-        log("*** Registering new " + str(self.TYPE_NAME) + " module ***")
+        log(f'*** Registering new {self.TYPE_NAME} module ***')
         self.id = new_id
-        self.name = wrh_input("Module name: ")
+        self.name = wrh_input('Module name: ')
         # This method ends here because every module should have different
         # parameters descriptions
 
@@ -141,18 +141,19 @@ class Module(metaclass=ModuleMeta):
         }
         for connection in open_connection((conf['host'], conf['port'])):
             connection.send(json.dumps(data).encode('utf-8'))
-            log('Module {} successfully uploaded its measurement'.format(self.name))
+            log(f'Module {self.name} successfully uploaded its measurement')
 
     @log_exceptions()
     def _web_service_thread(self):
         predicate = (lambda: self._should_end is False)
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        bind_result = wait_bind_socket(self.socket, '', self.port, 10, predicate=predicate,
-                                       error_message="%s %s port bind failed. \
-                                       (ERROR_CODE, ERROR_MESSAGE) = " % (Module.TYPE_NAME, self.name))
+        bind_result = wait_bind_socket(
+            self.socket, '', self.port, 10, predicate=predicate,
+            error_message=f'{self.TYPE_NAME} {self.name} port bind failed. (ERROR_CODE, ERROR_MESSAGE) = '
+        )
         if bind_result is True:
-            log("%s %s started listening" % (self.TYPE_NAME, self.name))
+            log(f'{self.TYPE_NAME} {self.name} started listening')
             self.socket.listen(10)
             await_connection(self.socket, self._start_new_connection_thread, predicate=predicate,
                              close_connection=False)

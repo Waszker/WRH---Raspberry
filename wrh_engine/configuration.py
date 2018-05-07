@@ -1,5 +1,5 @@
 from utils.decorators import with_open
-from utils.io import *
+from utils.io import log, Color
 from wrh_engine.constants import WRH_CONFIGURATION_FILENAME
 
 from wrh_engine.wrh_exceptions import UnknownModuleException, BadConfigurationException
@@ -11,6 +11,7 @@ class ConfigurationParser:
     Configuration file should store only one line for each installed module.
     Each line should start with unique module number and its unique id - that's the only defined configuration option!
     """
+    SEP = ';'
 
     def __init__(self, module_classes):
         """
@@ -23,7 +24,7 @@ class ConfigurationParser:
         try:
             open(WRH_CONFIGURATION_FILENAME).close()
         except IOError:
-            log("No configuration file found, creating new one", Color.WARNING)
+            log('No configuration file found, creating new one', Color.WARNING)
             self.save_configuration([])
         self.module_classes = module_classes
         self._check_file_sanity()
@@ -52,7 +53,9 @@ class ConfigurationParser:
         :param _file_: opened configuration file object, passed by decorator
         :type _file_: file
         """
-        _file_.write('\n'.join([module.WRHID + ';' + module.get_configuration_line() for module in installed_modules]))
+        _file_.write(
+            '\n'.join([f'{module.WRHID}{self.SEP}{module.get_configuration_line()}' for module in installed_modules])
+        )
 
     @with_open(WRH_CONFIGURATION_FILENAME, 'r')
     def get_new_module_id(self, _file_=None):
@@ -70,20 +73,21 @@ class ConfigurationParser:
             sanity = [self.module_classes[self._get_module_class_name_from_line(line)]
                           .is_configuration_line_sane(self._cut_module_name(line)) for line in _file_]
         except KeyError as e:
-            raise UnknownModuleException("Unknown module %s" % str(e))
+            raise UnknownModuleException(f'Unknown module {e}')
 
         if not all(sanity):
             raise BadConfigurationException(
-                "Bad configuration line(s): " + ', '.join(([str(i) for i, b in enumerate(sanity) if b is False])))
+                f'Bad configuration line(s): {", ".join(([str(i) for i, b in enumerate(sanity) if b is False]))}'
+            )
 
-    @staticmethod
-    def _cut_module_name(line):
-        return ';'.join(line.split(";")[1:])
+    @classmethod
+    def _cut_module_name(cls, line):
+        return line[line.index(cls.SEP) + 1:]
 
-    @staticmethod
-    def _get_module_class_name_from_line(line):
-        return line.split(";")[0]
+    @classmethod
+    def _get_module_class_name_from_line(cls, line):
+        return line[:line.index(cls.SEP)]
 
-    @staticmethod
-    def _get_module_id_from_line(line):
-        return int(line.split(";")[1])
+    @classmethod
+    def _get_module_id_from_line(cls, line):
+        return int(line.split(cls.SEP)[1])

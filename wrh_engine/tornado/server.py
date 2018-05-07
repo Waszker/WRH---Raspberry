@@ -1,4 +1,3 @@
-#!/bin/python2.7
 import os
 import signal
 
@@ -12,7 +11,7 @@ from utils.decorators import log_exceptions
 from utils.io import log, Color
 from wrh_engine.tornado import resources
 
-__UPLOADS__ = "/tmp/"
+__UPLOADS__ = '/tmp/'
 modules, classes = [], []
 ip = None
 
@@ -26,13 +25,13 @@ class Userform(BaseHandler):
     def get(self):
         global modules, ip
         try:
-            requested_module = self.get_argument("class")
+            requested_module = self.get_argument('class')
             class_type_number = requested_module if requested_module in [c.WRHID for c in classes] else -1
         except tornado.web.MissingArgumentError:
             class_type_number = -1
-        ip = str(self.request.host).split(":")[0]
+        ip = str(self.request.host).split(':')[0]
 
-        self.render("index.html", ipaddress=ip, target=class_type_number, classes=classes, modules=modules)
+        self.render('index.html', ipaddress=ip, target=class_type_number, classes=classes, modules=modules)
 
 
 class Uptime(BaseHandler):
@@ -49,9 +48,9 @@ class Restart(BaseHandler):
 
 class Request(BaseHandler):
     async def get(self):
-        host = self.get_argument("host")
-        port = int(self.get_argument("port"))
-        message = self.get_argument("message")
+        host = self.get_argument('host')
+        port = int(self.get_argument('port'))
+        message = self.get_argument('message')
         stream = await TCPClient().connect(host, port)
         if message:
             await stream.write(message.encode('utf-8'))
@@ -63,13 +62,13 @@ class Request(BaseHandler):
 
 
 application = tornado.web.Application([
-    (r"/", Userform),
-    (r"/uptime", Uptime),
-    (r"/restart", Restart),
-    (r"/request", Request)
+    (r'/', Userform),
+    (r'/uptime', Uptime),
+    (r'/restart', Restart),
+    (r'/request', Request)
 ],
     debug=True,
-    static_path=os.path.join(os.path.dirname("wrh_engine/tornado"), "tornado")
+    static_path=os.path.join(os.path.dirname('wrh_engine/tornado'), 'tornado')
 )
 
 

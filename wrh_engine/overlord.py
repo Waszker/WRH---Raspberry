@@ -1,6 +1,8 @@
+import signal
 import subprocess
 
-from utils.processes import *
+from utils.io import log
+from utils.processes import end_process
 from wrh_engine.constants import WRH_CONFIGURATION_FILENAME
 
 
@@ -45,5 +47,5 @@ class Overlord:
     def _sigchld_handler(self, *_):
         for i in range(len(self.processes)):
             if self.processes[i].poll() is None: continue
-            log('OVERLORD resurrecting ' + str(self.commands[i]))
+            log(f'OVERLORD resurrecting {self.commands[i]}')
             self.processes[i] = subprocess.Popen(self.commands[i])

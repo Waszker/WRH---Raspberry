@@ -1,4 +1,3 @@
-#!/bin/python2
 import datetime
 import subprocess as s
 
