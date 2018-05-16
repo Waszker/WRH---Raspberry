@@ -109,9 +109,7 @@ class Module(metaclass=ModuleMeta):
         is needed.
         """
         signal.signal(signal.SIGINT, self._sigint_handler)
-        web_service_thread = threading.Thread(target=self._web_service_thread)
-        web_service_thread.daemon = False
-        web_service_thread.start()
+        self._web_service_thread()
 
     @abstractmethod
     def get_html_representation(self, website_host_address):
@@ -123,7 +121,7 @@ class Module(metaclass=ModuleMeta):
         """
         pass
 
-    @ignore_exceptions((KeyError, ValueError))
+    @ignore_exceptions(KeyError, ValueError)
     @with_open(WRH_DATABASE_CONFIGURATION_FILENAME, 'r')
     def _send_measurement(self, measurement, _file_=None):
         """
@@ -143,16 +141,17 @@ class Module(metaclass=ModuleMeta):
             connection.send(json.dumps(data).encode('utf-8'))
             log(f'Module {self.name} successfully uploaded its measurement')
 
+    @in_thread
     @log_exceptions()
     def _web_service_thread(self):
-        predicate = (lambda: self._should_end is False)
+        predicate = lambda: not self._should_end
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         bind_result = wait_bind_socket(
             self.socket, '', self.port, 10, predicate=predicate,
             error_message=f'{self.TYPE_NAME} {self.name} port bind failed. (ERROR_CODE, ERROR_MESSAGE) = '
         )
-        if bind_result is True:
+        if bind_result:
             log(f'{self.TYPE_NAME} {self.name} started listening')
             self.socket.listen(10)
             await_connection(self.socket, self._start_new_connection_thread, predicate=predicate,
@@ -175,6 +174,6 @@ class Module(metaclass=ModuleMeta):
 
     def _sigint_handler(self, *_):
         self._should_end = True
-        if self.socket is not None:
+        if self.socket:
             self.socket.shutdown(socket.SHUT_RDWR)
             self.socket.close()
