@@ -140,7 +140,7 @@ class RangoScenario:
     @in_thread
     def _activate(self, rango_port):
         self._cancel_all_watering_threads()
-        delay = 5  # wait 5 seconds before activating first line
+        delay = 30  # wait 30 seconds before activating first line
         for line, atime, repeats in zip(self.active_lines, self.line_activation_times, self.line_activation_repeats):
             watering_thread = WateringThread(rango_port, line, atime, repeats, delay=delay)
             watering_thread.start()
