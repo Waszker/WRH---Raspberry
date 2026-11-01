@@ -156,6 +156,43 @@
         }
     }
 
+    /* ---------- Stare formaty odpowiedzi modułów ----------
+     * Moduły sprzed zmiany na JSON odpowiadają tekstem/HTML-em. Dzięki tym parserom nowy interfejs
+     * może działać z wciąż uruchomionymi starymi procesami modułów (np. test obok wersji produkcyjnej). */
+    const legacy = {
+        /* '<a style="color: green...">OFF (0)</a>&<a ...>ON (3)</a>&...' -> {relays: [...]} (kolejność GPIO 5,4,15,14) */
+        rango(text, gpios) {
+            const parts = String(text).split('&');
+            if (parts.length < gpios.length) return null;
+            return { relays: gpios.map((gpio, i) => {
+                const m = /(ON|OFF|\?)\s*\((\d+)\)/i.exec(parts[i].replace(/<[^>]*>/g, ''));
+                return { gpio: gpio, state: m && m[1] !== '?' ? m[1].toUpperCase() : 'UNKNOWN', repeats: m ? parseInt(m[2], 10) : 0 };
+            }) };
+        },
+        /* 'ON' / 'OFF' -> {state} */
+        esp8266(text) {
+            const v = String(text).replace(/<[^>]*>/g, '').trim().toUpperCase();
+            return { state: v === 'ON' || v === 'OFF' ? v : 'UNKNOWN' };
+        },
+        /* '55.1;21.4' ('?;?' przed pomiarem) -> {humidity, temperature} */
+        dht22(text) {
+            const [h, t] = String(text).split(';').map((v) => (isNaN(parseFloat(v)) ? null : parseFloat(v)));
+            return { humidity: h === undefined ? null : h, temperature: t === undefined ? null : t };
+        },
+        /* '12.34 Mbit/s 5.67 Mbit/s' -> {download, upload, unit} */
+        speedTest(text) {
+            const m = /^\s*(\S+)\s*(\S*)\s+(\S+)\s*(\S*)\s*$/.exec(String(text));
+            if (!m) return null;
+            const num = (v) => (isNaN(parseFloat(v)) ? null : parseFloat(v));
+            return { download: num(m[1]), upload: num(m[3]), unit: m[2] || m[4] || 'Mbit/s' };
+        },
+        /* 'Last successful upload done 17 minutes ago' ('...' gdy brak) -> {minutes_ago} */
+        googleDrive(text) {
+            const m = /(\d+)\s*minutes/.exec(String(text));
+            return { minutes_ago: m ? parseInt(m[1], 10) : null };
+        }
+    };
+
     /* ---------- Toasty ---------- */
 
     function toast(message, kind, durationMs) {
@@ -319,7 +356,7 @@
 
     Object.assign(WRH, {
         WrhError, request: wrhRequest, fetchJson, errorText, escapeHtml, icon, plural, formatNumber, formatDuration,
-        readInt, stateFromModule, setBadge, setBusy, toast, defineModule, runCommand, refreshAll, refreshType
+        readInt, stateFromModule, setBadge, setBusy, toast, defineModule, runCommand, refreshAll, refreshType, legacy
     });
     window.wrhRequest = wrhRequest;
 

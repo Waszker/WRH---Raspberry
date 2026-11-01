@@ -16,7 +16,8 @@
         return {
             async refresh() {
                 try {
-                    const data = await ctx.request('');
+                    let data = await ctx.request('');
+                    if (typeof data === 'string') data = WRH.legacy.speedTest(data);
                     if (!data || typeof data !== 'object') throw new WRH.WrhError('invalid');
                     const unit = UNIT_LABELS[data.unit] || data.unit || 'Mb/s';
                     download.innerHTML = valueHtml(data.download, unit);

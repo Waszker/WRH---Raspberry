@@ -14,7 +14,8 @@
         return {
             async refresh() {
                 try {
-                    const data = await ctx.request('');
+                    let data = await ctx.request('');
+                    if (typeof data === 'string') data = WRH.legacy.dht22(data);
                     if (!data || typeof data !== 'object') throw new WRH.WrhError('invalid');
                     temperature.innerHTML = valueHtml(data.temperature, '°C');
                     humidity.innerHTML = valueHtml(data.humidity, '%');

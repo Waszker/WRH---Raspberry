@@ -18,7 +18,8 @@
         return {
             async refresh() {
                 try {
-                    const data = await ctx.request('');
+                    let data = await ctx.request('');
+                    if (typeof data === 'string') data = WRH.legacy.googleDrive(data);
                     if (!data || typeof data !== 'object') throw new WRH.WrhError('invalid');
                     const minutes = data.minutes_ago;
                     label.textContent = minutes === null || minutes === undefined

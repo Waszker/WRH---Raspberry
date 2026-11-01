@@ -146,7 +146,8 @@
         return {
             async refresh() {
                 try {
-                    const data = await ctx.request('STATE');
+                    let data = await ctx.request('STATE');
+                    if (typeof data === 'string') data = WRH.legacy.rango(data, lines.map((l) => l.gpio));
                     if (!data || !Array.isArray(data.relays)) throw new WRH.WrhError('invalid');
                     let unknown = false;
                     lines.forEach((line) => {

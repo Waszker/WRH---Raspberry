@@ -125,8 +125,10 @@ if __name__ == "__main__":
     try:
         classes, modules = resources.get_installed_modules_info()
         signal.signal(signal.SIGINT, sigint_handler)
-        application.listen(8888)
-        log('Tornado: Started.')
+        # WRH_WEB_PORT lets a second instance (e.g. a test checkout) run next to the production one
+        web_port = int(os.environ.get('WRH_WEB_PORT', 8888))
+        application.listen(web_port)
+        log('Tornado: Started on port {}.'.format(web_port))
         tornado.ioloop.IOLoop.instance().start()
     except Exception as e:
         log(e, Color.EXCEPTION)

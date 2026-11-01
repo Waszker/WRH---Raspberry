@@ -56,7 +56,8 @@
         return {
             async refresh() {
                 try {
-                    const data = await ctx.request('STATE');
+                    let data = await ctx.request('STATE');
+                    if (typeof data === 'string') data = WRH.legacy.esp8266(data);
                     if (!data || typeof data !== 'object') throw new WRH.WrhError('invalid');
                     const state = WRH.stateFromModule(data.state);
                     WRH.setBadge(badge, state);
