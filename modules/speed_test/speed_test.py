@@ -1,3 +1,4 @@
+import json
 import re
 import signal
 import subprocess
@@ -121,7 +122,22 @@ class SpeedTestModule(base_module.Module):
         return self.html_repr
 
     def _react_to_connection(self, connection, _):
-        connection.send(f'{self.last_download} {self.last_upload}'.encode('utf-8'))
+        # Response: {"download": <number or null>, "upload": <number or null>, "unit": "Mbit/s"}
+        download, download_unit = self._split_speed_value(self.last_download)
+        upload, upload_unit = self._split_speed_value(self.last_upload)
+        response = {'download': download, 'upload': upload, 'unit': download_unit or upload_unit or 'Mbit/s'}
+        connection.send(json.dumps(response).encode('utf-8'))
+
+    @staticmethod
+    def _split_speed_value(value):
+        """
+        Splits speedtest-cli value like "12.34 Mbit/s" into (12.34, "Mbit/s"). Unknown values ("? Mbit/s") give None.
+        """
+        number, _, unit = str(value).strip().partition(' ')
+        try:
+            return float(number), unit.strip() or None
+        except ValueError:
+            return None, unit.strip() or None
 
     @in_thread
     @log_exceptions()

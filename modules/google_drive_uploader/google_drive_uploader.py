@@ -1,4 +1,5 @@
 import datetime
+import json
 import os
 import re
 import signal
@@ -139,10 +140,10 @@ class GoogleDriveUploader(base_module.Module):
         Generally respond to incoming connection.
         Maybe send some information about current module state?
         """
-        connection.send("Last successful upload done {} minutes ago".format(
-            int((datetime.datetime.now() - self.last_upload).total_seconds() / 60)
-            if self.last_upload is not None else "..."
-        ).encode('utf-8'))
+        # Response: {"minutes_ago": <minutes since last successful upload or null if none yet>}
+        minutes_ago = int((datetime.datetime.now() - self.last_upload).total_seconds() / 60) \
+            if self.last_upload is not None else None
+        connection.send(json.dumps({'minutes_ago': minutes_ago}).encode('utf-8'))
 
 
 if __name__ == "__main__":

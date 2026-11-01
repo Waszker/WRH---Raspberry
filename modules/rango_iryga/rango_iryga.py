@@ -1,3 +1,4 @@
+import json
 import re
 import signal
 import socket
@@ -56,7 +57,8 @@ class RangoIrygaModule(base_module.Module):
 
     def get_measurement(self):
         """
-        Returns measurements taken by this module
+        Returns measurements taken by this module: state of every relay (in RELAYS order) as a dict
+        {"relays": [{"gpio": 5, "state": "ON" | "OFF" | "UNKNOWN", "repeats": <alive watering threads>}, ...]}
         """
         repeats = [sum([thread.isAlive() for thread in self.relay_actions[relay]]) for relay in RangoIrygaModule.RELAYS]
         value_finding_pattern = ".+?value=\"(.+?)\".+?value=\"(.+?)\".+?value=\"(.+?)\".+?value=\"(.+?)\".+?value=\"(.+?)\".+?value=\"(.+?)\".+?value=\"(.+?)\".+?value=\"(.+?)\".*$"
@@ -68,22 +70,14 @@ class RangoIrygaModule(base_module.Module):
         except requests.ConnectionError:
             response_content = ''
         if not checker.match(str(response_content)):
-            state = "<a style=\"color: black; font-size: 25px\">? (" + str(repeats[0]) + ")</a>&" \
-                                                                                         "<a style=\"color: black; font-size: 25px\">? (" + str(
-                repeats[1]) + ")</a>&" \
-                              "<a style=\"color: black; font-size: 25px\">? (" + str(repeats[2]) + ")</a>&" \
-                                                                                                   "<a style=\"color: black; font-size: 25px\">? (" + str(
-                repeats[3]) + ")</a>"
+            states = ["UNKNOWN"] * len(RangoIrygaModule.RELAYS)
         else:
             # Socket returns opposite state - we need to change its response
-            true_state = {"ON": "<a style=\"color: green; font-size: 25px\">OFF",
-                          "OFF": "<a style=\"color: red; font-size: 25px\">ON"}
+            true_state = {"ON": "OFF", "OFF": "ON"}
             search = re.search(value_finding_pattern, str(response_content))
-            state = "" + true_state[search.group(1)] + " (" + str(repeats[0]) + ")</a>&" + true_state[
-                search.group(3)] + " (" + str(repeats[1]) + ")</a>&" + true_state[
-                        search.group(5)] + " (" + str(repeats[2]) + ")</a>&" + true_state[search.group(7)] + " (" + str(
-                repeats[3]) + ")</a>"
-        return state
+            states = [true_state.get(search.group(group), "UNKNOWN") for group in (1, 3, 5, 7)]
+        return {"relays": [{"gpio": relay, "state": state, "repeats": repeat}
+                           for relay, state, repeat in zip(RangoIrygaModule.RELAYS, states, repeats)]}
 
     def get_module_description(self):
         """
@@ -214,7 +208,7 @@ class RangoIrygaModule(base_module.Module):
             log(message)
             self._set_relay_state(number, False, time_wait, repeats)
         elif str(state).upper() == "STATE":
-            connection.send(self.get_measurement().encode('utf-8'))
+            connection.send(json.dumps(self.get_measurement()).encode('utf-8'))
 
 
 if __name__ == "__main__":

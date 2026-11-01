@@ -1,18 +1,20 @@
-<div class="card-panel">
-    <script>
-        function updateMeasurementsSpeedtest{id}(text) {{
-            document.getElementById("speedTestDiv{id}").innerHTML = text;
-        }}
-
-        function getMeasurements{id}() {{
-            getRequest("localhost", {port}, "", updateMeasurementsSpeedtest{id});
-        }}
-
-        getMeasurements{id}();
-        setInterval(function() {{
-            getMeasurements{id}();
-        }}, 60*1000);
-    </script>
-    <h5>{name}</h5>
-    <div id="speedTestDiv{id}" class="speedTestDiv"></div>
-</div>
+<article class="card" data-wrh-module="speed-test" data-port="{port}" data-module-id="{id}">
+    <header class="card-head">
+        <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-gauge"/></svg></span>
+        <h2 class="card-title">{name}</h2>
+        <button type="button" class="icon-btn" data-action="refresh" aria-label="Odśwież">
+            <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg>
+        </button>
+    </header>
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-label"><svg class="icon" aria-hidden="true"><use href="#i-down"/></svg>Pobieranie</div>
+            <div class="stat-value stat-value--big" data-role="download"><span class="spinner spinner--lg"></span></div>
+        </div>
+        <div class="stat">
+            <div class="stat-label"><svg class="icon" aria-hidden="true"><use href="#i-up"/></svg>Wysyłanie</div>
+            <div class="stat-value stat-value--big" data-role="upload"><span class="spinner spinner--lg"></span></div>
+        </div>
+    </div>
+    <div class="card-msg" data-role="error" hidden></div>
+</article>

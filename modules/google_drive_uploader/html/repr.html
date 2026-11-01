@@ -1,18 +1,11 @@
-<div class="card-panel">
-    <script>
-        function updateLastUpload_{id}(text) {{
-            document.getElementById("googleDriveUploaderDiv{id}").innerHTML = text;
-        }}
-
-        function getLastUpload_{id}() {{
-            getRequest("localhost", {port}, "", updateLastUpload_{id});
-        }}
-
-        getLastUpload_{id}();
-        setInterval(function() {{
-            getLastUpload_{id}();
-        }}, 60*1000);
-    </script>
-    <h5>{name}</h5>
-    <div id="googleDriveUploaderDiv{id}" class="googleDriveUploaderDiv"></div>
-</div>
+<article class="card" data-wrh-module="google-drive-uploader" data-port="{port}" data-module-id="{id}">
+    <header class="card-head">
+        <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-cloud"/></svg></span>
+        <h2 class="card-title">{name}</h2>
+        <button type="button" class="icon-btn" data-action="refresh" aria-label="Odśwież">
+            <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg>
+        </button>
+    </header>
+    <p class="big-text">Ostatni udany upload:<strong data-role="last-upload"><span class="spinner"></span></strong></p>
+    <div class="card-msg" data-role="error" hidden></div>
+</article>

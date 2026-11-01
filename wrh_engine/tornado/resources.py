@@ -18,12 +18,12 @@ def get_installed_modules_info():
 
 def get_system_stats():
     now = datetime.datetime.now()
-    stat_string = "Date: %02i-%02i-%02i <br />" % (now.day, now.month, now.year)
-    stat_string += "Hour: %02i:%02i <br />" % (now.hour, now.minute)
-    stat_string += "Uptime: " + get_uptime() + "<br />"
-    stat_string += "CPU temp: " + str(round(get_cpu_temp(), 1)) + "&deg;C <br />"
-
-    return stat_string
+    return {
+        'date': '%02i-%02i-%04i' % (now.day, now.month, now.year),
+        'time': '%02i:%02i' % (now.hour, now.minute),
+        'uptime': get_uptime(),
+        'cpu_temp': round(get_cpu_temp(), 1),
+    }
 
 
 def restart():
