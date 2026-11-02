@@ -185,11 +185,6 @@
             if (!m) return null;
             const num = (v) => (isNaN(parseFloat(v)) ? null : parseFloat(v));
             return { download: num(m[1]), upload: num(m[3]), unit: m[2] || m[4] || 'Mbit/s' };
-        },
-        /* 'Last successful upload done 17 minutes ago' ('...' gdy brak) -> {minutes_ago} */
-        googleDrive(text) {
-            const m = /(\d+)\s*minutes/.exec(String(text));
-            return { minutes_ago: m ? parseInt(m[1], 10) : null };
         }
     };
 

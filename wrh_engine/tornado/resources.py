@@ -12,7 +12,8 @@ def get_installed_modules_info():
     modules_classes = loader.get_module_classes()
     parser = ConfigurationParser(modules_classes)
     modules = parser.get_installed_modules()
-    unique_classes = list({modules_classes[m.WRHID] for m in modules})
+    # Modules can opt out of the web UI with WEB_VISIBLE = False (e.g. background uploaders)
+    unique_classes = [c for c in {modules_classes[m.WRHID] for m in modules} if getattr(c, 'WEB_VISIBLE', True)]
     return sorted(unique_classes, key=lambda x: x.WRHID), modules
 
 

@@ -111,6 +111,9 @@ class Module(metaclass=ModuleMeta):
         signal.signal(signal.SIGINT, self._sigint_handler)
         self._web_service_thread()
 
+    # Set WEB_VISIBLE = False in a subclass to hide the module from the web UI (no tab, no cards)
+    WEB_VISIBLE = True
+
     @abstractmethod
     def get_html_representation(self, website_host_address):
         """

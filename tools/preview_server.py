@@ -14,7 +14,7 @@ Przydatne adresy:
     /                                   widok System
     /?class=RangoIrygaModule            nawadnianie (linia 2 włączona, pozostały 3 cykle)
     /?class=ESP8266SocketModule         gniazdka (jedno ON, jedno OFF, jedno symuluje brak odpowiedzi - port 9999)
-    /?class=DHT22Module, /?class=SpeedTestModule, /?class=GoogleDriveUploader
+    /?class=DHT22Module, /?class=SpeedTestModule
     /?class=RangoIrygaSchedulerModule   starszy moduł (markup w stylu Materialize), jeśli da się go zaimportować
     ...&theme=dark / ...&theme=light    wymuszenie motywu
     ...&delay=2500                      opóźnia zdarzenie load (do zrzutów: firefox --headless --screenshot)
@@ -58,7 +58,6 @@ RANGO = module_class('RangoIrygaModule', 'RANGO IRYGA')
 ESP = module_class('ESP8266SocketModule', 'ESP8266 WIFI SOCKET')
 DHT = module_class('DHT22Module', 'DHT22 TEMP./HUM. SENSOR')
 SPEED = module_class('SpeedTestModule', 'INTERNET SPEED TEST')
-DRIVE = module_class('GoogleDriveUploader', 'GOOGLE DRIVE UPLOADER')
 
 MODULES = [
     PreviewModule(RANGO, 'rango_iryga', 1, 'Ogród', 5001),
@@ -69,7 +68,6 @@ MODULES = [
     PreviewModule(DHT, 'dht22', 5, 'Szklarnia', 5005),
     PreviewModule(DHT, 'dht22', 6, 'Piwnica', REFUSED_PORT),
     PreviewModule(SPEED, 'speed_test', '7', 'Łącze internetowe', 5007),
-    PreviewModule(DRIVE, 'google_drive_uploader', 8, 'Zdjęcia z kamery', 5008),
 ]
 
 
@@ -139,8 +137,6 @@ def module_response(port, message):
         return json.dumps({'humidity': 61.3, 'temperature': 23.4}).encode('utf-8')
     if port == 5007:  # SpeedTestModule
         return json.dumps({'download': 54.21, 'upload': 9.87, 'unit': 'Mbit/s'}).encode('utf-8')
-    if port == 5008:  # GoogleDriveUploader
-        return json.dumps({'minutes_ago': 17}).encode('utf-8')
     if SCHEDULER is not None and port == SCHEDULER.port:  # starszy moduł - odpowiada HTML-em
         if message.startswith('MEASUREMENT'):
             return SCHEDULER.get_measurement().encode('utf-8')
