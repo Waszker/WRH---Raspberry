@@ -257,7 +257,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
         representation = '<div class="card-panel">'
         representation += '<h5>%s</h5>' % self.name
         representation += '<div id="rangoIrygaSchedulerSocketDiv' + id + '" class="socketDiv" style="height: auto; margin: auto">\n \
-                           <img src="static/images/loading_spinner.gif" style="width: 50px;"/>\n \
+                           <span class="spinner spinner--lg"></span>\n \
                            </div>\n \
                            <table style="margin: 0px auto; max-width: 95%; width: auto"> \
                            <tr><td colspan="3" style="text-align:center; vertical-align:middle"><h5>Dodaj nowy scenariusz</h5></td></tr> \
@@ -322,7 +322,7 @@ class RangoIrygaSchedulerModule(base_module.Module):
                     </table>'
         representation += '<script>\n \
                         function getScenarios' + id + '() {\n \
-                            document.getElementById("rangoIrygaSchedulerSocketDiv' + id + '").innerHTML = "<img src=\\"static/images/loading_spinner.gif\\" style=\\"width: 50px;\\" />";\n \
+                            document.getElementById("rangoIrygaSchedulerSocketDiv' + id + '").innerHTML = "<span class=\\"spinner spinner--lg\\"></span>";\n \
                             postRequest("localhost", ' + port + ', "MEASUREMENT|null", update_scenarios_view' + id + ');\n \
                         }\n \
                         function update_scenarios_view' + id + '(text) {\n \

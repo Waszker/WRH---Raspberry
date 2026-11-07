@@ -1,22 +1,20 @@
-<div class="card-panel">
-    <script>
-        function update_measurements_dht22_{id}(text) {{
-            var res = text.split(";");
-            var h = res[0];
-            var t = res[1];
-            document.getElementById("dht22Div{id}").innerHTML = "Humidity: " + h + "% Temperature: " + t + "&deg;C";
-        }}
-
-        function getMeasurements{id}() {{
-            getRequest("localhost", {port}, "", update_measurements_dht22_{id});
-        }}
-
-        getMeasurements{id}();
-
-        setInterval(function() {{
-            getMeasurements{id}();
-        }}, 60*1000);
-    </script>
-    <h5>{name}</h5>
-    <div id="dht22Div{id}" class="dht22Div"></div>
-</div>
+<article class="card" data-wrh-module="dht22" data-port="{port}" data-module-id="{id}">
+    <header class="card-head">
+        <span class="card-icon"><svg class="icon" aria-hidden="true"><use href="#i-thermo"/></svg></span>
+        <h2 class="card-title">{name}</h2>
+        <button type="button" class="icon-btn" data-action="refresh" aria-label="Odśwież">
+            <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg>
+        </button>
+    </header>
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-label"><svg class="icon" aria-hidden="true"><use href="#i-thermo"/></svg>Temperatura</div>
+            <div class="stat-value stat-value--big" data-role="temperature"><span class="spinner spinner--lg"></span></div>
+        </div>
+        <div class="stat">
+            <div class="stat-label"><svg class="icon" aria-hidden="true"><use href="#i-drop"/></svg>Wilgotność</div>
+            <div class="stat-value stat-value--big" data-role="humidity"><span class="spinner spinner--lg"></span></div>
+        </div>
+    </div>
+    <div class="card-msg" data-role="error" hidden></div>
+</article>

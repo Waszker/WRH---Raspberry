@@ -1,4 +1,5 @@
 import datetime
+import json
 import os
 import re
 import signal
@@ -18,6 +19,7 @@ class GoogleDriveUploader(base_module.Module):
     This WRH module takes care of uploading files that appear in its "upload" folder.
     """
     TYPE_NAME = "GOOGLE DRIVE UPLOADER"
+    WEB_VISIBLE = False  # no tab in the web UI
     UPLOAD_FOLDER = "/tmp/google_drive_upload"
     UPLOAD_DRIVE_FOLDER = "WRH UPLOADS"
     CONFIGURATION_LINE_PATTERN = "([0-9]{1,9});(.+?);([1-9][0-9]{0,9});(.+)$"
@@ -102,13 +104,9 @@ class GoogleDriveUploader(base_module.Module):
 
     def get_html_representation(self, website_host_address):
         """
-        Returns html code to include in website.
+        This module has no web view (WEB_VISIBLE = False): it only uploads files in the background.
         """
-        if not self.html_repr:
-            with open('modules/google_drive_uploader/html/repr.html', 'r') as f:
-                html = f.read()
-                self.html_repr = html.format(id=self.id, name=self.name, port=self.port)
-        return self.html_repr
+        return ''
 
     @in_thread
     @log_exceptions()
@@ -139,10 +137,10 @@ class GoogleDriveUploader(base_module.Module):
         Generally respond to incoming connection.
         Maybe send some information about current module state?
         """
-        connection.send("Last successful upload done {} minutes ago".format(
-            int((datetime.datetime.now() - self.last_upload).total_seconds() / 60)
-            if self.last_upload is not None else "..."
-        ).encode('utf-8'))
+        # Response: {"minutes_ago": <minutes since last successful upload or null if none yet>}
+        minutes_ago = int((datetime.datetime.now() - self.last_upload).total_seconds() / 60) \
+            if self.last_upload is not None else None
+        connection.send(json.dumps({'minutes_ago': minutes_ago}).encode('utf-8'))
 
 
 if __name__ == "__main__":

@@ -1,3 +1,4 @@
+import json
 import re
 import signal
 import socket
@@ -132,7 +133,7 @@ class ESP8266SocketModule(base_module.Module):
             log(message)
             self._set_socket_state(False, time_wait)
         elif str(state) == "STATE" or str(state) == "state":
-            connection.send(self.get_measurement().encode('utf-8'))
+            connection.send(json.dumps({"state": self.get_measurement()}).encode('utf-8'))
 
 
 if __name__ == "__main__":

@@ -1,3 +1,4 @@
+import json
 import re
 import signal
 import sys
@@ -123,10 +124,12 @@ class DHT22Module(base_module.Module):
                 pass
 
     def _react_to_connection(self, connection, _):
+        # Response: {"humidity": <percent>, "temperature": <Celsius>}, values are null until first measurement
         if self.last_temperature is not None and self.last_humidity is not None:
-            connection.send(f'{self.last_humidity:0.1f};{self.last_temperature:0.1f}'.encode('utf-8'))
+            response = {'humidity': round(self.last_humidity, 1), 'temperature': round(self.last_temperature, 1)}
         else:
-            connection.send('?;?'.encode('utf-8'))
+            response = {'humidity': None, 'temperature': None}
+        connection.send(json.dumps(response).encode('utf-8'))
 
 
 if __name__ == "__main__":

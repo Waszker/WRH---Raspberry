@@ -171,3 +171,6 @@ fabric.properties
 
 utils/
 
+
+# Local preview virtualenv (tools/preview_server.py)
+venv/
